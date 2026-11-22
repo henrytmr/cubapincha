@@ -5,30 +5,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CubaPincha — Oferta de trabajo</title>
 <style>
-body{font-family:system-ui,sans-serif;max-width:720px;margin:2em auto;padding:0 1em;line-height:1.6;color:#222}
-h1{font-size:1.6em;margin-bottom:.2em}
-h2{font-size:1.1em;margin-top:1.5em}
-.muted{color:#666;font-size:.9em}
-.badge{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:0 .4em;font-size:.85em;margin-left:.4em}
-.salario{font-size:1.2em;font-weight:bold}
-.btn{display:inline-block;background:#1565c0;color:#fff;text-decoration:none;padding:.7em 1.2em;border-radius:6px;margin-top:1em}
-.btn.sec{background:#eee;color:#222}
-ul{padding-left:1.2em}
-.card{border:1px solid #ddd;border-radius:8px;padding:1em 1.2em}
-footer{margin-top:2em;font-size:.9em;color:#666}
+:root{
+  --accent:#0f766e; --accent-dark:#0b5e57; --accent-soft:#e6f4f1;
+  --ink:#1f2937; --muted:#6b7280; --bg:#f4f5f3; --card:#ffffff; --line:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6}
+a{color:var(--accent)}
+/* Cabecera */
+header.site{background:var(--card);border-bottom:1px solid var(--line)}
+header.site .wrap{max-width:720px;margin:0 auto;padding:.75em 1em;
+  display:flex;align-items:center;justify-content:space-between;gap:1em}
+.brand{font-size:1.3em;font-weight:800;text-decoration:none;letter-spacing:-.01em;color:var(--ink)}
+.brand b{color:var(--accent);font-weight:800}
+header.site nav a{color:var(--muted);text-decoration:none;font-size:.95em}
+header.site nav a:hover{color:var(--accent)}
+/* Contenido */
+main{max-width:720px;margin:0 auto;padding:1em 1em 7em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:1.25em 1.25em;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.hero h1{font-size:1.7em;line-height:1.25;margin:.35em 0 .3em;letter-spacing:-.01em}
+.chips{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
+.chip{display:inline-block;background:var(--accent-soft);color:var(--accent-dark);
+  border-radius:999px;padding:.2em .75em;font-size:.85em;font-weight:600}
+.fecha{color:var(--muted);font-size:.9em}
+.company{font-size:1.08em;font-weight:700;margin:.1em 0}
+.badge{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:999px;
+  padding:.1em .6em;font-size:.8em;font-weight:700;margin-left:.45em;vertical-align:.1em}
+.lugar{color:var(--muted);margin:.2em 0 0;display:flex;align-items:center;gap:.35em}
+.lugar svg{flex:none}
+/* Salario */
+.salario{background:var(--accent-soft);border:1px solid #c8e6e0;border-radius:12px;
+  padding:1em 1.25em;margin-top:1.1em}
+.salario .etiqueta{font-size:.8em;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;color:#3f6b66;margin:0}
+.salario .cantidad{font-size:1.55em;font-weight:800;color:var(--accent-dark);
+  line-height:1.2;margin:.15em 0 0}
+.salario .cantidad span{font-size:.6em;font-weight:600;color:#3f6b66}
+.salario .notas{margin:.45em 0 0;color:#3f6b66;font-size:.95em}
+/* Secciones */
+h2.sec{font-size:.85em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);margin:1.9em 0 .55em;padding-bottom:.35em;border-bottom:1px solid var(--line)}
+.desc p{margin:.4em 0}
+ul.lista{margin:.4em 0;padding-left:1.25em}
+ul.lista li{margin:.35em 0}
+ul.lista li::marker{color:var(--accent)}
+/* Detalles */
+.detalles{display:grid;grid-template-columns:1fr 1fr;gap:.6em}
+.detalles div{background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:.65em .9em}
+.detalles dt{font-size:.78em;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--muted)}
+.detalles dd{margin:.15em 0 0;font-weight:600}
+@media (max-width:420px){.detalles{grid-template-columns:1fr}}
+/* Botones */
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;
+  padding:.8em 1.3em;border-radius:9px;font-weight:700;text-align:center}
+.btn:hover{background:var(--accent-dark)}
+.btn.sec{background:#eef2f1;color:var(--ink)}
+.btn.sec:hover{background:#e2e8e6}
+.cta{margin-top:1.6em;text-align:center}
+.cta .nota{color:var(--muted);font-size:.9em;margin:.7em 0 0}
+/* Barra inferior */
+.cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);
+  border-top:1px solid var(--line);padding:.7em 1em;display:flex;gap:.7em;
+  justify-content:center;box-shadow:0 -2px 12px rgba(0,0,0,.07)}
+.cta-bar .btn{flex:1;max-width:360px}
+.cta-bar .btn.sec{flex:0 1 auto;white-space:nowrap}
+@media (min-width:768px){
+  .cta-bar{position:static;box-shadow:none;border:1px solid var(--line);
+    border-radius:12px;margin:1.6em auto 0;max-width:720px}
+  main{padding-bottom:1.5em}
+}
+/* Estados: cargando / error */
+.estado{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:2.2em 1.5em;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.estado p{margin:.4em 0}
+.estado .titulo{font-size:1.15em;font-weight:700}
+.estado .detalle{color:var(--muted)}
+.estado .acciones{margin-top:1.2em;display:flex;gap:.7em;justify-content:center;flex-wrap:wrap}
+.spinner{width:34px;height:34px;margin:0 auto .8em;border-radius:50%;
+  border:3px solid var(--accent-soft);border-top-color:var(--accent);
+  animation:girar 1s linear infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+/* Pie */
+footer.site{max-width:720px;margin:0 auto;padding:0 1em 7em;text-align:center;
+  color:var(--muted);font-size:.9em}
+@media (min-width:768px){footer.site{padding-bottom:2em}}
+footer.site a{color:var(--muted)}
 </style>
 </head>
 <body>
-<h1>CubaPincha</h1>
-<div id="estado"><p>Cargando la oferta…</p></div>
-<div id="oferta" hidden></div>
-<footer><a href="index.html">Ver todas las ofertas en CubaPincha</a> · Contacto:
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Cuba<b>Pincha</b></a>
+    <nav><a href="index.html">Todas las ofertas</a></nav>
+  </div>
+</header>
+<main>
+  <div id="estado"></div>
+  <div id="oferta" hidden></div>
+</main>
+<div class="cta-bar" id="barra" hidden>
+  <a class="btn" id="btnAppBar" href="#">Abrir en la app</a>
+  <a class="btn sec" href="https://henrytmr.github.io/cubapincha/">Ver todas las ofertas</a>
+</div>
+<footer class="site"><a href="index.html">Ver todas las ofertas en CubaPincha</a> · Contacto:
 <a href="mailto:henryruztamayo@gmail.com">henryruztamayo@gmail.com</a></footer>
 <script>
 (function () {
   var API = "https://ogimwehtnhegfoamiwzm.supabase.co/functions/v1/api";
   var estado = document.getElementById("estado");
   var caja = document.getElementById("oferta");
+  var barra = document.getElementById("barra");
+  var btnAppBar = document.getElementById("btnAppBar");
   var params = new URLSearchParams(window.location.search);
   var id = params.get("id") || "";
 
@@ -53,10 +144,26 @@ footer{margin-top:2em;font-size:.9em;color:#666}
       comision: "por comisión", a_convenir: "a convenir"};
     return m[p] || p || "";
   }
-  function mostrarError(msg) {
-    estado.innerHTML = "<p>" + esc(msg) + "</p>" +
-      "<p><a class=\"btn sec\" href=\"index.html\">Volver a CubaPincha</a></p>";
+  function mostrarEstado(html) {
+    estado.innerHTML = "<div class=\"estado\">" + html + "</div>";
+    estado.hidden = false;
+    caja.hidden = true;
+    barra.hidden = true;
   }
+  function mostrarCargando() {
+    mostrarEstado("<div class=\"spinner\"></div>" +
+      "<p class=\"titulo\">Cargando la oferta…</p>" +
+      "<p class=\"detalle\">Un momento, por favor.</p>");
+  }
+  function mostrarError(msg) {
+    mostrarEstado("<p class=\"titulo\">" + esc(msg) + "</p>" +
+      "<p class=\"detalle\">Si el problema continúa, vuelve a intentarlo en un momento.</p>" +
+      "<div class=\"acciones\">" +
+      "<a class=\"btn\" href=\"\" onclick=\"location.reload();return false;\">Reintentar</a>" +
+      "<a class=\"btn sec\" href=\"index.html\">Volver a CubaPincha</a></div>");
+  }
+
+  mostrarCargando();
 
   if (!id) {
     mostrarError("No se indicó ninguna oferta en el enlace.");
@@ -79,45 +186,70 @@ footer{margin-top:2em;font-size:.9em;color:#666}
     var o = res.data;
     document.title = o.title + " — CubaPincha";
     var lugar = [o.municipalityName, o.provinceName].filter(Boolean).join(", ");
+    var pin = "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" " +
+      "stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" " +
+      "stroke-linejoin=\"round\"><path d=\"M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z\"/>" +
+      "<circle cx=\"12\" cy=\"10\" r=\"3\"/></svg>";
     var salario = "";
     if (o.salaryMin != null || o.salaryMax != null) {
       var min = dinero(o.salaryMin), max = dinero(o.salaryMax);
-      salario = "<p class=\"salario\">" + esc(min && max ? min + " – " + max : (max || min)) +
-        " CUP <span class=\"muted\">" + esc(periodo(o.salaryPeriod)) + "</span></p>";
+      var rango = min && max ? min + " – " + max : (max || min);
+      salario = "<section class=\"salario\">" +
+        "<p class=\"etiqueta\">Salario</p>" +
+        "<p class=\"cantidad\">" + esc(rango) + " CUP" +
+        (periodo(o.salaryPeriod) ? " <span>" + esc(periodo(o.salaryPeriod)) + "</span>" : "") + "</p>" +
+        (o.paymentNotes ? "<p class=\"notas\">" + esc(o.paymentNotes) + "</p>" : "") +
+        "</section>";
     }
     function lista(titulo, items) {
       if (!items || !items.length) return "";
-      return "<h2>" + titulo + "</h2><ul>" +
+      return "<h2 class=\"sec\">" + titulo + "</h2><ul class=\"lista\">" +
         items.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
-    var detalles = [];
-    if (o.category) detalles.push("Categoría: " + o.category);
-    if (o.workMode) detalles.push("Modalidad: " + o.workMode);
-    if (o.contractType) detalles.push("Contrato: " + o.contractType);
-    if (o.locality) detalles.push("Zona: " + o.locality);
-    if (o.startDate) detalles.push("Inicio: " + esc(o.startDate));
-    if (o.contactHours) detalles.push("Horario de contacto: " + o.contactHours);
-    if (o.experienceMin != null) detalles.push("Experiencia mínima: " + o.experienceMin + " años");
+    function detalle(etiqueta, valor) {
+      if (valor == null || valor === "") return "";
+      return "<div><dt>" + etiqueta + "</dt><dd>" + esc(valor) + "</dd></div>";
+    }
+    var detalles = "";
+    detalles += detalle("Categoría", o.category);
+    detalles += detalle("Modalidad", o.workMode);
+    detalles += detalle("Tipo de contrato", o.contractType);
+    detalles += detalle("Zona", o.locality);
+    detalles += detalle("Fecha de inicio", o.startDate);
+    detalles += detalle("Horario de contacto", o.contactHours);
+    detalles += detalle("Experiencia mínima",
+      o.experienceMin != null ? o.experienceMin + (o.experienceMin === 1 ? " año" : " años") : "");
+    if (detalles) {
+      detalles = "<h2 class=\"sec\">Detalles de la oferta</h2><dl class=\"detalles\">" + detalles + "</dl>";
+    }
 
+    var appUrl = "cubapincha://oferta/" + encodeURIComponent(o.jobId);
     caja.innerHTML =
-      "<div class=\"card\">" +
-      "<h1>" + esc(o.title) + "</h1>" +
-      "<p><strong>" + esc(o.companyName) + "</strong>" +
-      (o.companyVerified ? "<span class=\"badge\">Verificada</span>" : "") + "</p>" +
-      (lugar ? "<p class=\"muted\">" + esc(lugar) + "</p>" : "") +
-      salario +
-      "<p>" + esc(o.description) + "</p>" +
-      (detalles.length ? "<p class=\"muted\">" + detalles.map(esc).join("<br>") + "</p>" : "") +
-      (o.paymentNotes ? "<p class=\"muted\">Pago: " + esc(o.paymentNotes) + "</p>" : "") +
+      "<article class=\"card hero\">" +
+      "<div class=\"chips\">" +
+      (o.category ? "<span class=\"chip\">" + esc(o.category) + "</span>" : "") +
+      (o.publishedAt ? "<span class=\"fecha\">Publicada: " + esc(fecha(o.publishedAt)) + "</span>" : "") +
       "</div>" +
+      "<h1>" + esc(o.title) + "</h1>" +
+      "<p class=\"company\">" + esc(o.companyName) +
+      (o.companyVerified ? "<span class=\"badge\">✓ Verificada</span>" : "") + "</p>" +
+      (lugar ? "<p class=\"lugar\">" + pin + esc(lugar) + "</p>" : "") +
+      "</article>" +
+      salario +
+      (o.description ? "<h2 class=\"sec\">Descripción</h2><div class=\"desc\"><p>" +
+        esc(o.description) + "</p></div>" : "") +
+      detalles +
       lista("Responsabilidades", o.responsibilities) +
       lista("Requisitos", o.requirements) +
       lista("Beneficios", o.benefits) +
-      "<p class=\"muted\">Publicada: " + esc(fecha(o.publishedAt)) + "</p>" +
-      "<p><a class=\"btn\" href=\"cubapincha://oferta/" + encodeURIComponent(o.jobId) + "\">Abrir en la app</a></p>" +
-      "<p class=\"muted\">Si no tienes la app instalada, puedes pedir el APK al equipo de CubaPincha.</p>";
+      "<div class=\"cta\">" +
+      "<a class=\"btn\" href=\"" + appUrl + "\">Abrir en la app</a>" +
+      "<p class=\"nota\">Si no tienes la app instalada, puedes pedir el APK al equipo de CubaPincha.</p>" +
+      "</div>";
     estado.hidden = true;
     caja.hidden = false;
+    btnAppBar.href = appUrl;
+    barra.hidden = false;
   })
   .catch(function () {
     mostrarError("No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.");
