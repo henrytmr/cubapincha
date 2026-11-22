@@ -6,100 +6,111 @@
 <title>CubaPincha — Oferta de trabajo</title>
 <style>
 :root{
-  --accent:#0f766e; --accent-dark:#0b5e57; --accent-soft:#e6f4f1;
-  --ink:#1f2937; --muted:#6b7280; --bg:#f4f5f3; --card:#ffffff; --line:#e5e7eb;
+  --tinta:#17263C; --noche:#1C2C3E; --indigo:#203F5A; --violeta:#2F5872;
+  --cobre:#C8754D; --cobre-oscuro:#A85F3C; --cobre-suave:#F7EBE3;
+  --menta:#63A38B; --sol:#D7A85E; --crema:#F7F5F0; --borde:#DDE3E5;
+  --secundario:#56636D; --verificado:#17624C; --verificado-suave:#E3F0EB;
+  --card:#ffffff;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  background:var(--bg);color:var(--ink);line-height:1.6}
-a{color:var(--accent)}
+  background:var(--crema);color:var(--tinta);line-height:1.6}
+a{color:var(--cobre-oscuro)}
 /* Cabecera */
-header.site{background:var(--card);border-bottom:1px solid var(--line)}
+header.site{background:var(--tinta)}
 header.site .wrap{max-width:720px;margin:0 auto;padding:.75em 1em;
   display:flex;align-items:center;justify-content:space-between;gap:1em}
-.brand{font-size:1.3em;font-weight:800;text-decoration:none;letter-spacing:-.01em;color:var(--ink)}
-.brand b{color:var(--accent);font-weight:800}
-header.site nav a{color:var(--muted);text-decoration:none;font-size:.95em}
-header.site nav a:hover{color:var(--accent)}
+.brand{display:inline-flex;align-items:center;gap:.55em;font-size:1.3em;font-weight:800;
+  text-decoration:none;letter-spacing:-.01em;color:#fff}
+.brand b{color:var(--sol);font-weight:800}
+.monograma{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:1.9em;height:1.9em;border-radius:10px;background:var(--cobre);color:#fff;
+  font-size:.72em;font-weight:800;letter-spacing:.02em;flex:none}
+.monograma::after{content:"✦";position:absolute;top:-.55em;right:-.35em;
+  color:var(--sol);font-size:.85em}
+header.site nav a{color:#C9D4D9;text-decoration:none;font-size:.95em}
+header.site nav a:hover{color:var(--sol)}
 /* Contenido */
 main{max-width:720px;margin:0 auto;padding:1em 1em 7em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
-  padding:1.25em 1.25em;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card{background:var(--card);border:1px solid var(--borde);border-radius:14px;
+  padding:1.25em 1.25em;box-shadow:0 1px 3px rgba(23,38,60,.08)}
 .hero h1{font-size:1.7em;line-height:1.25;margin:.35em 0 .3em;letter-spacing:-.01em}
 .chips{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
-.chip{display:inline-block;background:var(--accent-soft);color:var(--accent-dark);
+.chip{display:inline-block;background:var(--cobre-suave);color:var(--cobre-oscuro);
   border-radius:999px;padding:.2em .75em;font-size:.85em;font-weight:600}
-.fecha{color:var(--muted);font-size:.9em}
+.fecha{color:var(--secundario);font-size:.9em}
 .company{font-size:1.08em;font-weight:700;margin:.1em 0}
-.badge{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:999px;
-  padding:.1em .6em;font-size:.8em;font-weight:700;margin-left:.45em;vertical-align:.1em}
-.lugar{color:var(--muted);margin:.2em 0 0;display:flex;align-items:center;gap:.35em}
+.badge{display:inline-block;background:var(--verificado-suave);color:var(--verificado);
+  border-radius:999px;padding:.1em .6em;font-size:.8em;font-weight:700;
+  margin-left:.45em;vertical-align:.1em}
+.lugar{color:var(--secundario);margin:.2em 0 0;display:flex;align-items:center;gap:.35em}
 .lugar svg{flex:none}
 /* Salario */
-.salario{background:var(--accent-soft);border:1px solid #c8e6e0;border-radius:12px;
+.salario{background:#FBF3EC;border:1px solid #EBD3BE;border-radius:12px;
   padding:1em 1.25em;margin-top:1.1em}
 .salario .etiqueta{font-size:.8em;font-weight:700;letter-spacing:.05em;
-  text-transform:uppercase;color:#3f6b66;margin:0}
-.salario .cantidad{font-size:1.55em;font-weight:800;color:var(--accent-dark);
+  text-transform:uppercase;color:var(--cobre-oscuro);margin:0}
+.salario .cantidad{font-size:1.55em;font-weight:800;color:var(--tinta);
   line-height:1.2;margin:.15em 0 0}
-.salario .cantidad span{font-size:.6em;font-weight:600;color:#3f6b66}
-.salario .notas{margin:.45em 0 0;color:#3f6b66;font-size:.95em}
+.salario .cantidad span{font-size:.6em;font-weight:600;color:var(--cobre-oscuro)}
+.salario .notas{margin:.45em 0 0;color:var(--secundario);font-size:.95em}
 /* Secciones */
 h2.sec{font-size:.85em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);margin:1.9em 0 .55em;padding-bottom:.35em;border-bottom:1px solid var(--line)}
+  color:var(--secundario);margin:1.9em 0 .55em;padding-bottom:.35em;
+  border-bottom:1px solid var(--borde)}
 .desc p{margin:.4em 0}
 ul.lista{margin:.4em 0;padding-left:1.25em}
 ul.lista li{margin:.35em 0}
-ul.lista li::marker{color:var(--accent)}
+ul.lista li::marker{color:var(--cobre)}
 /* Detalles */
 .detalles{display:grid;grid-template-columns:1fr 1fr;gap:.6em}
-.detalles div{background:var(--card);border:1px solid var(--line);
+.detalles div{background:var(--card);border:1px solid var(--borde);
   border-radius:10px;padding:.65em .9em}
 .detalles dt{font-size:.78em;font-weight:700;letter-spacing:.04em;
-  text-transform:uppercase;color:var(--muted)}
+  text-transform:uppercase;color:var(--secundario)}
 .detalles dd{margin:.15em 0 0;font-weight:600}
 @media (max-width:420px){.detalles{grid-template-columns:1fr}}
 /* Botones */
-.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;
+.btn{display:inline-block;background:var(--cobre);color:#fff;text-decoration:none;
   padding:.8em 1.3em;border-radius:9px;font-weight:700;text-align:center}
-.btn:hover{background:var(--accent-dark)}
-.btn.sec{background:#eef2f1;color:var(--ink)}
-.btn.sec:hover{background:#e2e8e6}
+.btn:hover{background:var(--cobre-oscuro)}
+.btn.sec{background:#fff;color:var(--tinta);border:1px solid var(--borde)}
+.btn.sec:hover{background:var(--crema)}
 .cta{margin-top:1.6em;text-align:center}
-.cta .nota{color:var(--muted);font-size:.9em;margin:.7em 0 0}
+.cta .nota{color:var(--secundario);font-size:.9em;margin:.7em 0 0}
 /* Barra inferior */
 .cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);
-  border-top:1px solid var(--line);padding:.7em 1em;display:flex;gap:.7em;
-  justify-content:center;box-shadow:0 -2px 12px rgba(0,0,0,.07)}
+  border-top:1px solid var(--borde);padding:.7em 1em;display:flex;gap:.7em;
+  justify-content:center;box-shadow:0 -2px 12px rgba(23,38,60,.08)}
 .cta-bar .btn{flex:1;max-width:360px}
 .cta-bar .btn.sec{flex:0 1 auto;white-space:nowrap}
 @media (min-width:768px){
-  .cta-bar{position:static;box-shadow:none;border:1px solid var(--line);
+  .cta-bar{position:static;box-shadow:none;border:1px solid var(--borde);
     border-radius:12px;margin:1.6em auto 0;max-width:720px}
   main{padding-bottom:1.5em}
 }
 /* Estados: cargando / error */
-.estado{background:var(--card);border:1px solid var(--line);border-radius:14px;
-  padding:2.2em 1.5em;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.estado{background:var(--card);border:1px solid var(--borde);border-radius:14px;
+  padding:2.2em 1.5em;text-align:center;box-shadow:0 1px 3px rgba(23,38,60,.08)}
 .estado p{margin:.4em 0}
 .estado .titulo{font-size:1.15em;font-weight:700}
-.estado .detalle{color:var(--muted)}
+.estado .detalle{color:var(--secundario)}
 .estado .acciones{margin-top:1.2em;display:flex;gap:.7em;justify-content:center;flex-wrap:wrap}
 .spinner{width:34px;height:34px;margin:0 auto .8em;border-radius:50%;
-  border:3px solid var(--accent-soft);border-top-color:var(--accent);
+  border:3px solid var(--cobre-suave);border-top-color:var(--cobre);
   animation:girar 1s linear infinite}
 @keyframes girar{to{transform:rotate(360deg)}}
 /* Pie */
 footer.site{max-width:720px;margin:0 auto;padding:0 1em 7em;text-align:center;
-  color:var(--muted);font-size:.9em}
+  color:var(--secundario);font-size:.9em}
 @media (min-width:768px){footer.site{padding-bottom:2em}}
-footer.site a{color:var(--muted)}
+footer.site a{color:var(--secundario)}
 </style>
 </head>
 <body>
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="index.html">Cuba<b>Pincha</b></a>
+    <a class="brand" href="index.html"><span class="monograma">CP</span>Cuba<b>Pincha</b></a>
     <nav><a href="index.html">Todas las ofertas</a></nav>
   </div>
 </header>

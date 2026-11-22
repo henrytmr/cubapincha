@@ -4,13 +4,139 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CubaPincha — Ofertas de trabajo</title>
-<style>body{font-family:system-ui,sans-serif;max-width:720px;margin:2em auto;padding:0 1em;line-height:1.6;color:#222}h1{font-size:1.8em}</style>
+<style>
+:root{
+  --tinta:#17263C; --noche:#1C2C3E; --indigo:#203F5A; --violeta:#2F5872;
+  --cobre:#C8754D; --cobre-oscuro:#A85F3C; --cobre-suave:#F7EBE3;
+  --menta:#63A38B; --sol:#D7A85E; --crema:#F7F5F0; --borde:#DDE3E5;
+  --secundario:#56636D; --verificado:#17624C; --verificado-suave:#E3F0EB;
+  --card:#ffffff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--crema);color:var(--tinta);line-height:1.6}
+a{color:var(--cobre-oscuro)}
+/* Cabecera */
+header.site{background:var(--tinta)}
+header.site .wrap{max-width:720px;margin:0 auto;padding:.75em 1em;
+  display:flex;align-items:center;justify-content:space-between;gap:1em}
+.brand{display:inline-flex;align-items:center;gap:.55em;font-size:1.3em;font-weight:800;
+  text-decoration:none;letter-spacing:-.01em;color:#fff}
+.brand b{color:var(--sol);font-weight:800}
+.monograma{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:1.9em;height:1.9em;border-radius:10px;background:var(--cobre);color:#fff;
+  font-size:.72em;font-weight:800;letter-spacing:.02em;flex:none}
+.monograma::after{content:"✦";position:absolute;top:-.55em;right:-.35em;
+  color:var(--sol);font-size:.85em}
+header.site nav a{color:#C9D4D9;text-decoration:none;font-size:.95em}
+header.site nav a:hover{color:var(--sol)}
+/* Hero */
+.hero{background:var(--noche);color:#fff;border-bottom:3px solid var(--cobre)}
+.hero .wrap{max-width:720px;margin:0 auto;padding:2.6em 1em 2.8em}
+.hero h1{font-size:2em;line-height:1.2;margin:.2em 0 .45em;letter-spacing:-.01em}
+.hero h1 span{color:var(--sol)}
+.hero p{color:#C9D4D9;margin:.4em 0 1.3em;max-width:34em}
+.hero .acciones{display:flex;gap:.7em;flex-wrap:wrap}
+/* Botones */
+.btn{display:inline-block;background:var(--cobre);color:#fff;text-decoration:none;
+  padding:.8em 1.3em;border-radius:9px;font-weight:700;text-align:center}
+.btn:hover{background:var(--cobre-oscuro)}
+.btn.sec{background:#fff;color:var(--tinta);border:1px solid var(--borde)}
+.btn.sec:hover{background:var(--crema)}
+/* Contenido */
+main{max-width:720px;margin:0 auto;padding:1.8em 1em 2em}
+section{margin-bottom:2.2em}
+section h2{font-size:1.3em;margin:0 0 .2em;letter-spacing:-.01em}
+section .intro{color:var(--secundario);margin:.2em 0 1em}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+@media (max-width:520px){.cards{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--borde);border-radius:14px;
+  padding:1.2em 1.25em;box-shadow:0 1px 3px rgba(23,38,60,.08)}
+.card.trabajador{border-top:3px solid var(--cobre)}
+.card.empresa{border-top:3px solid var(--menta)}
+.card h3{margin:0 0 .4em;font-size:1.1em}
+.card p{margin:.3em 0;color:var(--secundario)}
+.card p strong{color:var(--tinta)}
+.pasos{list-style:none;padding:0;margin:0;counter-reset:paso}
+.pasos li{counter-increment:paso;display:flex;gap:.8em;margin:.9em 0;align-items:flex-start}
+.pasos li::before{content:counter(paso);flex:none;width:1.9em;height:1.9em;
+  border-radius:50%;background:var(--cobre);color:#fff;font-weight:800;
+  text-align:center;line-height:1.9em;font-size:.9em}
+.pasos li p{margin:0}
+.pasos li strong{display:block}
+.contacto{background:var(--indigo);color:#fff;border-radius:14px;padding:1.4em 1.5em}
+.contacto h2{color:#fff}
+.contacto p{color:#C9D4D9;margin:.3em 0 1em}
+.contacto a{color:var(--sol)}
+.contacto .btn{margin-top:.2em}
+/* Pie */
+footer.site{background:var(--tinta);color:#C9D4D9;text-align:center;
+  padding:1.6em 1em;font-size:.9em}
+footer.site .lema{color:#fff;font-weight:700;margin:0 0 .4em}
+footer.site p{margin:.3em 0}
+footer.site a{color:var(--sol);text-decoration:none}
+footer.site a:hover{text-decoration:underline}
+</style>
 </head>
 <body>
-<h1>CubaPincha</h1>
-<p>Encuentra trabajo o publica ofertas. La aplicación para Android se
-distribuye directamente: pide el APK al equipo de CubaPincha.</p>
-<p><a href="privacidad.html">Política de privacidad</a> · Contacto:
-<a href="mailto:henryruztamayo@gmail.com">henryruztamayo@gmail.com</a></p>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="monograma">CP</span>Cuba<b>Pincha</b></a>
+    <nav><a href="privacidad.html">Privacidad</a></nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Conecta con tu próximo <span>pincha</span></h1>
+    <p>CubaPincha es la aplicación para buscar trabajo y publicar ofertas en Cuba:
+    los trabajadores encuentran empleo y las empresas encuentran a quien necesitan.</p>
+    <div class="acciones">
+      <a class="btn" href="mailto:henryruztamayo@gmail.com?subject=Quiero%20el%20APK%20de%20CubaPincha">Pedir el APK</a>
+      <a class="btn sec" href="privacidad.html">Política de privacidad</a>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section>
+    <h2>¿Qué es CubaPincha?</h2>
+    <p class="intro">Un solo lugar para el trabajo en Cuba: ofertas claras, perfiles reales y contacto directo.</p>
+    <div class="cards">
+      <div class="card trabajador">
+        <h3>Para trabajadores</h3>
+        <p>Crea tu perfil con tu <strong>profesión, provincia y municipio</strong>, busca ofertas cerca de ti y postúlate con un toque.</p>
+        <p>Recibe avisos cuando salga una oferta que te encaje y guarda las que te interesen.</p>
+      </div>
+      <div class="card empresa">
+        <h3>Para empresas</h3>
+        <p>Publica tus ofertas y ve <strong>quién se postuló</strong> a cada una, con el perfil completo del trabajador.</p>
+        <p>Guarda los candidatos que te interesen y valora el trabajo cuando termine.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cómo conseguir la app</h2>
+    <p class="intro">La aplicación para Android se distribuye directamente, no está en tiendas.</p>
+    <ol class="pasos">
+      <li><p><strong>Pide el APK al equipo</strong>Escribe a henryruztamayo@gmail.com y te enviamos el instalador.</p></li>
+      <li><p><strong>Instálalo en tu teléfono Android</strong>Permite la instalación desde el archivo cuando el teléfono te lo pregunte.</p></li>
+      <li><p><strong>Crea tu cuenta o entra con Google</strong>Y empieza a buscar trabajo o a publicar ofertas.</p></li>
+    </ol>
+  </section>
+
+  <section class="contacto">
+    <h2>Contacto</h2>
+    <p>¿Dudas, sugerencias o quieres publicar una oferta? Escríbenos.</p>
+    <a class="btn" href="mailto:henryruztamayo@gmail.com">henryruztamayo@gmail.com</a>
+  </section>
+</main>
+
+<footer class="site">
+  <p class="lema">CubaPincha — Conecta con tu próximo pincha</p>
+  <p><a href="privacidad.html">Política de privacidad</a> · Contacto:
+  <a href="mailto:henryruztamayo@gmail.com">henryruztamayo@gmail.com</a></p>
+</footer>
 </body>
 </html>
