@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CubaPincha — Política de privacidad</title>
+<link rel="icon" type="image/png" href="logo.png">
 <style>
 :root{
   --tinta:#17263C; --noche:#1C2C3E; --indigo:#203F5A; --violeta:#2F5872;
@@ -23,11 +24,11 @@ header.site .wrap{max-width:720px;margin:0 auto;padding:.75em 1em;
 .brand{display:inline-flex;align-items:center;gap:.55em;font-size:1.3em;font-weight:800;
   text-decoration:none;letter-spacing:-.01em;color:#fff}
 .brand b{color:var(--sol);font-weight:800}
-.monograma{position:relative;display:inline-flex;align-items:center;justify-content:center;
-  width:1.9em;height:1.9em;border-radius:10px;background:var(--cobre);color:#fff;
-  font-size:.72em;font-weight:800;letter-spacing:.02em;flex:none}
-.monograma::after{content:"✦";position:absolute;top:-.55em;right:-.35em;
-  color:var(--sol);font-size:.85em}
+/* Placa del apretón, como en la app: marfil con borde fino */
+.placa{display:inline-flex;align-items:center;justify-content:center;flex:none;
+  width:38px;height:38px;border-radius:10px;background:var(--crema);
+  border:1px solid var(--borde);padding:3px}
+.placa img{width:100%;height:100%;display:block}
 header.site nav a{color:#C9D4D9;text-decoration:none;font-size:.95em}
 header.site nav a:hover{color:var(--sol)}
 /* Contenido */
@@ -60,7 +61,7 @@ footer.site a:hover{text-decoration:underline}
 <body>
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="index.html"><span class="monograma">CP</span>Cuba<b>Pincha</b></a>
+    <a class="brand" href="index.html"><span class="placa"><img src="logo.png" alt="CubaPincha"></span>Cuba<b>Pincha</b></a>
     <nav><a href="index.html">Inicio</a></nav>
   </div>
 </header>

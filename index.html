@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CubaPincha — Ofertas de trabajo</title>
+<link rel="icon" type="image/png" href="logo.png">
 <style>
 :root{
   --tinta:#17263C; --noche:#1C2C3E; --indigo:#203F5A; --violeta:#2F5872;
@@ -23,40 +24,57 @@ header.site .wrap{max-width:720px;margin:0 auto;padding:.75em 1em;
 .brand{display:inline-flex;align-items:center;gap:.55em;font-size:1.3em;font-weight:800;
   text-decoration:none;letter-spacing:-.01em;color:#fff}
 .brand b{color:var(--sol);font-weight:800}
-.monograma{position:relative;display:inline-flex;align-items:center;justify-content:center;
-  width:1.9em;height:1.9em;border-radius:10px;background:var(--cobre);color:#fff;
-  font-size:.72em;font-weight:800;letter-spacing:.02em;flex:none}
-.monograma::after{content:"✦";position:absolute;top:-.55em;right:-.35em;
-  color:var(--sol);font-size:.85em}
+/* Placa del apretón, como en la app: marfil con borde fino */
+.placa{display:inline-flex;align-items:center;justify-content:center;flex:none;
+  width:38px;height:38px;border-radius:10px;background:var(--crema);
+  border:1px solid var(--borde);padding:3px}
+.placa img{width:100%;height:100%;display:block}
 header.site nav a{color:#C9D4D9;text-decoration:none;font-size:.95em}
 header.site nav a:hover{color:var(--sol)}
-/* Hero */
-.hero{background:var(--noche);color:#fff;border-bottom:3px solid var(--cobre)}
-.hero .wrap{max-width:720px;margin:0 auto;padding:2.6em 1em 2.8em}
-.hero h1{font-size:2em;line-height:1.2;margin:.2em 0 .45em;letter-spacing:-.01em}
-.hero h1 span{color:var(--sol)}
-.hero p{color:#C9D4D9;margin:.4em 0 1.3em;max-width:34em}
-.hero .acciones{display:flex;gap:.7em;flex-wrap:wrap}
+/* Bienvenida, como en la app: logo arriba, nombre, lema, titular,
+   subtítulo, tarjeta de trabajador, ruta, tarjeta de empresa */
+.bienvenida{max-width:720px;margin:0 auto;padding:2.2em 1em 1.2em;text-align:center}
+.logo-hero{width:140px;height:140px;border-radius:28px;background:var(--crema);
+  border:1px solid var(--borde);padding:10px;margin:0 auto}
+.logo-hero img{width:100%;height:100%;display:block}
+.app-nombre{font-size:1.25em;font-weight:800;margin:.7em 0 0;letter-spacing:-.01em}
+.app-nombre b{color:var(--cobre-oscuro)}
+.lema{font-style:italic;color:var(--secundario);margin:.2em 0 0}
+.bienvenida h1{font-size:1.9em;line-height:1.2;margin:1em 0 .35em;letter-spacing:-.01em}
+.bienvenida .subtitulo{color:var(--secundario);margin:.2em 0 0}
+/* Tarjetas de rol */
+.roles{max-width:720px;margin:0 auto;padding:.6em 1em 0;text-align:left}
+.rol{display:flex;align-items:center;gap:1em;background:var(--card);
+  border:1.5px solid var(--borde);border-radius:14px;padding:1.1em 1.25em;
+  text-decoration:none;color:var(--tinta);box-shadow:0 1px 3px rgba(23,38,60,.08)}
+.rol:hover{border-color:var(--cobre)}
+.rol .icono{flex:none;width:60px;height:60px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center}
+.rol.trabajador .icono{background:#E4EBEF}
+.rol.empresa .icono{background:#DFF0E8}
+.rol .texto{flex:1;min-width:0}
+.rol h3{margin:0 0 .15em;font-size:1.1em}
+.rol p{margin:0;color:var(--secundario)}
+.rol .flecha{flex:none;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--borde);display:flex;align-items:center;justify-content:center;
+  color:var(--secundario);font-size:1.3em;line-height:1}
+/* La ruta conecta las dos tarjetas, como en la app */
+.ruta{width:2px;height:48px;margin:2px auto;background:var(--borde)}
+.acciones-bienvenida{max-width:720px;margin:0 auto;padding:1.4em 1em 0;
+  display:flex;flex-direction:column;align-items:center;gap:.6em}
 /* Botones */
 .btn{display:inline-block;background:var(--cobre);color:#fff;text-decoration:none;
   padding:.8em 1.3em;border-radius:9px;font-weight:700;text-align:center}
 .btn:hover{background:var(--cobre-oscuro)}
 .btn.sec{background:#fff;color:var(--tinta);border:1px solid var(--borde)}
 .btn.sec:hover{background:var(--crema)}
+.btn.texto{background:none;color:var(--cobre-oscuro);padding:.5em .8em}
+.btn.texto:hover{background:var(--cobre-suave)}
 /* Contenido */
 main{max-width:720px;margin:0 auto;padding:1.8em 1em 2em}
 section{margin-bottom:2.2em}
 section h2{font-size:1.3em;margin:0 0 .2em;letter-spacing:-.01em}
 section .intro{color:var(--secundario);margin:.2em 0 1em}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
-@media (max-width:520px){.cards{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--borde);border-radius:14px;
-  padding:1.2em 1.25em;box-shadow:0 1px 3px rgba(23,38,60,.08)}
-.card.trabajador{border-top:3px solid var(--cobre)}
-.card.empresa{border-top:3px solid var(--menta)}
-.card h3{margin:0 0 .4em;font-size:1.1em}
-.card p{margin:.3em 0;color:var(--secundario)}
-.card p strong{color:var(--tinta)}
 .pasos{list-style:none;padding:0;margin:0;counter-reset:paso}
 .pasos li{counter-increment:paso;display:flex;gap:.8em;margin:.9em 0;align-items:flex-start}
 .pasos li::before{content:counter(paso);flex:none;width:1.9em;height:1.9em;
@@ -81,42 +99,46 @@ footer.site a:hover{text-decoration:underline}
 <body>
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="index.html"><span class="monograma">CP</span>Cuba<b>Pincha</b></a>
+    <a class="brand" href="index.html"><span class="placa"><img src="logo.png" alt="CubaPincha"></span>Cuba<b>Pincha</b></a>
     <nav><a href="privacidad.html">Privacidad</a></nav>
   </div>
 </header>
 
-<section class="hero">
-  <div class="wrap">
-    <h1>Conecta con tu próximo <span>pincha</span></h1>
-    <p>CubaPincha es la aplicación para buscar trabajo y publicar ofertas en Cuba:
-    los trabajadores encuentran empleo y las empresas encuentran a quien necesitan.</p>
-    <div class="acciones">
-      <a class="btn" href="mailto:henryruztamayo@gmail.com?subject=Quiero%20el%20APK%20de%20CubaPincha">Pedir el APK</a>
-      <a class="btn sec" href="privacidad.html">Política de privacidad</a>
-    </div>
-  </div>
+<section class="bienvenida">
+  <div class="logo-hero"><img src="logo.png" alt="CubaPincha"></div>
+  <p class="app-nombre">Cuba<b>Pincha</b></p>
+  <p class="lema">Conecta con tu próximo pincha</p>
+  <h1>El trabajo que buscas, cerca de ti.</h1>
+  <p class="subtitulo">Encuentra oportunidades. Encuentra talento.</p>
 </section>
 
-<main>
-  <section>
-    <h2>¿Qué es CubaPincha?</h2>
-    <p class="intro">Un solo lugar para el trabajo en Cuba: ofertas claras, perfiles reales y contacto directo.</p>
-    <div class="cards">
-      <div class="card trabajador">
-        <h3>Para trabajadores</h3>
-        <p>Crea tu perfil con tu <strong>profesión, provincia y municipio</strong>, busca ofertas cerca de ti y postúlate con un toque.</p>
-        <p>Recibe avisos cuando salga una oferta que te encaje y guarda las que te interesen.</p>
-      </div>
-      <div class="card empresa">
-        <h3>Para empresas</h3>
-        <p>Publica tus ofertas y ve <strong>quién se postuló</strong> a cada una, con el perfil completo del trabajador.</p>
-        <p>Guarda los candidatos que te interesen y valora el trabajo cuando termine.</p>
-      </div>
-    </div>
-  </section>
+<div class="roles">
+  <a class="rol trabajador" href="mailto:henryruztamayo@gmail.com?subject=Quiero%20el%20APK%20de%20CubaPincha">
+    <span class="icono"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2F5872" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+    <span class="texto">
+      <h3>Busco trabajo</h3>
+      <p>Crea tu perfil y encuentra oportunidades que conecten con tu talento.</p>
+    </span>
+    <span class="flecha">›</span>
+  </a>
+  <div class="ruta"></div>
+  <a class="rol empresa" href="mailto:henryruztamayo@gmail.com?subject=Quiero%20publicar%20ofertas%20en%20CubaPincha">
+    <span class="icono"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#17624C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></svg></span>
+    <span class="texto">
+      <h3>Busco trabajadores</h3>
+      <p>Publica tus ofertas y encuentra personas para hacer crecer tu negocio.</p>
+    </span>
+    <span class="flecha">›</span>
+  </a>
+</div>
 
-  <section>
+<div class="acciones-bienvenida">
+  <a class="btn" href="mailto:henryruztamayo@gmail.com?subject=Quiero%20el%20APK%20de%20CubaPincha">Pedir el APK</a>
+  <a class="btn texto" href="#como-funciona">Ver cómo funciona</a>
+</div>
+
+<main>
+  <section id="como-funciona">
     <h2>Cómo conseguir la app</h2>
     <p class="intro">La aplicación para Android se distribuye directamente, no está en tiendas.</p>
     <ol class="pasos">
