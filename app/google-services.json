@@ -1,0 +1,108 @@
+{
+  "project_info": {
+    "project_number": "654632132778",
+    "project_id": "cubapincha",
+    "storage_bucket": "cubapincha.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654632132778:android:68db9aa57c515518aa30d3",
+        "android_client_info": {
+          "package_name": "com.cubapincha.job"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654632132778-85v9ulurh25eg18bk5h66re0ff1161qb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cubapincha.job",
+            "certificate_hash": "90951251524b8bd40eb7b8b3402b2df250cf8051"
+          }
+        },
+        {
+          "client_id": "654632132778-sboa2fk4arakdpojd4o15ejf8andmfid.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cubapincha.job",
+            "certificate_hash": "0dc9e9a42abb1217699f553f98dfd196dd636dc5"
+          }
+        },
+        {
+          "client_id": "654632132778-5tm2t3n5g4omk5m28ebr8g5jh1vo48d6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT6gb0ci_ZdlYzFgXcwnK3lnRsxo4Pm00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654632132778-4odjvp1nv1sp6d5rtfhj8fmookg6hdr6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654632132778:android:a2c824674e44ed3eaa30d3",
+        "android_client_info": {
+          "package_name": "com.henry.jobmatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654632132778-6458k4gs845798rss4hl8s66069mqur9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.henry.jobmatch",
+            "certificate_hash": "90951251524b8bd40eb7b8b3402b2df250cf8051"
+          }
+        },
+        {
+          "client_id": "654632132778-fm29c3bacnur6kgsegsnaaoms81aklej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.henry.jobmatch",
+            "certificate_hash": "c05cdf497ee85daccb7f918f570a834189815bb3"
+          }
+        },
+        {
+          "client_id": "654632132778-r1pmvo16v6envhesm5bm1cfndo4igbi9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.henry.jobmatch",
+            "certificate_hash": "35a762dbf3884075a7b044ae96f6278f7e682f68"
+          }
+        },
+        {
+          "client_id": "654632132778-5tm2t3n5g4omk5m28ebr8g5jh1vo48d6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT6gb0ci_ZdlYzFgXcwnK3lnRsxo4Pm00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654632132778-4odjvp1nv1sp6d5rtfhj8fmookg6hdr6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

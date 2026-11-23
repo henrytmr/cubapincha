@@ -1,0 +1,7 @@
+# Copia este archivo como local.properties y completa los valores de tu entorno.
+# No añadas contraseñas de keystore ni claves privadas aquí.
+sdk.dir=/RUTA/AL/ANDROID/SDK
+supabaseUrl=https://ogimwehtnhegfoamiwzm.supabase.co
+supabaseAnonKey=TU_SUPABASE_ANON_KEY
+# ID OAuth de cliente WEB (no el ID Android)
+googleWebClientId=TU_GOOGLE_WEB_CLIENT_ID

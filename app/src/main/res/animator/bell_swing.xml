@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Balanceo suave de la campana. Los keyframes van dentro de
+     propertyValuesHolder: fuera de ahí AnimatorInflater no los reconoce
+     ("Unknown animator name: keyframe") y la app se cierra. -->
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="480">
+    <propertyValuesHolder
+        android:propertyName="rotation"
+        android:valueType="floatType">
+        <keyframe android:fraction="0" android:value="0" />
+        <keyframe android:fraction="0.2" android:value="-12" />
+        <keyframe android:fraction="0.45" android:value="8" />
+        <keyframe android:fraction="0.65" android:value="-4" />
+        <keyframe android:fraction="0.85" android:value="2" />
+        <keyframe android:fraction="1" android:value="0" />
+    </propertyValuesHolder>
+</objectAnimator>

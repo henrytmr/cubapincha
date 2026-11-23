@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Insignia de verificado para tamaño pequeño (20dp): el sello dentado del
+     catálogo (ic_verified) tiene 12 puntas y a 16-20dp se empasta y se ve
+     distorsionado. Esta versión es un círculo sólido con un check limpio:
+     se lee perfecto a tamaño diminuto. El sello del catálogo queda para
+     tamaños grandes (perfil, pantallas de verificación). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/verified_tint"
+        android:pathData="M12,12m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+    <path
+        android:strokeWidth="2.4"
+        android:strokeColor="@color/on_verified"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M8.3,12.2L11,14.9L15.9,9.6" />
+</vector>

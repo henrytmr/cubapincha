@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- El contenido (~750dp) no cabe apaisado ni con fuente grande: sin scroll,
+     el botón Aplicar quedaba fuera de la pantalla. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filters"
+        android:textAppearance="?attr/textAppearanceTitleLarge" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.CubaPincha.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/category"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            style="@style/Widget.CubaPincha.TextInputEditText"
+            android:id="@+id/input_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.CubaPincha.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:hint="@string/province"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            style="@style/Widget.CubaPincha.TextInputEditText"
+            android:id="@+id/input_province"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.CubaPincha.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:hint="@string/municipality"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            style="@style/Widget.CubaPincha.TextInputEditText"
+            android:id="@+id/input_municipality"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.CubaPincha.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:hint="@string/mobility"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            style="@style/Widget.CubaPincha.TextInputEditText"
+            android:id="@+id/input_mobility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.CubaPincha.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:hint="@string/mode"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            style="@style/Widget.CubaPincha.TextInputEditText"
+            android:id="@+id/input_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.CubaPincha.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:hint="@string/schedule"
+        app:endIconMode="dropdown_menu">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            style="@style/Widget.CubaPincha.TextInputEditText"
+            android:id="@+id/input_contract"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:hint="@string/salary_min">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_salary_min"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:hint="@string/salary_max">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_salary_max"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/check_verified"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:text="@string/verified_only" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/check_salary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_8"
+        android:text="@string/only_with_salary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_24"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_clear"
+            style="@style/Widget.CubaPincha.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/clear" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_apply"
+            style="@style/Widget.CubaPincha.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="@string/apply_filters" />
+    </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

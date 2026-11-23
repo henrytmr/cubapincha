@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono phone del paquete CubaPincha (actual). Trazo 2.2, extremos redondeados; color por tint. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M6 3.5 9 3l2 5-2 1.5c1 2.2 2.3 3.5 4.5 4.5L15 12l5 2 .5 3c.2 1.2-.8 2.5-2 2.5C10.8 19.5 4.5 13.2 4.5 5.5c0-1.2.3-1.8 1.5-2z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

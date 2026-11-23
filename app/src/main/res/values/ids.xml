@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="pulse_animator_tag" type="id" />
+    <item name="last_tap_tag" type="id" />
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Color de los ítems de la barra inferior (noche). El no seleccionado
+     #B9B3D9 sobre night_900 tiene contraste ≈ 7.8:1 (antes #5F7285
+     sobre #1D3247 era 2.65:1, insuficiente). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/violet_night" android:state_checked="true" />
+    <item android:color="@color/text_secondary_dark" />
+</selector>

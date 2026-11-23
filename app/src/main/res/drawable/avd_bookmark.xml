@@ -1,0 +1,6 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_bookmark_anim">
+    <target android:name="pop" android:animation="@animator/pop_scale_x" />
+    <target android:name="pop" android:animation="@animator/pop_scale_y" />
+    <target android:name="fill" android:animation="@animator/fill_fade_in" />
+</animated-vector>

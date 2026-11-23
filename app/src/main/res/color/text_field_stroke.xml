@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Borde del campo de texto: suave en reposo, azul eléctrico al enfocar.
+     El color de error lo gestiona TextInputLayout (boxStrokeErrorColor). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/brand_primary" android:state_focused="true" />
+    <item android:color="@color/border_light" />
+</selector>

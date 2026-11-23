@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CubaPincha</string>
+    <string name="tagline">Conecta con tu próximo pincha</string>
+    <string name="welcome_headline">El trabajo que buscas, cerca de ti.</string>
+    <string name="offer_detail_title">Oferta</string>
+    <string name="welcome_tagline">Encuentra, publica y conecta.</string>
+    <string name="welcome_subtitle">Encuentra oportunidades. Encuentra talento.</string>
+    <string name="i_am_worker">Busco trabajo</string>
+    <string name="i_am_company">Busco trabajadores</string>
+    <string name="role_worker_body">Crea tu perfil y encuentra oportunidades que conecten con tu talento.</string>
+    <string name="role_company_body">Publica tus ofertas y encuentra personas para hacer crecer tu negocio.</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="continue_google">Continuar con Google</string>
+    <string name="how_it_works">Ver cómo funciona</string>
+    <string name="how_title">Así de fácil es CubaPincha</string>
+    <string name="how_step1_title">1. Crea tu perfil o publica una oferta</string>
+    <string name="how_step1_body">Como trabajador, cuéntanos quién eres y qué sabes hacer. Como empresa, publica tu oferta en minutos.</string>
+    <string name="how_step2_title">2. Encuentra una coincidencia</string>
+    <string name="how_step2_body">Te mostramos las ofertas o las personas que mejor combinan contigo, con su porcentaje de coincidencia.</string>
+    <string name="how_step3_title">3. Conecta por la app, WhatsApp o llamada</string>
+    <string name="how_step3_body">Expresa tu interés con un toque y sigue cada paso de la candidatura hasta la entrevista.</string>
+    <string name="how_close">Entendido</string>
+
+    <!-- Login / registro -->
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="remember_me">Recordarme en este dispositivo</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="no_account">¿Aún no tienes cuenta?</string>
+    <string name="create_account">Crear cuenta</string>
+    <string name="create_my_account">Crear mi cuenta</string>
+    <string name="create_company_account">Crear cuenta de empresa</string>
+    <string name="skip_for_now">Saltar por ahora</string>
+    <string name="next">Siguiente</string>
+    <string name="back">Atrás</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="accept">Aceptar</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellidos</string>
+    <string name="city_country">Ciudad y país</string>
+    <string name="city">Ciudad</string>
+    <string name="country">País</string>
+    <string name="accept_terms">Acepto los términos y condiciones de CubaPincha</string>
+    <string name="headline">Oficio o cargo</string>
+    <string name="skills">Habilidades (separadas por coma)</string>
+    <string name="experience">Años de experiencia</string>
+    <string name="work_mode">Modalidad preferida</string>
+    <string name="availability">Disponibilidad</string>
+    <string name="salary_range">Rango salarial (opcional)</string>
+    <string name="salary_min">Salario mínimo (CUP)</string>
+    <string name="salary_max">Salario máximo (CUP)</string>
+    <string name="photo_cv">Foto y CV (opcional)</string>
+    <string name="add_photo">Añadir foto</string>
+    <string name="add_cv">Añadir CV</string>
+    <string name="legal_name">Razón social o nombre comercial</string>
+    <string name="corporate_email">Correo corporativo</string>
+    <string name="industry">Industria</string>
+    <string name="company_size">Tamaño de la empresa</string>
+    <string name="description">Descripción</string>
+    <string name="phone">Teléfono</string>
+    <string name="website">Sitio web</string>
+    <string name="logo">Logotipo</string>
+    <string name="add_logo">Añadir logotipo</string>
+    <string name="step_of">Paso %1$d de %2$d</string>
+    <string name="invalid_email">Revisa tu correo, parece que tiene un error.</string>
+    <string name="empty_password">Escribe tu contraseña para continuar.</string>
+    <string name="required_field">Este campo es necesario para seguir.</string>
+    <string name="terms_required">Acepta los términos para crear tu cuenta.</string>
+    <string name="login_error">No pudimos iniciar sesión. Revisa tus datos e inténtalo de nuevo.</string>
+    <string name="recovery_sent">Si ese correo existe, te enviamos un enlace para recuperar tu contraseña.</string>
+    <string name="google_soon">El inicio con Google estará disponible muy pronto.</string>
+    <string name="welcome_back">Qué bueno verte de nuevo</string>
+    <string name="hello_name">Hola, %1$s</string>
+    <string name="complete_profile">Completa tu perfil</string>
+    <string name="profile_percent">Tu perfil está al %1$d%%</string>
+
+    <!-- Navegación trabajador -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_search">Buscar</string>
+    <string name="nav_interests">Intereses</string>
+    <string name="nav_notifications">Notificaciones</string>
+    <string name="nav_profile">Perfil</string>
+    <!-- Navegación empresa -->
+    <string name="nav_dashboard">Panel</string>
+    <string name="nav_jobs">Ofertas</string>
+    <string name="nav_create">Crear</string>
+    <string name="nav_candidates">Candidatos</string>
+
+    <!-- Inicio trabajador -->
+    <string name="search_hint">Cargo, habilidad o empresa…</string>
+    <string name="recommended">Recomendadas para ti</string>
+    <string name="new_jobs">Ofertas nuevas</string>
+    <string name="view_offer">Ver oferta</string>
+    <string name="saved">Guardada</string>
+    <string name="save_offer">Guardar</string>
+    <string name="offer_saved">Oferta guardada</string>
+    <string name="undo">Deshacer</string>
+    <string name="match_label">%1$d%% de coincidencia</string>
+    <string name="salary_agree">A convenir</string>
+    <string name="verified_company">Empresa verificada</string>
+    <string name="my_saved">Mis guardadas</string>
+    <string name="change_view">Cambiar vista</string>
+    <string name="view_card">Vista tarjeta</string>
+    <string name="view_detail">Vista ficha</string>
+
+    <!-- Buscador -->
+    <string name="filters">Filtros</string>
+    <string name="apply_filters">Aplicar filtros</string>
+    <string name="clear">Limpiar</string>
+    <string name="save_search">Guardar búsqueda</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="category">Categoría</string>
+    <string name="mode">Modalidad</string>
+    <string name="schedule">Jornada</string>
+    <string name="date_published">Fecha de publicación</string>
+    <string name="verified_only">Solo empresas verificadas</string>
+    <string name="search_name">Nombre de la búsqueda</string>
+    <string name="alert_frequency">Frecuencia de alerta</string>
+    <string name="freq_immediate">Inmediata</string>
+    <string name="freq_daily">Diaria</string>
+    <string name="freq_off">Desactivada</string>
+    <string name="no_results_title">Aún no encontramos nada por aquí</string>
+    <string name="no_results_body">Prueba con otra palabra o quita algún filtro. Las nuevas ofertas llegan cada día.</string>
+    <string name="results_count">%1$d ofertas</string>
+
+    <!-- Detalle -->
+    <string name="read_full">Leer descripción completa</string>
+    <string name="view_company">Ver empresa</string>
+    <string name="share">Compartir</string>
+    <string name="interested">Me interesa</string>
+    <string name="interest_sent">Interés enviado</string>
+    <string name="withdraw_interest">Retirar interés</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="whatsapp_contact">Contactar por WhatsApp</string>
+    <string name="whatsapp_unavailable">No se pudo abrir WhatsApp en este teléfono.</string>
+    <string name="whatsapp_no_contact">Esta oferta no publicó contacto por WhatsApp.</string>
+    <string name="call">Llamar</string>
+    <string name="responsibilities">Responsabilidades</string>
+    <string name="requirements">Requisitos</string>
+    <string name="benefits">Beneficios</string>
+    <string name="contact">Contacto</string>
+    <string name="similar_jobs">Ofertas similares</string>
+    <string name="interest_confirm_title">¿Quieres expresar tu interés?</string>
+    <string name="interest_confirm_body">Tu perfil será compartido con esta empresa según tus preferencias. Puedes retirarlo cuando quieras.</string>
+    <string name="interest_success">¡Listo! Tu interés llegó a la empresa. Te avisaremos con cada novedad.</string>
+    <string name="interest_withdrawn">Interés retirado. La oferta sigue esperándote si cambias de opinión.</string>
+    <string name="withdraw_confirm_title">¿Retirar tu interés?</string>
+    <string name="withdraw_confirm_body">La empresa dejará de verte entre sus candidatos. Podrás volver a postularte después si cambias de opinión.</string>
+    <string name="load_more_error">No se pudieron cargar más ofertas.</string>
+    <string name="connection_slow">La conexión está tardando más de lo normal. Comprueba tu conexión o pulsa Reintentar.</string>
+    <string name="match_percent_desc">%1$d%% de coincidencia</string>
+    <string name="job_closed_label">Publicación cerrada</string>
+    <string name="copy_contact">Copiar contacto</string>
+    <string name="request_contact">Solicitar contacto</string>
+    <string name="contact_copied">Contacto copiado</string>
+
+    <!-- Intereses -->
+    <string name="tab_all">Todas</string>
+    <string name="tab_reviewing">En revisión</string>
+    <string name="tab_interview">Entrevista</string>
+    <string name="tab_hired">Contratado</string>
+    <string name="tab_closed">Cerrados</string>
+    <string name="view_tracking">Ver seguimiento</string>
+    <string name="timeline_sent">Interés enviado</string>
+    <string name="timeline_seen">Visto por la empresa</string>
+    <string name="timeline_reviewing">En revisión por la empresa</string>
+    <string name="timeline_interview">Entrevista programada</string>
+    <string name="timeline_hired">¡Contratado!</string>
+    <string name="timeline_decision">Decisión</string>
+    <string name="timeline_rejected">Proceso cerrado</string>
+    <string name="guidance_sent">La empresa aún no ha visto tu interés. Si pasan 3 días sin respuesta, puedes enviarle un recordatorio educado.</string>
+    <string name="guidance_reviewing">La empresa está revisando tu perfil. Ten paciencia: suelen responder en pocos días.</string>
+    <string name="guidance_interview">Prepárate: repasa la oferta y ten a mano tus datos de contacto.</string>
+    <string name="guidance_hired">¡Felicidades! Coordina con la empresa tu fecha de inicio.</string>
+    <string name="guidance_rejected">La empresa cerró el proceso. Sigue buscando: hay más ofertas para ti.</string>
+    <string name="guidance_withdrawn">Retiraste tu interés en esta oferta.</string>
+    <string name="no_applications_title">Todavía no has expresado interés</string>
+    <string name="no_applications_body">Cuando encuentres una oferta que te guste, pulsa «Me interesa» y aquí seguirás cada paso.</string>
+    <string name="explore_jobs">Explorar ofertas</string>
+    <string name="view_my_jobs">Ver mis ofertas</string>
+    <string name="no_saved_title">Aún no guardaste ninguna oferta</string>
+    <string name="no_saved_body">Toca el marcador en una oferta para tenerla siempre a mano, incluso sin conexión.</string>
+
+    <!-- Notificaciones -->
+    <string name="mark_all_read">Marcar todas como leídas</string>
+    <string name="mark_read">Marcar como leída</string>
+    <string name="manage_prefs">Gestionar preferencias</string>
+    <string name="mute_search">Silenciar esta búsqueda</string>
+    <string name="no_notifications_title">Todo en calma por aquí</string>
+    <string name="no_notifications_body">Cuando haya novedades sobre tus ofertas o candidaturas, te avisaremos aquí.</string>
+    <string name="notifications_on">Notificaciones activadas</string>
+    <string name="notifications_off">Notificaciones en pausa</string>
+
+    <!-- Perfil / ajustes -->
+    <string name="edit_profile">Editar perfil</string>
+    <string name="settings">Ajustes</string>
+    <string name="api_url">URL de la API</string>
+    <string name="api_url_hint">Edge Function Supabase configurada para CubaPincha</string>
+    <string name="supabase_publishable_key">Clave publicable de Supabase</string>
+    <string name="supabase_publishable_key_hint">sb_publishable_… o clave anon heredada</string>
+    <string name="firebase_api_key">Clave API de Firebase (solo FCM)</string>
+    <string name="firebase_api_key_hint">Solo para notificaciones push; no autentica usuarios</string>
+    <string name="connection_mode">Modo de conexión</string>
+    <string name="mode_demo">Demo (datos de ejemplo en tu teléfono)</string>
+    <string name="mode_connected">Conectado (Supabase)</string>
+    <string name="test_connection">Probar conexión</string>
+    <string name="connection_ok">Conexión correcta con CubaPincha</string>
+    <string name="connection_fail">No pudimos conectar. Revisa la clave publicable de Supabase.</string>
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_confirm">¿Quieres cerrar sesión? Tus datos guardados seguirán aquí cuando vuelvas.</string>
+    <string name="my_data">Mis datos</string>
+    <string name="saved_searches">Búsquedas guardadas</string>
+    <string name="pending_sync">Pendiente de sincronizar</string>
+    <string name="sync_now">Sincronizar ahora</string>
+    <string name="synced">Sincronizado</string>
+    <string name="sync_failed">No se pudo sincronizar ahora. Tus cambios siguen guardados y se reintentarán.</string>
+    <string name="version">Versión 2.0 · CubaPincha</string>
+
+    <!-- Empresa -->
+    <string name="active_jobs">Ofertas activas</string>
+    <string name="interests_received">Intereses recibidos</string>
+    <string name="in_review">En revisión</string>
+    <string name="interviews">Entrevistas</string>
+    <string name="response_rate">Tasa de respuesta</string>
+    <string name="publish_job">Publicar oferta</string>
+    <string name="view_candidates">Ver candidatos</string>
+    <string name="configure_alerts">Configurar alertas</string>
+    <string name="create_job">Crear oferta</string>
+    <string name="job_title">Título del puesto</string>
+    <string name="job_description">Descripción del puesto</string>
+    <string name="contract_type">Tipo de contrato</string>
+    <string name="deadline">Fecha límite</string>
+    <string name="experience_min">Experiencia mínima (años)</string>
+    <string name="languages">Idiomas</string>
+    <string name="keywords">Palabras clave</string>
+    <string name="save_draft">Guardar borrador</string>
+    <string name="preview">Vista previa</string>
+    <string name="draft_saved">Borrador guardado. Puedes seguir cuando quieras.</string>
+    <string name="job_published">¡Tu oferta ya está publicada!</string>
+    <string name="job_published_short">Publicada</string>
+    <string name="job_paused">Oferta pausada</string>
+    <string name="job_closed">Oferta cerrada</string>
+    <string name="job_duplicated">Oferta duplicada como borrador</string>
+    <string name="filter_drafts">Borradores</string>
+    <string name="filter_active">Activas</string>
+    <string name="filter_paused">Pausadas</string>
+    <string name="filter_expired">Vencidas</string>
+    <string name="filter_closed">Cerradas</string>
+    <string name="edit">Editar</string>
+    <string name="pause">Pausar</string>
+    <string name="duplicate">Duplicar</string>
+    <string name="close">Cerrar</string>
+    <string name="close_confirm_title">¿Cerrar esta oferta?</string>
+    <string name="close_confirm_body">Dejará de recibir intereses, pero conservarás los candidatos y el historial.</string>
+    <string name="no_company_jobs_title">Aún no tienes ofertas</string>
+    <string name="no_company_jobs_body">Publica tu primera vacante y empieza a recibir candidatos hoy mismo.</string>
+    <string name="mark_reviewing">Marcar en revisión</string>
+    <string name="invite_interview">Invitar a entrevista</string>
+    <string name="reject">Descartar</string>
+    <string name="hire">Contratar</string>
+    <string name="internal_note">Nota interna</string>
+    <string name="internal_note_hint">Solo tu equipo verá esta nota…</string>
+    <string name="open_profile">Abrir perfil</string>
+    <string name="no_candidates_title">Sin candidatos por ahora</string>
+    <string name="no_candidates_body">Cuando alguien exprese interés en tus ofertas, aparecerá aquí con su compatibilidad.</string>
+    <string name="candidate_saved">Candidato guardado</string>
+    <string name="save_candidate">Guardar candidato</string>
+    <string name="pending_verification">Tu empresa está en revisión. Te avisaremos en cuanto puedas publicar.</string>
+
+    <!-- Estados generales -->
+    <string name="loading">Cargando…</string>
+    <string name="offline_banner">Sin conexión · viendo contenido guardado</string>
+    <string name="online_banner">Conexión restablecida · sincronizando</string>
+    <string name="error_title">Algo no salió como esperábamos</string>
+    <string name="error_body">No te preocupes, nada se perdió. Inténtalo de nuevo en un momento.</string>
+    <string name="retry">Reintentar</string>
+    <string name="error_no_connection">Parece que no tienes conexión. Puedes seguir viendo tu contenido guardado.</string>
+    <string name="sync_summary">Sincronizado: %1$d · Pendiente: %2$d · Revisar: %3$d</string>
+    <string name="discard_action">Descartar acción</string>
+    <string name="view_details">Ver detalles</string>
+    <string name="report">Reportar</string>
+    <string name="report_sent">Gracias por avisarnos. Revisaremos este contenido.</string>
+    <string name="search">Buscar</string>
+    <string name="all">Todas</string>
+    <string name="salary">Salario</string>
+    <string name="distance">Distancia</string>
+    <string name="posted_today">Hoy</string>
+    <string name="posted_yesterday">Ayer</string>
+    <string name="posted_days">Hace %1$d días</string>
+    <string name="posted_weeks">Hace %1$d semanas</string>
+    <string name="per_month">/mes</string>
+    <string name="demo_badge">Modo demo</string>
+    <string name="demo_hint">Estás explorando con datos de ejemplo. Conecta tu Google Sheet en Ajustes para usar datos reales.</string>
+    <string name="photo_choice_title">Añadir foto</string>
+    <string name="photo_take">Tomar foto</string>
+    <string name="photo_gallery">Elegir de la galería</string>
+    <string name="photo_added">Foto añadida. Queda guardada en tu teléfono.</string>
+    <string name="logo_added">Logotipo añadido. Queda guardado en tu teléfono.</string>
+    <string name="camera_denied">Para tomar una foto, permite el acceso a la cámara.</string>
+    <string name="camera_denied_forever">La cámara está bloqueada para CubaPincha. Puedes permitirla en Ajustes.</string>
+    <string name="camera_error">No se pudo abrir la cámara.</string>
+    <string name="notifications_permission_denied">Para recibir avisos, activa las notificaciones de CubaPincha en los ajustes del sistema.</string>
+    <string name="trust_verified">Empresa verificada</string>
+    <string name="trust_today">Publicada hoy</string>
+    <string name="trust_contact">Contacto confirmado</string>
+    <string name="match_explainer">Coincide con tus preferencias</string>
+
+    <!-- CubaPincha: ubicación cubana -->
+    <string name="province">Provincia</string>
+    <string name="select_province">Selecciona una provincia</string>
+    <string name="municipality">Municipio</string>
+    <string name="select_municipality">Selecciona un municipio</string>
+    <string name="locality">Localidad o reparto (opcional)</string>
+    <string name="locality_hint">Barrio, reparto o referencia cercana</string>
+    <string name="mobility">¿Hasta dónde buscas?</string>
+    <string name="mobility_my_municipality">Solo mi municipio</string>
+    <string name="mobility_my_province">Toda mi provincia</string>
+    <string name="mobility_anywhere">Cualquier provincia</string>
+    <string name="mobility_remote">Solo remoto</string>
+    <string name="can_relocate">Puedo trasladarme a otra provincia</string>
+    <string name="remote_available">Acepto trabajo remoto</string>
+    <string name="work_by_zones">Por zonas</string>
+
+    <!-- CubaPincha: salario y condiciones -->
+    <string name="salary_period">Periodo de pago</string>
+    <string name="includes_food">Comida incluida</string>
+    <string name="includes_transport">Transporte incluido</string>
+    <string name="includes_accommodation">Alojamiento incluido</string>
+    <string name="includes_tips">Propinas</string>
+    <string name="contact_hours">Horario de contacto</string>
+    <string name="contact_hours_hint">p. ej. 9:00–17:00</string>
+    <string name="start_date">Fecha de inicio</string>
+
+    <!-- CubaPincha: registro -->
+    <string name="org_type">Tipo de organización</string>
+    <string name="contact_preference">¿Cómo prefieres que te contacten?</string>
+    <string name="contact_whatsapp">WhatsApp</string>
+    <string name="contact_call">Llamada</string>
+    <string name="contact_email">Correo</string>
+
+    <!-- CubaPincha: crear oferta -->
+    <string name="quick_mode">Rápida</string>
+    <string name="complete_mode">Completa</string>
+    <string name="quality_title">Calidad de tu publicación</string>
+    <string name="quality_hint">Las ofertas completas se ven mejor y reciben más intereses.</string>
+    <string name="draft_offline_saved">Borrador guardado en tu teléfono. Publícalo cuando tengas conexión.</string>
+    <string name="publish_offline">Sin conexión. Guarda la oferta como borrador y publícala cuando tengas conexión.</string>
+    <string name="quality_score">Calidad: %1$d de %2$d</string>
+    <string name="pending_publish">Pendiente de publicar</string>
+    <string name="publish_now">Publicar ahora</string>
+
+    <!-- CubaPincha: publicaciones -->
+    <string name="archive">Archivar</string>
+    <string name="reactivate">Reactivar</string>
+    <string name="job_archived">Oferta archivada. Conservas su historial.</string>
+    <string name="job_deleted">Oferta eliminada.</string>
+    <string name="delete">Eliminar</string>
+    <string name="delete_draft_title">¿Eliminar esta oferta?</string>
+    <string name="delete_draft_body">La oferta se eliminará de forma permanente. Esta acción no se puede deshacer.</string>
+    <string name="archive_confirm_title">¿Archivar esta oferta?</string>
+    <string name="archive_confirm_body">Dejará de aparecer en tus listas activas, pero conservarás los candidatos y el historial.</string>
+    <string name="edit_warning_title">Esta oferta ya tiene candidatos</string>
+    <string name="edit_warning_body">Este cambio puede afectar a personas que ya mostraron interés. Se guardará una nueva versión de la oferta.</string>
+    <string name="filter_archived">Archivadas</string>
+    <string name="copy_link">Copiar enlace</string>
+    <string name="link_copied">Enlace copiado</string>
+    <string name="share_via_telegram">Telegram</string>
+    <string name="share_via_email">Correo</string>
+
+    <!-- CubaPincha: contacto -->
+    <string name="contact_sheet_title">Contactar a la empresa</string>
+    <string name="recommended_hours">Horario recomendado: %1$s</string>
+    <string name="message_label">Mensaje</string>
+    <string name="copy_number">Copiar número</string>
+    <string name="number_copied">Número copiado</string>
+
+    <!-- CubaPincha: candidatura -->
+    <string name="send_reminder">Enviar recordatorio</string>
+    <string name="reminder_sent">Recordatorio enviado. La empresa lo verá en tu candidatura.</string>
+    <string name="reminder_too_soon">Podrás enviar un recordatorio cuando pasen 3 días sin respuesta.</string>
+
+    <!-- CubaPincha: perfil y ajustes -->
+    <string name="theme">Tema</string>
+    <string name="theme_system">Seguir el sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Nocturno</string>
+    <string name="data_saver">Ahorro de datos</string>
+    <string name="data_saver_hint">Menos resultados por carga y sincronización solo manual.</string>
+    <string name="intro_sound">Sonido de inicio</string>
+    <string name="intro_sound_hint">Un sonido suave al abrir la app.</string>
+    <string name="push_settings_title">Notificaciones push y Google (opcional)</string>
+    <string name="fcm_project_id">ID del proyecto de Firebase</string>
+    <string name="fcm_app_id">ID de la app Android (1:…:android:…)</string>
+    <string name="fcm_sender_id">ID del remitente (número)</string>
+    <string name="google_client_id">ID de cliente web de Google</string>
+    <string name="push_configured">Push configurado: este teléfono recibirá avisos.</string>
+    <string name="push_not_configured">Push sin configurar: pega los 3 valores de Firebase y pulsa Probar conexión.</string>
+
+    <!-- CubaPincha: filtros y coincidencia -->
+    <string name="only_with_salary">Solo ofertas con salario visible</string>
+    <string name="why_matches">Por qué coincide contigo</string>
+    <string name="match_province">Misma provincia</string>
+    <string name="match_experience">Experiencia relacionada</string>
+    <string name="match_salary">Salario compatible</string>
+    <string name="match_mode">Modalidad compatible</string>
+    <string name="match_availability">Disponibilidad compatible</string>
+    <string name="verified_what">¿Qué significa verificada?</string>
+    <string name="verified_body">Verificamos la identidad de la empresa y sus datos de contacto. La verificación no garantiza el empleo ni las condiciones de la oferta.</string>
+
+    <!-- CubaPincha: reportes -->
+    <string name="report_money">Pide dinero para postular</string>
+    <string name="report_salary">Salario engañoso</string>
+    <string name="report_location">Ubicación falsa</string>
+    <string name="report_identity">Identidad de empresa no confirmada</string>
+    <string name="report_harassment">Acoso o trato inapropiado</string>
+    <string name="report_duplicate">Oferta duplicada o ya cubierta</string>
+
+    <!-- CubaPincha: bienvenida -->
+    <string name="create_account_title">Crear cuenta</string>
+    <string name="create_account_body">¿Qué quieres hacer en CubaPincha?</string>
+</resources>

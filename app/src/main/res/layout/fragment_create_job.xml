@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/scroll_root" xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_screen">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_chevron_left" />
+
+            <TextView
+                android:id="@+id/screen_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_job"
+                android:textAppearance="?attr/textAppearanceTitleLarge" />
+        </LinearLayout>
+
+        <!-- Modo rápido / completo -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/mode_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            app:checkedButton="@id/btn_mode_complete"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_mode_quick"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/quick_mode" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_mode_complete"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/complete_mode" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <!-- Indicador de calidad de la publicación -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/quality_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/quality_title"
+                    android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/quality_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:max="7"
+                    android:progress="0"
+                    app:indicatorColor="?attr/colorPrimary"
+                    app:trackColor="?attr/colorSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/quality_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/quality_hint"
+                    android:textAppearance="?attr/textAppearanceBodySmall" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Información"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_title"
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/job_title">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/category"
+            app:endIconMode="dropdown_menu">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_description"
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/job_description">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="4"
+                android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Solo modo completo -->
+        <LinearLayout
+            android:id="@+id/group_complete_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="@string/responsibilities">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_responsibilities"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="2"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="@string/requirements">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_requirements"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="2"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_24"
+            android:text="Condiciones"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/mode"
+            app:endIconMode="dropdown_menu">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/select_province"
+            app:endIconMode="dropdown_menu">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_province"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/select_municipality"
+            app:endIconMode="dropdown_menu">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_municipality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/locality"
+                app:placeholderText="@string/locality_hint">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_locality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/contract_type"
+            app:endIconMode="dropdown_menu">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_contract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/salary_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_salary_min"
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:hint="@string/salary_min">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_salary_min"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_salary_max"
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:hint="@string/salary_max">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_salary_max"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/salary_period"
+            app:endIconMode="dropdown_menu">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_salary_period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/includes_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:text="¿Qué incluye?"
+            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_food"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_8"
+            android:text="@string/includes_food" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_transport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/includes_transport" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_accommodation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/includes_accommodation" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/includes_tips" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_benefits"
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/benefits">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_benefits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="2"
+                android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/contact_hours"
+                app:placeholderText="@string/contact_hours_hint">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_contact_hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.CubaPincha.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:hint="@string/start_date">
+            <com.cubapincha.job.util.NoHighlightEditText
+                style="@style/Widget.CubaPincha.TextInputEditText"
+                android:id="@+id/input_start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Solo modo completo -->
+        <LinearLayout
+            android:id="@+id/group_criteria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_24"
+                android:text="Criterios"
+                android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="@string/experience_min">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_experience"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="@string/languages">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_languages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="@string/keywords">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_keywords"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_draft"
+                style="@style/Widget.CubaPincha.Button.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/save_draft" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_preview"
+                style="@style/Widget.CubaPincha.Button.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/preview" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_publish"
+            style="@style/Widget.CubaPincha.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:text="@string/publish_job" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

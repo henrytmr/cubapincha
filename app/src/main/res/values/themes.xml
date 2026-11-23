@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.CubaPincha" parent="Theme.Material3.DayNight.NoActionBar" tools:targetApi="27">
+        <item name="colorPrimary">@color/violet_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="colorPrimaryVariant">@color/indigo_700</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/violet_500</item>
+        <item name="colorSecondaryContainer">@color/surface_violet</item>
+        <item name="colorTertiary">@color/mint_400</item>
+        <item name="colorError">@color/error_red</item>
+        <!-- El amarillo del sistema al autocompletar no pertenece a la
+             paleta: se tiñe de menta translúcido (segunda capa; la
+             primera es NoHighlightEditText). -->
+        <item name="android:autofilledHighlight">@color/autofill_highlight</item>
+        <item name="android:colorBackground">@color/bg_light</item>
+        <item name="colorSurface">@color/surface_light</item>
+        <item name="colorOnSurface">@color/text_primary_light</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary_light</item>
+        <!-- Superficie variante real (fondo de tracks y contenedores suaves);
+             el borde fino vive en @color/border, no aquí. -->
+        <item name="colorSurfaceVariant">@color/surface_violet</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.CubaPincha.Display</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.CubaPincha.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.CubaPincha.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.CubaPincha.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.CubaPincha.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.CubaPincha.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.CubaPincha.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.CubaPincha.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.CubaPincha.LabelMedium</item>
+        <item name="chipStyle">@style/Widget.CubaPincha.Chip</item>
+    </style>
+
+    <style name="TextAppearance.CubaPincha.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.CubaPincha.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Botón principal: violeta fijo en ambos temas (ver el comentario de
+         brand_primary en colors.xml: el primario nocturno con texto blanco
+         no llega a AA). -->
+    <style name="Widget.CubaPincha.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="backgroundTint">@color/brand_primary</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <!-- Botón secundario -->
+    <style name="Widget.CubaPincha.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@color/brand_primary</item>
+        <item name="android:textColor">@color/brand_primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <!-- Botón de texto -->
+    <style name="Widget.CubaPincha.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">44dp</item>
+        <item name="android:textColor">@color/brand_primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <!-- Campo de texto: borde suave que se tiñe de azul al enfocar y de rojo
+         al validar con error; Material anima la transición del borde y la etiqueta. -->
+    <style name="Widget.CubaPincha.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_field</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_field</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_field</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_field</item>
+        <item name="boxStrokeColor">@color/text_field_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxStrokeErrorColor">?attr/colorError</item>
+        <item name="hintTextColor">?attr/colorOnSurfaceVariant</item>
+        <item name="errorTextColor">?attr/colorError</item>
+    </style>
+    <!-- Texto dentro del campo (2.9.1): el relleno NO se deja al valor por
+         defecto de Material, porque solo lo reciben los hijos que resuelven
+         editTextStyle. Los desplegables (AutoCompleteTextView) resuelven
+         autoCompleteTextViewStyle y TextInputLayout les quita el fondo, así
+         que su texto quedaba pegado al borde (Municipio, Provincia...).
+         Este estilo explícito, aplicado a los 87 campos de la app, fija el
+         mismo aire en todos: 16dp a los lados y arriba/abajo, texto de 16sp
+         y 56dp de alto mínimo (estándar Material). -->
+    <style name="Widget.CubaPincha.TextInputEditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+    <!-- Tarjeta: sombra muy suave (1dp) + borde fino; el radio es 20dp. -->
+    <style name="Widget.CubaPincha.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/radius_card</item>
+        <item name="cardElevation">1dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="strokeColor">@color/border</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+    <!-- Chip de filtro: píldora redondeada, 40dp de alto táctil. -->
+    <style name="Widget.CubaPincha.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">@dimen/radius_chip</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="chipBackgroundColor">@color/chip_bg</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <!-- Foto de perfil / logotipo: recorte circular completo. -->
+    <style name="ShapeAppearance.CubaPincha.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Reglas de Lint para CubaPincha.
+     FragmentLiveDataObserve está desactivado a propósito: el detector
+     de androidx.fragment (UnsafeFragmentLifecycleObserverDetector, con
+     su RecursiveMethodVisitor) entra en una recursión patológica con
+     los callbacks anidados de esta app y deja lintRelease colgado más
+     de 15 minutos al 100% de CPU sin terminar (comprobado el 2026-11-19
+     con jstack). La app no usa LiveData ni .observe() en ningún sitio,
+     así que esa comprobación no puede encontrar nada aquí; los
+     observadores de ciclo de vida que sí se usan (Fragment Result API
+     con el fragmento como owner) son el uso documentado de esa API. -->
+<lint>
+    <issue id="FragmentLiveDataObserve" severity="ignore" />
+</lint>

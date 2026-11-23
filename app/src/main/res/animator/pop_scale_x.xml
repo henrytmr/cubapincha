@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pop del marcador (§9): 0.94 -> 1.04 -> 1.0. Keyframes dentro de
+     propertyValuesHolder (ver bell_swing.xml). -->
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="220">
+    <propertyValuesHolder
+        android:propertyName="scaleX"
+        android:valueType="floatType">
+        <keyframe android:fraction="0" android:value="0.94" />
+        <keyframe android:fraction="0.4" android:value="1.04" />
+        <keyframe android:fraction="1" android:value="1" />
+    </propertyValuesHolder>
+</objectAnimator>

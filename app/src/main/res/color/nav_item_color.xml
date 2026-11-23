@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Color de los ítems de la barra inferior (día). El no seleccionado
+     #5F5A7A sobre crema tiene contraste ≈ 6:1. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/violet_500" android:state_checked="true" />
+    <item android:color="@color/text_secondary_light" />
+</selector>

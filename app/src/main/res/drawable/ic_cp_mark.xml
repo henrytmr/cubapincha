@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CubaPincha v3 — "La C que se completa": C en azul tinta + check cobre.
+     Geometría canónica en cubapincha-marca/geometry.py (misma que el SVG y
+     los PNG). La C usa terminales planas; el check, redondas. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <path
+        android:pathData="M 58.4 23.4 A 29 29 0 0 0 14 48 A 29 29 0 0 0 66.8 64.6"
+        android:strokeWidth="11"
+        android:strokeColor="@color/cpInk"
+        android:strokeLineCap="butt" />
+    <path
+        android:pathData="M 66 66 L 73 77 L 88 57"
+        android:strokeWidth="11"
+        android:strokeColor="@color/cpCoral"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

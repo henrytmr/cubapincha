@@ -1,0 +1,5 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_heart_anim">
+    <target android:name="pulse" android:animation="@animator/heart_pulse_x" />
+    <target android:name="pulse" android:animation="@animator/heart_pulse_y" />
+</animated-vector>

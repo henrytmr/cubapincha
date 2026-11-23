@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="surface_violet">#293C4D</color>
+    <color name="border">#354655</color>
+    <color name="mint_soft">#29473D</color>
+    <color name="icon_muted">#82929E</color>
+    <color name="success_text">#63C49A</color>
+    <color name="verified_tint">#63C49A</color>
+    <color name="on_verified">#17263C</color>
+    <color name="night_blue">#97B6C7</color>
+    <color name="confirm_green">#63C49A</color>
+    <color name="amber_notice">#E3B665</color>
+    <color name="error_red">#F28B82</color>
+</resources>

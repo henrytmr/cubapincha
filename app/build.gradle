@@ -1,0 +1,91 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+// Fallar la compilación si faltan las claves obligatorias
+def optionalProp = { String key, String fallback = "" ->
+    def v = localProperties[key]
+    return (v == null || v.toString().trim().isEmpty()) ? fallback : v.toString().trim()
+}
+
+android {
+    namespace 'com.cubapincha.job'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.cubapincha.job"
+        minSdk 24
+        targetSdk 34
+        versionCode 26
+        versionName "2.11.0"
+    }
+
+    signingConfigs {
+        // DEBUG usa la clave estándar autogenerada por Android Gradle Plugin.
+        // No se distribuye ningún keystore privado ni contraseña en el proyecto.
+        release {
+            def store = localProperties['storeFile']
+            if (store != null && !store.toString().trim().isEmpty()) {
+                storeFile file(store.toString().trim())
+                storePassword localProperties['storePassword'] ?: ""
+                keyAlias localProperties['keyAlias'] ?: "cubapincha"
+                keyPassword localProperties['keyPassword'] ?: ""
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled false
+            // La firma de producción solo se activa cuando local.properties
+            // aporta un keystore existente. No bloquear la evaluación del
+            // proyecto: assembleDebug debe funcionar en una instalación limpia.
+            if (signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    // Valores fijos de conexión (obligatorios)
+    def supabaseUrl = optionalProp('supabaseUrl', "https://ogimwehtnhegfoamiwzm.supabase.co")
+    def supabaseAnonKey = optionalProp('supabaseAnonKey', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naW13ZWh0bmhlZ2ZvYW1pd3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxODEzODUsImV4cCI6MjExMDc1NzM4NX0.2TK332LJh9dPpfjzfrNKYVr0IrBOIrKD2YiUYuxVMBs')
+    def googleWebClientId = optionalProp('googleWebClientId', '654632132778-4odjvp1nv1sp6d5rtfhj8fmookg6hdr6.apps.googleusercontent.com')
+
+    buildTypes.each {
+        it.buildConfigField "String", "SUPABASE_URL", "\"${supabaseUrl}\""
+        it.buildConfigField "String", "SUPABASE_ANON_KEY", "\"${supabaseAnonKey}\""
+        it.buildConfigField "String", "EDGE_FUNCTION_URL", "\"${supabaseUrl}/functions/v1/api\""
+        it.buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"${googleWebClientId}\""
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.4.0'
+    implementation 'com.google.android.gms:play-services-auth:21.2.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    implementation 'androidx.work:work-runtime:2.9.0'
+    implementation 'androidx.browser:browser:1.8.0'
+}

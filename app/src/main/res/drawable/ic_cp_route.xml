@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Símbolo CubaPincha — "Conecta con tu próximo pincha".
+     Una sola línea continua: una C abierta (la oportunidad) que fluye
+     hacia una P (la persona que conecta), con el punto coral en el centro:
+     la persona. Versión de marca (violeta sobre fondo claro).
+     El grupo "dot" tiene pivote en su centro para animar su aparición
+     sin desplazarlo. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <path
+        android:name="route"
+        android:strokeColor="#7B4BE2"
+        android:strokeWidth="6.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M68,26 C54,14 32,16 23,31 C14,46 15,64 26,77 C35,87 50,88 60,82 L70,78 L70,34 C82,34 88,40 88,47 C88,54 82,60 70,60" />
+    <group
+        android:name="dot"
+        android:pivotX="44"
+        android:pivotY="52">
+        <path
+            android:fillColor="#F29A83"
+            android:pathData="M38,52 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+    </group>
+</vector>

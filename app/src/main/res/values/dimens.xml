@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sistema de espaciado 8dp: toda la app usa múltiplos de 8 (4 solo para microseparaciones). -->
+    <dimen name="space_4">4dp</dimen>
+    <dimen name="space_8">8dp</dimen>
+    <dimen name="space_12">12dp</dimen>
+    <dimen name="space_16">16dp</dimen>
+    <dimen name="space_20">20dp</dimen>
+    <dimen name="space_24">24dp</dimen>
+    <dimen name="space_32">32dp</dimen>
+    <dimen name="space_40">40dp</dimen>
+    <dimen name="space_48">48dp</dimen>
+
+    <!-- Márgenes y radios (jerarquía de forma: hero 28, tarjeta 20, campo/botón 16) -->
+    <dimen name="margin_screen">16dp</dimen>
+    <dimen name="margin_card">16dp</dimen>
+    <dimen name="padding_card">18dp</dimen>
+    <dimen name="radius_hero">28dp</dimen>
+    <dimen name="radius_card">20dp</dimen>
+    <dimen name="radius_small">12dp</dimen>
+    <dimen name="radius_button">16dp</dimen>
+    <dimen name="radius_field">16dp</dimen>
+    <dimen name="radius_chip">20dp</dimen>
+
+    <!-- Tamaños táctiles y de icono -->
+    <dimen name="touch_min">44dp</dimen>
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size_small">16dp</dimen>
+    <dimen name="avatar_size">48dp</dimen>
+    <dimen name="avatar_size_small">40dp</dimen>
+    <dimen name="match_ring_card">48dp</dimen>
+    <dimen name="match_ring_detail">56dp</dimen>
+    <dimen name="match_ring_large">64dp</dimen>
+</resources>

@@ -1,0 +1,13 @@
+# JobMatch — archivos que no se comparten (locales o generados)
+local.properties
+.gradle/
+build/
+app/build/
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+*.apk
+*.aab
+keystore/
