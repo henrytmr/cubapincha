@@ -1,18 +1,32 @@
 workflows:
-  android-debug:
-    name: CubaPincha Android 2.11.0 conectado desde fuente completa
+  android-release:
+    name: CubaPincha Android 2.11.0 release firmado
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
       java: 21
+      android_signing:
+        - cubapincha-release
     scripts:
-      - name: Extract complete corrected source
+      - name: Extract complete corrected release source
         script: |
-          unzip -q cuba-pincha-android-source-full-corrected.zip
+          unzip -q cuba-pincha-android-source-full-release.zip -d codigo-fuente
           chmod +x codigo-fuente/gradlew
-      - name: Assemble connected debug APK
+      - name: Configure connected release build
         script: |
           cd codigo-fuente
-          ./gradlew assembleDebug --stacktrace
+          cat > local.properties <<PROPS
+          supabaseUrl=https://ogimwehtnhegfoamiwzm.supabase.co
+          supabaseAnonKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naW13ZWh0bmhlZ2ZvYW1pd3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxODEzODUsImV4cCI6MjExMDc1NzM4NX0.2TK332LJh9dPpfjzfrNKYVr0IrBOIrKD2YiUYuxVMBs
+          googleWebClientId=654632132778-5tm2t3n5g4omk5m28ebr8g5jh1vo48d6.apps.googleusercontent.com
+          storeFile=$CM_KEYSTORE_PATH
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          keyPassword=$CM_KEY_PASSWORD
+          PROPS
+      - name: Assemble signed release APK
+        script: |
+          cd codigo-fuente
+          ./gradlew clean assembleRelease --stacktrace
     artifacts:
       - codigo-fuente/app/build/outputs/**/*.apk
