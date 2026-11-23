@@ -51,5 +51,6 @@
             </LinearLayout>
             <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_save" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="Guardar trabajador" app:icon="@drawable/ic_bookmark" />
         </LinearLayout>
+        <TextView android:id="@+id/recommended_profile" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="end" android:layout_marginTop="4dp" android:text="Ver perfil &gt;" android:textColor="?attr/colorPrimary" android:textStyle="bold" android:clickable="true" android:focusable="true" android:padding="4dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

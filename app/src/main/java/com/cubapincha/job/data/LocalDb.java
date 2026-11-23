@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.cubapincha.job.model.AppNotification;
 import com.cubapincha.job.model.Application;
 import com.cubapincha.job.model.Job;
+import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.model.User;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +29,7 @@ import java.util.List;
  */
 public class LocalDb extends SQLiteOpenHelper {
     private static final String DB_NAME = "cubapincha.db";
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 6;
 
     private static LocalDb instance;
 
@@ -47,6 +49,8 @@ public class LocalDb extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE cached_notifications (notificationId TEXT PRIMARY KEY, json TEXT, createdAt TEXT)");
         db.execSQL("CREATE TABLE saved_jobs (jobId TEXT PRIMARY KEY, folder TEXT, createdAt TEXT)");
         db.execSQL("CREATE TABLE saved_candidates (workerId TEXT PRIMARY KEY, json TEXT, savedAt TEXT)");
+        db.execSQL("CREATE TABLE cached_recommended_workers (workerId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
+        db.execSQL("CREATE TABLE cached_profile (profileId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
         db.execSQL("CREATE TABLE pending_actions (clientActionId TEXT PRIMARY KEY, actionType TEXT, payload TEXT, status TEXT, createdAt TEXT, errorCode TEXT)");
         db.execSQL("CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT)");
         db.execSQL("CREATE TABLE demo_state (key TEXT PRIMARY KEY, json TEXT)");
@@ -76,6 +80,10 @@ public class LocalDb extends SQLiteOpenHelper {
         }
         if (oldVersion < 5) {
             db.execSQL("CREATE TABLE IF NOT EXISTS saved_candidates (workerId TEXT PRIMARY KEY, json TEXT, savedAt TEXT)");
+        }
+        if (oldVersion < 6) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS cached_recommended_workers (workerId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
+            db.execSQL("CREATE TABLE IF NOT EXISTS cached_profile (profileId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
         }
     }
 
@@ -253,6 +261,51 @@ public class LocalDb extends SQLiteOpenHelper {
             }
         }
         return out;
+    }
+
+    public void cacheRecommendedWorkers(List<RecommendedWorker> workers) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (RecommendedWorker worker : workers) {
+                ContentValues cv = new ContentValues();
+                cv.put("workerId", worker.workerId);
+                cv.put("json", CryptoHelper.encrypt(worker.toJson().toString()));
+                cv.put("updatedAt", String.valueOf(System.currentTimeMillis()));
+                db.insertWithOnConflict("cached_recommended_workers", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+            db.setTransactionSuccessful();
+        } finally { db.endTransaction(); }
+    }
+
+    public List<RecommendedWorker> getCachedRecommendedWorkers() {
+        List<RecommendedWorker> out = new ArrayList<>();
+        try (Cursor c = getReadableDatabase().query("cached_recommended_workers", new String[]{"json"},
+                null, null, null, null, "updatedAt DESC")) {
+            while (c.moveToNext()) {
+                try { out.add(RecommendedWorker.fromJson(new JSONObject(CryptoHelper.decrypt(c.getString(0))))); }
+                catch (Exception ignored) { }
+            }
+        }
+        return out;
+    }
+
+    public void cacheProfile(User user) {
+        if (user == null || user.userId == null || user.userId.isEmpty()) return;
+        ContentValues cv = new ContentValues();
+        cv.put("profileId", user.userId);
+        cv.put("json", CryptoHelper.encrypt(user.toJson().toString()));
+        cv.put("updatedAt", String.valueOf(System.currentTimeMillis()));
+        getWritableDatabase().insertWithOnConflict("cached_profile", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public User getCachedProfile(String userId) {
+        if (userId == null || userId.isEmpty()) return null;
+        try (Cursor c = getReadableDatabase().query("cached_profile", new String[]{"json"},
+                "profileId = ?", new String[]{userId}, null, null, null)) {
+            if (c.moveToFirst()) return User.fromJson(new JSONObject(CryptoHelper.decrypt(c.getString(0))));
+        } catch (Exception ignored) { }
+        return null;
     }
 
     // ---- Guardadas ----
@@ -451,6 +504,8 @@ public class LocalDb extends SQLiteOpenHelper {
             db.delete("cached_jobs", null, null);
             db.delete("cached_applications", null, null);
             db.delete("cached_notifications", null, null);
+            db.delete("cached_recommended_workers", null, null);
+            db.delete("cached_profile", null, null);
             db.delete("saved_jobs", null, null);
             db.delete("demo_state", null, null);
             // La identidad de los datos offline sobrevive al logout/cambio.

@@ -27,6 +27,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         void onInterestClick(RecommendedWorker worker);
         void onSaveClick(RecommendedWorker worker);
         void onWhatsAppClick(RecommendedWorker worker);
+        default void onProfileClick(RecommendedWorker worker) { onWorkerClick(worker); }
     }
 
     private final List<RecommendedWorker> items = new ArrayList<>();
@@ -64,6 +65,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.skills.setText(skills.isEmpty() ? "" : "Habilidades: " + skills);
         h.skills.setVisibility(skills.isEmpty() ? View.GONE : View.VISIBLE);
         h.ring.setPercent(w.matchPercent, true);
+        UiUtils.setDebouncedClickListener(h.profile, v -> listener.onProfileClick(w));
         h.save.setText("");
         h.save.setIconResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
@@ -84,7 +86,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
     @Override public int getItemCount() { return items.size(); }
 
     static class Holder extends RecyclerView.ViewHolder {
-        TextView avatar, name, headline, location, salary, skills;
+        TextView avatar, name, headline, location, salary, skills, profile;
         TextView interest, whatsapp;
         MaterialButton save;
         RatingStarsView rating;
@@ -98,6 +100,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
             salary = v.findViewById(R.id.recommended_salary);
             rating = v.findViewById(R.id.recommended_rating);
             skills = v.findViewById(R.id.recommended_skills);
+            profile = v.findViewById(R.id.recommended_profile);
             ring = v.findViewById(R.id.recommended_match_ring);
             interest = v.findViewById(R.id.btn_recommended_interest);
             save = v.findViewById(R.id.btn_recommended_save);

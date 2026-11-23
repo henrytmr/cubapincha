@@ -1,14 +1,14 @@
-# CubaPincha — Contrato API Edge/Supabase 2.0.0
+# CubaPincha — Contrato API Edge/Supabase v17
 
 Este es el contrato vigente de la aplicación Android 2.11.0. La app autentica con Supabase Auth y envía el JWT en `Authorization: Bearer <jwt>` a `POST https://<proyecto>.supabase.co/functions/v1/api`. La respuesta tiene siempre `{ ok, data, error, requestId }`. `health`, `publicJob`, `listCatalogs` y `getRatings` son públicas; el resto exige JWT.
 
 ## Identidad y perfiles
 
-`usuarios.id` es el UID de Supabase Auth. `perfiles_trabajador.id` y `perfiles_empresa.id` son IDs de perfil distintos. Las respuestas de `applications` usan `workerId` y `companyId` como IDs de perfil; el cliente no debe compararlos con `usuarios.id`.
+`usuarios.id` es el UID de Supabase Auth. `perfiles_trabajador.id` y `perfiles_empresa.id` son IDs de perfil distintos. Las respuestas de `applications` usan `workerId` y `companyId` como IDs de perfil; el cliente no debe compararlos con `usuarios.id`. En v17, `getSavedCandidates` devuelve candidatos guardados de la empresa y `matchWorkers` devuelve recomendados con `phone`, `ratingAverage`, `ratingTotal`, `profilePercent` y `saved`.
 
 ## Acciones principales
 
-Lecturas: `health`, `me`, `jobs`, `job`, `applications`, `notifications`, `sync`, `contactOptions`, `listFilters`, `publicJob`, `listCatalogs`, `getRatings`.
+Lecturas: `health`, `me`, `jobs`, `job`, `applications`, `notifications`, `sync`, `contactOptions`, `getSavedCandidates`, `matchWorkers`, `listFilters`, `publicJob`, `listCatalogs`, `getRatings`.
 
 Escrituras: `registerProfile`, `updateProfile`, `createJob`, `publishJob`, `updateJob`, `changeJobStatus`, `archiveJob`, `deleteJob`, `expressInterest`, `sendReminder`, `changeApplicationStatus`, `saveJob`, `saveCandidate`, `saveFilter`, `deleteFilter`, `syncActions`, `contactEvent`, `registerDevice`, `unregisterDevice`, `markNotificationRead`, `report`, `rateApplication` y `logout`.
 

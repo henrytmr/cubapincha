@@ -83,7 +83,7 @@ public class MatchRingView extends View {
         // usa la variante oscura con contraste AA sobre fondo claro.
         int ringColor;
         int textColor;
-        if (this.percent >= 80) {
+        if (this.percent >= 90) {
             ringColor = ContextCompat.getColor(getContext(), R.color.mint_400);
             textColor = ContextCompat.getColor(getContext(), R.color.success_text);
         } else if (this.percent >= 50) {

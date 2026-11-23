@@ -22,7 +22,6 @@ import com.cubapincha.job.data.JobFilter;
 import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Application;
-import com.cubapincha.job.model.ContactOptions;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -145,22 +144,20 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
     }
 
     @Override public void onWhatsAppClick(RecommendedWorker worker) {
-        Repository.get(requireContext()).getContactOptions("worker", worker.workerId, result -> {
-            if (!isAdded() || root == null) return;
-            ContactOptions c = result.ok ? result.data : null;
-            if (c == null || !c.whatsappEnabled || c.publicPhone == null || c.publicPhone.isEmpty()) {
-                Snackbar.make(root, "Este trabajador no tiene WhatsApp disponible.", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-            Repository.get(requireContext()).contactEvent("worker", worker.workerId, "whatsapp");
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/"
-                        + c.publicPhone.replaceAll("[^0-9]", ""))));
-            } catch (Exception e) {
-                Snackbar.make(root, "No pudimos abrir WhatsApp.", Snackbar.LENGTH_LONG).show();
-            }
-        });
+        if (worker.phone == null || worker.phone.trim().isEmpty()) {
+            Snackbar.make(root, "Este trabajador no tiene WhatsApp disponible.", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        Repository.get(requireContext()).contactEvent("worker", worker.workerId, "whatsapp");
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/"
+                    + worker.phone.replaceAll("[^0-9]", ""))));
+        } catch (Exception e) {
+            Snackbar.make(root, "No pudimos abrir WhatsApp.", Snackbar.LENGTH_LONG).show();
+        }
     }
+
+    @Override public void onProfileClick(RecommendedWorker worker) { onWorkerClick(worker); }
 
     private static String join(List<String> values) { return join(values, ", "); }
     private static String join(List<String> values, String separator) {

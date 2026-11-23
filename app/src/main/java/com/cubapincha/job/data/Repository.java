@@ -436,8 +436,14 @@ public class Repository {
 
     public void me(ApiCallback<User> cb) {
         run(() -> {
+            if (!isDemoMode() && !isOnline()) {
+                User cached = db.getCachedProfile(session.getUserId());
+                return cached == null ? ApiResult.fail("NO_CONNECTION", "Necesitas conexión para cargar tu perfil.")
+                        : ApiResult.success(cached);
+            }
             ApiResult<User> r = activeClient().me();
             if (r.ok && r.data != null) {
+                db.cacheProfile(r.data);
                 session.setProfilePercent(r.data.profilePercent);
                 if (r.data.status != null && !r.data.status.isEmpty()) session.setStatus(r.data.status);
             }
@@ -690,9 +696,14 @@ public class Repository {
                                       ApiCallback<List<RecommendedWorker>> cb) {
         run(() -> {
             if (!isDemoMode() && !isOnline()) {
-                return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para cargar trabajadores recomendados.");
+                List<RecommendedWorker> cached = db.getCachedRecommendedWorkers();
+                return cached.isEmpty()
+                        ? ApiResult.fail("NO_CONNECTION", "Necesitas conexión para cargar trabajadores recomendados.")
+                        : ApiResult.success(cached);
             }
-            return activeClient().getRecommendedWorkers(minMatch, limit);
+            ApiResult<List<RecommendedWorker>> r = activeClient().getRecommendedWorkers(minMatch, limit);
+            if (r.ok && r.data != null) db.cacheRecommendedWorkers(r.data);
+            return r;
         }, cb);
     }
 
