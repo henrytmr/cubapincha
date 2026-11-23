@@ -37,7 +37,8 @@ import com.cubapincha.job.util.TextUtils;
 /** Perfil y ajustes: modo demo/conectado, URL de la API, tema, sincronización. */
 public class ProfileFragment extends Fragment {
     private TextView syncStatus, pushStatus;
-    private TextView ratingsStars, ratingsSummary, ratingsEmpty, ratingsError;
+    private RatingStarsView ratingsStars;
+    private TextView ratingsSummary, ratingsEmpty, ratingsError;
     private LinearLayout ratingsList;
     private MaterialButton ratingsMore;
     private String ratingsUserId = "";
@@ -267,7 +268,7 @@ public class ProfileFragment extends Fragment {
                 return;
             }
             RatingsPage page = result.data;
-            ratingsStars.setText(starsForAverage(page.average));
+            ratingsStars.setRating(Math.max(0, Math.min(5, (int) Math.round(page.average))));
             ratingsSummary.setText(RatingUi.summaryText(page.average, page.total));
             if (!append) ratingsList.removeAllViews();
             RatingUi.appendRatingCards(requireContext(), ratingsList, page.ratings);
@@ -282,13 +283,6 @@ public class ProfileFragment extends Fragment {
             ratingsMore.setVisibility(more ? View.VISIBLE : View.GONE);
             ratingsMore.setEnabled(more);
         });
-    }
-
-    private static String starsForAverage(double average) {
-        int filled = Math.max(0, Math.min(5, (int) Math.round(average)));
-        StringBuilder stars = new StringBuilder();
-        for (int i = 1; i <= 5; i++) stars.append(i <= filled ? '★' : '☆');
-        return stars.toString();
     }
 
     private void updateModeUi(boolean demo) { /* conexión fija: no-op */ }

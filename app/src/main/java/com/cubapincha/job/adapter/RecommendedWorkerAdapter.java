@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cubapincha.job.R;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.ui.UiUtils;
+import com.cubapincha.job.ui.RatingStarsView;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
 import com.cubapincha.job.util.TextUtils;
@@ -55,10 +56,9 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.location.setText(w.locationText());
         h.salary.setText(w.salaryText());
         int stars = Math.max(0, Math.min(5, (int) Math.round(w.ratingAverage)));
-        StringBuilder rating = new StringBuilder();
-        for (int i = 1; i <= 5; i++) rating.append(i <= stars ? '★' : '☆');
-        h.rating.setText(rating + " " + String.format(java.util.Locale.US, "%.1f", w.ratingAverage)
-                + " (" + w.ratingTotal + ")");
+        h.rating.setRating(stars);
+        h.rating.setContentDescription(String.format(java.util.Locale.US, "%.1f de 5, %d valoraciones",
+                w.ratingAverage, w.ratingTotal));
         String skills = TextUtils.joinComma(w.skills);
         h.skills.setText(skills.isEmpty() ? "" : "Habilidades: " + skills);
         h.skills.setVisibility(skills.isEmpty() ? View.GONE : View.VISIBLE);
@@ -77,8 +77,9 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
     @Override public int getItemCount() { return items.size(); }
 
     static class Holder extends RecyclerView.ViewHolder {
-        TextView avatar, name, headline, location, salary, rating, skills;
+        TextView avatar, name, headline, location, salary, skills;
         TextView interest, save, whatsapp;
+        RatingStarsView rating;
         MatchRingView ring;
         Holder(View v) {
             super(v);

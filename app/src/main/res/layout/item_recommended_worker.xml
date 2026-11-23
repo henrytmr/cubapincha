@@ -41,7 +41,7 @@
                 android:layout_height="58dp" />
         </LinearLayout>
         <TextView android:id="@+id/recommended_salary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:textAppearance="?attr/textAppearanceBodySmall" />
-        <TextView android:id="@+id/recommended_rating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/amber_notice" android:textAppearance="?attr/textAppearanceBodyMedium" />
+        <com.cubapincha.job.ui.RatingStarsView android:id="@+id/recommended_rating" android:layout_width="190dp" android:layout_height="32dp" android:layout_marginTop="4dp" />
         <TextView android:id="@+id/recommended_skills" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textAppearance="?attr/textAppearanceBodySmall" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start" android:orientation="horizontal">

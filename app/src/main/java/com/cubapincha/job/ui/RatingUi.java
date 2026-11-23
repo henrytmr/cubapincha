@@ -1,7 +1,6 @@
 package com.cubapincha.job.ui;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
@@ -110,29 +109,15 @@ public final class RatingUi {
         LinearLayout stars = new LinearLayout(context);
         stars.setOrientation(LinearLayout.HORIZONTAL);
         stars.setGravity(android.view.Gravity.CENTER);
-        final TextView[] starViews = new TextView[5];
         final int[] selectedStars = {0};
-        for (int i = 0; i < 5; i++) {
-            final int starIndex = i;
-            TextView star = new TextView(context);
-            starViews[i] = star;
-            star.setText("☆");
-            star.setTextSize(38);
-            star.setGravity(android.view.Gravity.CENTER);
-            star.setContentDescription("" + (i + 1) + " estrellas");
-            LinearLayout.LayoutParams starParams = new LinearLayout.LayoutParams(0,
-                    dp(context, 54), 1f);
-            stars.addView(star, starParams);
-            star.setOnClickListener(v -> {
-                selectedStars[0] = starIndex + 1;
-                for (int j = 0; j < starViews.length; j++) {
-                    starViews[j].setText(j < selectedStars[0] ? "★" : "☆");
-                    starViews[j].setTextColor(j < selectedStars[0]
-                            ? Color.parseColor("#F4B942") : Color.GRAY);
-                }
-                hint.setText(selectedStars[0] + " de 5 estrellas");
-            });
-        }
+        RatingStarsView starView = new RatingStarsView(context);
+        starView.setInteractive(true);
+        starView.setOnRatingChangedListener(value -> {
+            selectedStars[0] = value;
+            hint.setText(value + " de 5 estrellas");
+        });
+        stars.addView(starView, new LinearLayout.LayoutParams(
+                dp(context, 260), dp(context, 54)));
         LinearLayout.LayoutParams ratingParams = matchWrap();
         ratingParams.topMargin = dp(context, 16);
         form.addView(stars, ratingParams);
@@ -250,12 +235,17 @@ public final class RatingUi {
         body.setPadding(dp(context, 12), dp(context, 10), dp(context, 12), dp(context, 10));
         card.addView(body, matchWrap());
 
-        TextView stars = new TextView(context);
-        stars.setText(starsText(rating.stars) + "  " + rating.stars + "/5");
-        stars.setTextColor(Color.parseColor("#F4B942"));
-        stars.setTextSize(15);
-        stars.setTypeface(null, android.graphics.Typeface.BOLD);
-        body.addView(stars, matchWrap());
+        LinearLayout ratingLine = new LinearLayout(context);
+        ratingLine.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        RatingStarsView stars = new RatingStarsView(context);
+        stars.setRating(rating.stars);
+        ratingLine.addView(stars, new LinearLayout.LayoutParams(dp(context, 150), dp(context, 32)));
+        TextView score = new TextView(context);
+        score.setText("  " + rating.stars + "/5");
+        score.setTypeface(null, android.graphics.Typeface.BOLD);
+        ratingLine.addView(score, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        body.addView(ratingLine, matchWrap());
 
         TextView author = new TextView(context);
         String name = rating.authorName == null || rating.authorName.isEmpty() ? "Usuario" : rating.authorName;
@@ -276,13 +266,6 @@ public final class RatingUi {
             body.addView(comment, commentParams);
         }
         return card;
-    }
-
-    private static String starsText(int count) {
-        int safe = Math.max(0, Math.min(5, count));
-        StringBuilder out = new StringBuilder();
-        for (int i = 1; i <= 5; i++) out.append(i <= safe ? '★' : '☆');
-        return out.toString();
     }
 
     private static LinearLayout.LayoutParams matchWrap() {

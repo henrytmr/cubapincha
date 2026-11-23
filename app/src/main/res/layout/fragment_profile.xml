@@ -166,13 +166,11 @@
                     android:text="Valoraciones recibidas"
                     android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-                <TextView
+                <com.cubapincha.job.ui.RatingStarsView
                     android:id="@+id/ratings_stars"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/amber_notice"
-                    android:textSize="18sp" />
+                    android:layout_width="190dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/ratings_summary"
