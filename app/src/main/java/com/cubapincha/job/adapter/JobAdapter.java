@@ -158,10 +158,8 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      *  Visible solo si la oferta admite WhatsApp. El número viene en la
      *  oferta (demo) o se pide al servidor al tocar (conectado). */
     private void bindWhatsappButton(ImageButton btn, Job job) {
-        boolean show = job.whatsappEnabled
-                || (job.contactPhone != null && !job.contactPhone.isEmpty());
-        btn.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (!show) return;
+        // El acceso permanece visible; el contacto real se resuelve al tocar.
+        btn.setVisibility(View.VISIBLE);
         UiUtils.setDebouncedClickListener(btn, v -> {
             AnimUtils.hapticTick(btn);
             Context ctx = btn.getContext();

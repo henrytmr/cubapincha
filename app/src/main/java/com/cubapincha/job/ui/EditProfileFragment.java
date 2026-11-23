@@ -141,28 +141,14 @@ public class EditProfileFragment extends Fragment {
                     }
                 }
             }
-            // Progreso de perfil: campos completados.
-            int filled = 0;
-            int total = company ? 5 : 6;
-            if (!u.displayName.isEmpty()) filled++;
-            if (u.provinceCode != null && !u.provinceCode.isEmpty()) filled++;
-            if (company) {
-                if (u.description != null && !u.description.isEmpty()) filled++;
-                if (u.industry != null && !u.industry.isEmpty()) filled++;
-                if (u.website != null && !u.website.isEmpty()) filled++;
-            } else {
-                if (u.headline != null && !u.headline.isEmpty()) filled++;
-                if (u.skills != null && !u.skills.isEmpty()) filled++;
-                if (u.experienceYears != null) filled++;
-                if (u.mobilityScope != null && !u.mobilityScope.isEmpty()) filled++;
-            }
-            u.profilePercent = Math.min(100, 20 + (filled * 80 / total));
             setLoading(true);
             Repository.get(requireContext()).updateProfile(u, result -> {
                 setLoading(false);
                 if (!isAdded()) return;
                 if (result.ok) {
-                    SessionManager.get(requireContext()).setProfilePercent(u.profilePercent);
+                    if (result.data != null && result.data.profilePercent >= 0) {
+                        SessionManager.get(requireContext()).setProfilePercent(result.data.profilePercent);
+                    }
                     View container = requireActivity().findViewById(R.id.fragment_container);
                     Snackbar.make(container != null ? container : view,
                             "Perfil actualizado. ¡Gracias por cuidarlo!", Snackbar.LENGTH_LONG).show();

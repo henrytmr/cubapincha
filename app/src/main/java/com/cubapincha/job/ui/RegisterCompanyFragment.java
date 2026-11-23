@@ -245,7 +245,7 @@ public class RegisterCompanyFragment extends Fragment {
             if (!isAdded()) return;
             if (result.ok && result.data != null) {
                 SessionManager session = SessionManager.get(requireContext());
-                session.setProfilePercent(70);
+                if (result.data.profilePercent >= 0) session.setProfilePercent(result.data.profilePercent);
                 session.clearPendingGoogle();
                 MainActivity main = (MainActivity) requireActivity();
                 main.enterMain();

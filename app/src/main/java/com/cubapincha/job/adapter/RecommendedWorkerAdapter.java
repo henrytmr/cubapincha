@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.button.MaterialButton;
 
 import com.cubapincha.job.R;
 import com.cubapincha.job.model.RecommendedWorker;
@@ -63,9 +64,15 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.skills.setText(skills.isEmpty() ? "" : "Habilidades: " + skills);
         h.skills.setVisibility(skills.isEmpty() ? View.GONE : View.VISIBLE);
         h.ring.setPercent(w.matchPercent, true);
+        h.save.setText("");
+        h.save.setIconResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
+        h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
         UiUtils.setDebouncedClickListener(h.interest, v -> listener.onInterestClick(w));
-        UiUtils.setDebouncedClickListener(h.save, v -> listener.onSaveClick(w));
+        UiUtils.setDebouncedClickListener(h.save, v -> {
+            AnimUtils.pop(h.save);
+            listener.onSaveClick(w);
+        });
         UiUtils.setDebouncedClickListener(h.whatsapp, v -> listener.onWhatsAppClick(w));
         int pos = h.getBindingAdapterPosition();
         if (pos != RecyclerView.NO_POSITION && pos > lastAnimatedPosition) {
@@ -78,7 +85,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
 
     static class Holder extends RecyclerView.ViewHolder {
         TextView avatar, name, headline, location, salary, skills;
-        TextView interest, save, whatsapp;
+        TextView interest, whatsapp;
+        MaterialButton save;
         RatingStarsView rating;
         MatchRingView ring;
         Holder(View v) {

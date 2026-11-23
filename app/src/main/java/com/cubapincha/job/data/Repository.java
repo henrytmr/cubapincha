@@ -435,7 +435,14 @@ public class Repository {
     }
 
     public void me(ApiCallback<User> cb) {
-        run(() -> activeClient().me(), cb);
+        run(() -> {
+            ApiResult<User> r = activeClient().me();
+            if (r.ok && r.data != null) {
+                session.setProfilePercent(r.data.profilePercent);
+                if (r.data.status != null && !r.data.status.isEmpty()) session.setStatus(r.data.status);
+            }
+            return r;
+        }, cb);
     }
 
     public void updateProfile(User user, ApiCallback<User> cb) {
@@ -447,6 +454,7 @@ public class Repository {
             if (r.ok && r.data != null && r.data.status != null && !r.data.status.isEmpty()) {
                 session.setStatus(r.data.status);
             }
+            if (r.ok && r.data != null) session.setProfilePercent(r.data.profilePercent);
             return r;
         }, cb);
     }
@@ -654,6 +662,9 @@ public class Repository {
     public void saveCandidate(String workerId, String applicationId, boolean save, ApiCallback<Boolean> cb) {
         run(() -> {
             try {
+                RecommendedWorker cached = new RecommendedWorker();
+                cached.workerId = workerId;
+                db.setSavedCandidate(cached, save);
                 JSONObject payload = new JSONObject();
                 payload.put("workerId", workerId);
                 if (applicationId != null && !applicationId.isEmpty()) payload.put("applicationId", applicationId);
@@ -663,6 +674,15 @@ public class Repository {
             } catch (Exception e) {
                 return ApiResult.fail("INTERNAL_ERROR", "");
             }
+        }, cb);
+    }
+
+    public void getSavedCandidates(int limit, String cursor, ApiCallback<List<RecommendedWorker>> cb) {
+        run(() -> {
+            if (!isDemoMode() && !isOnline()) return ApiResult.success(db.getSavedCandidates());
+            ApiResult<List<RecommendedWorker>> r = activeClient().getSavedCandidates(limit, cursor);
+            if (r.ok && r.data != null) for (RecommendedWorker w : r.data) db.setSavedCandidate(w, true);
+            return r;
         }, cb);
     }
 
@@ -769,6 +789,20 @@ public class Repository {
                 payload.put("all", true);
                 return offlineOr(() -> activeClient().markAllNotificationsRead(),
                         "markNotificationRead", payload);
+            } catch (Exception e) {
+                return ApiResult.fail("INTERNAL_ERROR", "");
+            }
+        }, cb);
+    }
+
+    public void deleteNotifications(String notificationId, boolean all, ApiCallback<Void> cb) {
+        run(() -> {
+            if (all) db.clearCachedNotifications();
+            else db.deleteCachedNotification(notificationId);
+            try {
+                JSONObject payload = new JSONObject();
+                if (all) payload.put("all", true); else payload.put("notificationId", notificationId);
+                return offlineOr(() -> activeClient().deleteNotifications(notificationId, all), "deleteNotifications", payload);
             } catch (Exception e) {
                 return ApiResult.fail("INTERNAL_ERROR", "");
             }

@@ -63,6 +63,9 @@ public interface ApiClient {
 
     ApiResult<Boolean> saveCandidate(String workerId, String applicationId, boolean save);
 
+    /** Trabajadores guardados por la empresa, contrato v17. */
+    ApiResult<List<RecommendedWorker>> getSavedCandidates(int limit, String cursor);
+
     ApiResult<List<RecommendedWorker>> getRecommendedWorkers(int minMatch, int limit);
 
     ApiResult<Boolean> inviteWorker(String workerId, String offerId, String message);
@@ -72,6 +75,9 @@ public interface ApiClient {
     ApiResult<Void> markNotificationRead(String notificationId);
 
     ApiResult<Void> markAllNotificationsRead();
+
+    /** Borra una notificación o todo el historial propio, contrato v17. */
+    ApiResult<Void> deleteNotifications(String notificationId, boolean all);
 
     ApiResult<Job> createJob(Job draft);
 

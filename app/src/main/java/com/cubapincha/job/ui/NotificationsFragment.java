@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -75,6 +76,7 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
                 }
             });
         });
+        view.findViewById(R.id.btn_clear_history).setOnClickListener(v -> confirmClearHistory());
         View btnPrefs = view.findViewById(R.id.btn_prefs);
         updatePrefsButton(btnPrefs);
         btnPrefs.setOnClickListener(v -> {
@@ -203,6 +205,42 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
                 ((MainActivity) requireActivity()).selectTab(R.id.nav_candidates);
             }
         }
+    }
+
+    @Override
+    public void onNotificationDelete(AppNotification n) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Borrar notificación")
+                .setMessage("¿Quieres borrar esta notificación?")
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Borrar", (d, w) -> Repository.get(requireContext())
+                        .deleteNotifications(n.notificationId, false, result -> {
+                            if (!isAdded()) return;
+                            if (result.ok) {
+                                ((MainActivity) requireActivity()).updateNotificationBadge();
+                                loadFromCacheOrNetwork();
+                                Snackbar.make(requireView(), "Notificación borrada", Snackbar.LENGTH_SHORT).show();
+                            } else Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                        })).show();
+    }
+
+    private void confirmClearHistory() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Vaciar historial")
+                .setMessage("Se eliminarán todas tus notificaciones. Esta acción no se puede deshacer.")
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Vaciar", (d, w) -> Repository.get(requireContext())
+                        .deleteNotifications(null, true, result -> {
+                            if (!isAdded()) return;
+                            if (result.ok) {
+                                shown = java.util.Collections.emptyList();
+                                adapter.setItems(shown);
+                                list.setVisibility(View.GONE);
+                                emptyState.setVisibility(View.VISIBLE);
+                                ((MainActivity) requireActivity()).updateNotificationBadge();
+                                Snackbar.make(requireView(), "Historial vaciado", Snackbar.LENGTH_SHORT).show();
+                            } else Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                        })).show();
     }
 
     @Override

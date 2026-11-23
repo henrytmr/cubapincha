@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class LocalDb extends SQLiteOpenHelper {
     private static final String DB_NAME = "cubapincha.db";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
 
     private static LocalDb instance;
 
@@ -46,6 +46,7 @@ public class LocalDb extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE cached_applications (applicationId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
         db.execSQL("CREATE TABLE cached_notifications (notificationId TEXT PRIMARY KEY, json TEXT, createdAt TEXT)");
         db.execSQL("CREATE TABLE saved_jobs (jobId TEXT PRIMARY KEY, folder TEXT, createdAt TEXT)");
+        db.execSQL("CREATE TABLE saved_candidates (workerId TEXT PRIMARY KEY, json TEXT, savedAt TEXT)");
         db.execSQL("CREATE TABLE pending_actions (clientActionId TEXT PRIMARY KEY, actionType TEXT, payload TEXT, status TEXT, createdAt TEXT, errorCode TEXT)");
         db.execSQL("CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT)");
         db.execSQL("CREATE TABLE demo_state (key TEXT PRIMARY KEY, json TEXT)");
@@ -72,6 +73,9 @@ public class LocalDb extends SQLiteOpenHelper {
             encryptColumn(db, "cached_notifications", "notificationId", "json");
             encryptColumn(db, "pending_actions", "clientActionId", "payload");
             encryptColumn(db, "drafts", "draftId", "json");
+        }
+        if (oldVersion < 5) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS saved_candidates (workerId TEXT PRIMARY KEY, json TEXT, savedAt TEXT)");
         }
     }
 
@@ -212,6 +216,40 @@ public class LocalDb extends SQLiteOpenHelper {
                 try {
                     out.add(AppNotification.fromJson(new JSONObject(CryptoHelper.decrypt(c.getString(0)))));
                 } catch (Exception ignored) { }
+            }
+        }
+        return out;
+    }
+
+    public void deleteCachedNotification(String notificationId) {
+        getWritableDatabase().delete("cached_notifications", "notificationId = ?", new String[]{notificationId});
+    }
+
+    public void clearCachedNotifications() {
+        getWritableDatabase().delete("cached_notifications", null, null);
+    }
+
+    public void setSavedCandidate(com.cubapincha.job.model.RecommendedWorker worker, boolean saved) {
+        SQLiteDatabase db = getWritableDatabase();
+        if (!saved) {
+            db.delete("saved_candidates", "workerId = ?", new String[]{worker.workerId});
+            return;
+        }
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put("workerId", worker.workerId);
+            cv.put("json", CryptoHelper.encrypt(worker.toJson().toString()));
+            cv.put("savedAt", String.valueOf(System.currentTimeMillis()));
+            db.insertWithOnConflict("saved_candidates", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        } catch (Exception ignored) { }
+    }
+
+    public List<com.cubapincha.job.model.RecommendedWorker> getSavedCandidates() {
+        List<com.cubapincha.job.model.RecommendedWorker> out = new ArrayList<>();
+        try (Cursor c = getReadableDatabase().query("saved_candidates", new String[]{"json"}, null, null, null, null, "savedAt DESC")) {
+            while (c.moveToNext()) {
+                try { out.add(com.cubapincha.job.model.RecommendedWorker.fromJson(new JSONObject(CryptoHelper.decrypt(c.getString(0))))); }
+                catch (Exception ignored) { }
             }
         }
         return out;

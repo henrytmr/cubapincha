@@ -613,6 +613,18 @@ public class DemoApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<List<RecommendedWorker>> getSavedCandidates(int limit, String cursor) {
+        latency();
+        java.util.Set<String> ids = new java.util.HashSet<>();
+        JSONArray saved = db.getDemoState(KEY_SAVED_CANDIDATES);
+        if (saved != null) for (int i = 0; i < saved.length(); i++) ids.add(saved.optString(i, ""));
+        List<RecommendedWorker> all = getRecommendedWorkers(0, 100).data;
+        List<RecommendedWorker> out = new ArrayList<>();
+        for (RecommendedWorker w : all) if (ids.contains(w.workerId)) out.add(w);
+        return ApiResult.success(out);
+    }
+
+    @Override
     public ApiResult<Boolean> inviteWorker(String workerId, String offerId, String message) {
         latency();
         addNotification("worker_invited", "Invitación enviada", "Se avisó al trabajador.", workerId, "candidate/" + workerId);
@@ -654,6 +666,14 @@ public class DemoApiClient implements ApiClient {
     @Override
     public ApiResult<Void> markAllNotificationsRead() {
         for (AppNotification n : notifications) n.read = true;
+        saveNotifications();
+        return ApiResult.success(null);
+    }
+
+    @Override
+    public ApiResult<Void> deleteNotifications(String notificationId, boolean all) {
+        if (all) notifications.clear();
+        else notifications.removeIf(n -> n.notificationId.equals(notificationId));
         saveNotifications();
         return ApiResult.success(null);
     }

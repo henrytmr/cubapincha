@@ -58,5 +58,15 @@
             android:layout_height="10dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/bg_unread_dot" />
+
+        <ImageButton
+            android:id="@+id/btn_delete_notification"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Borrar notificación"
+            android:src="@drawable/ic_trash"
+            app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

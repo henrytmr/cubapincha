@@ -541,6 +541,25 @@ public class SupabaseApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<List<RecommendedWorker>> getSavedCandidates(int limit, String cursor) {
+        try {
+            JSONObject params = new JSONObject();
+            params.put("limit", Math.max(1, Math.min(100, limit)));
+            if (cursor != null && !cursor.isEmpty()) params.put("cursor", cursor);
+            JSONObject resp = doRead("getSavedCandidates", params);
+            return unwrap(resp, data -> {
+                JSONObject d = (JSONObject) data;
+                JSONArray a = d.optJSONArray("workers");
+                List<RecommendedWorker> out = new ArrayList<>();
+                if (a != null) for (int i = 0; i < a.length(); i++) out.add(RecommendedWorker.fromJson(a.getJSONObject(i)));
+                return out;
+            });
+        } catch (Exception e) {
+            return failOf(e);
+        }
+    }
+
+    @Override
     public ApiResult<List<RecommendedWorker>> getRecommendedWorkers(int minMatch, int limit) {
         try {
             JSONObject params = new JSONObject();
@@ -621,6 +640,20 @@ public class SupabaseApiClient implements ApiClient {
             JSONObject body = new JSONObject();
             body.put("action", "markNotificationRead");
             body.put("all", true);
+            JSONObject resp = doPost(body);
+            return unwrap(resp, data -> null);
+        } catch (Exception e) {
+            return failOf(e);
+        }
+    }
+
+    @Override
+    public ApiResult<Void> deleteNotifications(String notificationId, boolean all) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("action", "deleteNotifications");
+            if (all) body.put("all", true);
+            else body.put("notificationId", notificationId);
             JSONObject resp = doPost(body);
             return unwrap(resp, data -> null);
         } catch (Exception e) {

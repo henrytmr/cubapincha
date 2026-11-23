@@ -32,6 +32,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
                 <TextView android:id="@+id/recommended_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?attr/textAppearanceTitleMedium" />
+                <TextView android:id="@+id/recommended_verified" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓ Verificado" android:textColor="@color/verified_tint" android:textSize="12sp" />
                 <TextView android:id="@+id/recommended_headline" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:textAppearance="?attr/textAppearanceBodyMedium" />
                 <TextView android:id="@+id/recommended_location" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:textAppearance="?attr/textAppearanceBodySmall" />
             </LinearLayout>
@@ -48,7 +49,7 @@
                 <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_interest" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Me interesa" />
                 <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_whatsapp" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="WhatsApp" app:icon="@drawable/ic_whatsapp" />
             </LinearLayout>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_save" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Guardar" app:icon="@drawable/ic_bookmark" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_save" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="Guardar trabajador" app:icon="@drawable/ic_bookmark" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

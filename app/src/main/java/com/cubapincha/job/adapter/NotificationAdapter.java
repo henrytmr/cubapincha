@@ -22,6 +22,7 @@ import java.util.List;
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.Holder> {
     public interface Listener {
         void onNotificationClick(AppNotification n);
+        void onNotificationDelete(AppNotification n);
     }
 
     private final List<AppNotification> items = new ArrayList<>();
@@ -54,6 +55,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         h.body.setText(n.body);
         h.date.setText(TextUtils.timeAgo(n.createdAt));
         h.dot.setVisibility(n.read ? View.GONE : View.VISIBLE);
+        UiUtils.setDebouncedClickListener(h.delete, v -> listener.onNotificationDelete(n));
         int icon;
         String type = n.type != null ? n.type : "";
         switch (type) {
@@ -99,7 +101,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     static class Holder extends RecyclerView.ViewHolder {
-        ImageView icon;
+        ImageView icon, delete;
         TextView title, body, date;
         View dot;
 
@@ -110,6 +112,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             body = itemView.findViewById(R.id.notif_body);
             date = itemView.findViewById(R.id.notif_date);
             dot = itemView.findViewById(R.id.unread_dot);
+            delete = itemView.findViewById(R.id.btn_delete_notification);
         }
     }
 }

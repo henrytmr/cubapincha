@@ -280,9 +280,8 @@ public class RegisterWorkerFragment extends Fragment {
             setLoading(false);
             if (!isAdded()) return;
             if (result.ok && result.data != null) {
-                int percent = skipped ? 35 : 85;
                 SessionManager session = SessionManager.get(requireContext());
-                session.setProfilePercent(percent);
+                if (result.data.profilePercent >= 0) session.setProfilePercent(result.data.profilePercent);
                 session.clearPendingGoogle();
                 ((MainActivity) requireActivity()).enterMain();
             } else {

@@ -29,6 +29,7 @@ public class RecommendedWorker {
     public List<String> matchReasons = new ArrayList<>();
     public String matchedOfferId;
     public String matchedOfferTitle;
+    public boolean saved;
 
     public String locationText() {
         if (municipalityName != null && !municipalityName.isEmpty()
@@ -43,6 +44,23 @@ public class RecommendedWorker {
         if (salaryMin == null && salaryMax == null) return "Salario: a convenir";
         if (salaryMin != null && salaryMax != null) return "Salario: " + salaryMin + "–" + salaryMax + " CUP";
         return "Salario: " + (salaryMin != null ? salaryMin : salaryMax) + " CUP";
+    }
+
+    public JSONObject toJson() {
+        JSONObject o = new JSONObject();
+        try {
+            o.put("workerId", workerId); o.put("userId", userId); o.put("workerName", workerName);
+            o.put("headline", headline); o.put("city", city); o.put("provinceName", provinceName);
+            o.put("municipalityName", municipalityName); o.put("skills", Job.listToJson(skills));
+            if (experienceYears != null) o.put("experienceYears", experienceYears);
+            o.put("workModes", Job.listToJson(workModes));
+            if (salaryMin != null) o.put("salaryMin", salaryMin); if (salaryMax != null) o.put("salaryMax", salaryMax);
+            o.put("phone", phone); o.put("contactPreference", contactPreference); o.put("profilePercent", profilePercent);
+            o.put("ratingAverage", ratingAverage); o.put("ratingTotal", ratingTotal); o.put("matchPercent", matchPercent);
+            o.put("matchReasons", Job.listToJson(matchReasons)); o.put("matchedOfferId", matchedOfferId); o.put("matchedOfferTitle", matchedOfferTitle);
+            o.put("saved", saved);
+        } catch (Exception ignored) { }
+        return o;
     }
 
     public static RecommendedWorker fromJson(JSONObject o) {
@@ -68,6 +86,7 @@ public class RecommendedWorker {
         w.matchReasons = strings(o.optJSONArray("matchReasons"));
         w.matchedOfferId = o.optString("matchedOfferId", "");
         w.matchedOfferTitle = o.optString("matchedOfferTitle", "");
+        w.saved = o.optBoolean("saved", false);
         return w;
     }
 
