@@ -22,7 +22,7 @@ workflows:
           storeFile=$CM_KEYSTORE_PATH
           storePassword=$CM_KEYSTORE_PASSWORD
           keyAlias=$CM_KEY_ALIAS
-          keyPassword=$CM_KEY_PASSWORD
+          keyPassword=$CM_KEYSTORE_PASSWORD
           PROPS
       - name: Assemble signed release APK
         script: |
