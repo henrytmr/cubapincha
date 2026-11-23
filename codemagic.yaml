@@ -1,18 +1,53 @@
 workflows:
+
   android-debug:
+  
     name: CubaPincha Android 2.11.0 debug
+    
     max_build_duration: 60
-    instance_type: linux_x2
+    
+    instance_type: linux_x1
+    
     environment:
+    
       java: 21
+      
     scripts:
+    
       - name: Extract corrected Android source
+      
         script: |
+        
           unzip -q cuba-pincha-android-source.zip
+          
           chmod +x codigo-fuente/gradlew
+          
       - name: Assemble debug APK
+      
         script: |
+        
           cd codigo-fuente
+          
           ./gradlew assembleDebug --stacktrace
+          
     artifacts:
+    
       - codigo-fuente/app/build/outputs/**/*.apk
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
