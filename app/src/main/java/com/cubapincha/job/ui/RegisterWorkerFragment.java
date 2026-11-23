@@ -281,7 +281,6 @@ public class RegisterWorkerFragment extends Fragment {
             if (!isAdded()) return;
             if (result.ok && result.data != null) {
                 SessionManager session = SessionManager.get(requireContext());
-                if (result.data.profilePercent >= 0) session.setProfilePercent(result.data.profilePercent);
                 session.clearPendingGoogle();
                 ((MainActivity) requireActivity()).enterMain();
             } else {
