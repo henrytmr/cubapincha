@@ -156,7 +156,8 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
                 TextView chip = new TextView(requireContext());
                 chip.setText(resId);
                 chip.setBackgroundResource(R.drawable.bg_chip_soft);
-                chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.violet_500));
+                chip.setTextColor(UiUtils.resolveThemeColor(requireContext(),
+                        com.google.android.material.R.attr.colorOnSurface));
                 chip.setTextSize(13);
                 int padH = (int) (10 * getResources().getDisplayMetrics().density);
                 int padV = (int) (4 * getResources().getDisplayMetrics().density);

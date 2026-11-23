@@ -43,10 +43,12 @@
         <TextView android:id="@+id/recommended_salary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:textAppearance="?attr/textAppearanceBodySmall" />
         <TextView android:id="@+id/recommended_rating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/amber_notice" android:textAppearance="?attr/textAppearanceBodyMedium" />
         <TextView android:id="@+id/recommended_skills" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textAppearance="?attr/textAppearanceBodySmall" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="end" android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_interest" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Me interesa" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_interest" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Me interesa" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_whatsapp" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="WhatsApp" app:icon="@drawable/ic_whatsapp" />
+            </LinearLayout>
             <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_save" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Guardar" app:icon="@drawable/ic_bookmark" />
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_recommended_whatsapp" style="@style/Widget.CubaPincha.Button.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="WhatsApp" app:icon="@drawable/ic_whatsapp" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
