@@ -1,14 +1,14 @@
 package com.cubapincha.job.ui;
 
+import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.InputType;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,131 +24,131 @@ import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.model.SavedSearch;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 
-/** Explorador de trabajadores para empresas; reutiliza la misma tarjeta del panel. */
+/** Buscador empresarial espejo del buscador del trabajador, adaptado a trabajadores. */
 public class WorkerSearchFragment extends Fragment implements RecommendedWorkerAdapter.Listener {
     private RecommendedWorkerAdapter adapter;
     private EditText query;
-    private EditText category;
-    private EditText province;
-    private EditText municipality;
-    private EditText minMatch;
     private TextView resultsCount;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
+    private String category = "";
+    private String province = "";
+    private String municipality = "";
+    private int minMatch = 0;
     private boolean sortByMatch;
+    private View root;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull android.view.LayoutInflater inflater,
-                             @Nullable ViewGroup parent, @Nullable Bundle state) {
-        int dp = (int) (getResources().getDisplayMetrics().density + 0.5f);
-        LinearLayout root = new LinearLayout(requireContext());
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(16 * dp, 16 * dp, 16 * dp, 0);
+    @Nullable @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent,
+                             @Nullable Bundle state) {
+        return inflater.inflate(R.layout.fragment_worker_search, parent, false);
+    }
 
-        LinearLayout bar = new LinearLayout(requireContext());
-        bar.setGravity(Gravity.CENTER_VERTICAL);
-        ImageButton back = new ImageButton(requireContext());
-        back.setImageResource(R.drawable.ic_chevron_left);
-        back.setContentDescription("Atrás");
-        query = new EditText(requireContext());
-        query.setHint("Oficio, habilidad o trabajador...");
-        query.setSingleLine(true);
-        bar.addView(back, new LinearLayout.LayoutParams(48 * dp, 48 * dp));
-        bar.addView(query, new LinearLayout.LayoutParams(0, 56 * dp, 1));
-        root.addView(bar);
-
-        TextView title = new TextView(requireContext());
-        title.setText("Buscar");
-        title.setTextSize(24);
-        root.addView(title);
-
-        LinearLayout actions = new LinearLayout(requireContext());
-        actions.setGravity(Gravity.CENTER_VERTICAL);
-        MaterialButton filtersButton = new MaterialButton(requireContext());
-        filtersButton.setText("Filtros");
-        filtersButton.setIconResource(R.drawable.ic_filter);
-        MaterialButton sortButton = new MaterialButton(requireContext());
-        sortButton.setText("Ordenar por");
-        sortButton.setIconResource(R.drawable.ic_sort);
-        actions.addView(filtersButton, new LinearLayout.LayoutParams(0, 48 * dp, 1));
-        LinearLayout.LayoutParams sortLp = new LinearLayout.LayoutParams(0, 48 * dp, 1);
-        sortLp.setMarginStart(8 * dp);
-        actions.addView(sortButton, sortLp);
-        root.addView(actions);
-
-        LinearLayout resultHeader = new LinearLayout(requireContext());
-        resultHeader.setGravity(Gravity.CENTER_VERTICAL);
-        resultsCount = new TextView(requireContext());
-        resultHeader.addView(resultsCount, new LinearLayout.LayoutParams(0, 44 * dp, 1));
-        MaterialButton saveSearch = new MaterialButton(requireContext());
-        saveSearch.setText("Guardar búsqueda");
-        resultHeader.addView(saveSearch, new LinearLayout.LayoutParams(-2, 44 * dp));
-        root.addView(resultHeader);
-
-        LinearLayout filters = new LinearLayout(requireContext());
-        filters.setOrientation(LinearLayout.VERTICAL);
-        category = addFilter(filters, "Categoría");
-        province = addFilter(filters, "Provincia");
-        municipality = addFilter(filters, "Municipio");
-        minMatch = addFilter(filters, "Mínimo %");
-        minMatch.setInputType(InputType.TYPE_CLASS_NUMBER);
-        filters.setVisibility(View.GONE);
-        root.addView(filters, new LinearLayout.LayoutParams(-1, -2));
-
-        filtersButton.setOnClickListener(v ->
-                filters.setVisibility(filters.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
-        sortButton.setOnClickListener(v -> {
-            sortByMatch = !sortByMatch;
-            sortButton.setText(sortByMatch ? "Mayor coincidencia" : "Ordenar por");
-            searchWorkers();
-        });
-        saveSearch.setOnClickListener(v -> {
-            SavedSearch saved = new SavedSearch();
-            saved.name = value(query).isEmpty() ? "Trabajadores recomendados" : value(query);
-            saved.query = value(query);
-            saved.category = value(category);
-            saved.provinceCode = value(province);
-            saved.municipalityCode = value(municipality);
-            saved.sort = sortByMatch ? "match" : "recent";
-            saved.frequency = "off";
-            Repository.get(requireContext()).saveFilter(saved, result -> {
-                if (isAdded()) Snackbar.make(root, result.ok ? "Búsqueda guardada." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
-            });
-        });
-
-        RecyclerView list = new RecyclerView(requireContext());
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        super.onViewCreated(view, state);
+        root = view;
+        query = view.findViewById(R.id.worker_query);
+        resultsCount = view.findViewById(R.id.worker_results_count);
+        MaterialButton filters = view.findViewById(R.id.worker_filters);
+        MaterialButton sort = view.findViewById(R.id.worker_sort);
+        MaterialButton save = view.findViewById(R.id.worker_save_search);
+        RecyclerView list = view.findViewById(R.id.worker_list);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new RecommendedWorkerAdapter(this);
         list.setAdapter(adapter);
-        root.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
-
-        back.setOnClickListener(v -> requireActivity().getOnBackPressedDispatcher().onBackPressed());
-        android.text.TextWatcher watcher = new android.text.TextWatcher() {
+        filters.setOnClickListener(v -> showWorkerFilters());
+        sort.setOnClickListener(v -> {
+            sortByMatch = !sortByMatch;
+            sort.setText(sortByMatch ? "Mayor coincidencia" : "Ordenar por");
+            searchWorkers();
+        });
+        save.setOnClickListener(v -> saveSearch());
+        loadSavedSearchChips();
+        query.addTextChangedListener(new android.text.TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             public void onTextChanged(CharSequence s, int start, int before, int count) { scheduleSearch(); }
             public void afterTextChanged(android.text.Editable e) { }
-        };
-        query.addTextChangedListener(watcher);
-        category.addTextChangedListener(watcher);
-        province.addTextChangedListener(watcher);
-        municipality.addTextChangedListener(watcher);
-        minMatch.addTextChangedListener(watcher);
+        });
         searchWorkers();
-        return root;
     }
 
-    private EditText addFilter(LinearLayout parent, String hint) {
-        int dp = (int) (getResources().getDisplayMetrics().density + 0.5f);
+    private void showWorkerFilters() {
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        LinearLayout content = new LinearLayout(requireContext());
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(pad, 0, pad, 0);
+        EditText cat = field("Categoría u oficio", category);
+        EditText prov = field("Provincia", province);
+        EditText mun = field("Municipio", municipality);
+        EditText min = field("Mínimo % de coincidencia", minMatch == 0 ? "" : String.valueOf(minMatch));
+        min.setInputType(InputType.TYPE_CLASS_NUMBER);
+        content.addView(cat); content.addView(prov); content.addView(mun); content.addView(min);
+        new AlertDialog.Builder(requireContext()).setTitle("Filtros").setView(content)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton("Aplicar", (d, which) -> {
+                    category = value(cat); province = value(prov); municipality = value(mun);
+                    try { minMatch = value(min).isEmpty() ? 0 : Math.max(0, Integer.parseInt(value(min))); }
+                    catch (NumberFormatException e) { minMatch = 0; }
+                    searchWorkers();
+                }).show();
+    }
+
+    private EditText field(String hint, String text) {
         EditText field = new EditText(requireContext());
-        field.setHint(hint);
-        field.setSingleLine(true);
-        field.setTextSize(14);
-        field.setPadding(12 * dp, 0, 12 * dp, 0);
-        parent.addView(field, new LinearLayout.LayoutParams(-1, 44 * dp));
+        field.setHint(hint); field.setSingleLine(true); field.setText(text); field.setTextSize(16);
+        field.setPadding(0, 12, 0, 12);
         return field;
+    }
+
+    private void saveSearch() {
+        SavedSearch saved = new SavedSearch();
+        saved.name = value(query).isEmpty() ? "Trabajadores" : value(query);
+        saved.query = value(query); saved.category = category;
+        saved.provinceCode = province; saved.municipalityCode = municipality;
+        saved.sort = sortByMatch ? "match" : "recent"; saved.frequency = "off";
+        Repository.get(requireContext()).saveFilter(saved, result -> {
+            if (isAdded()) Snackbar.make(root, result.ok ? "Búsqueda guardada." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
+        });
+    }
+
+    private void loadSavedSearchChips() {
+        Repository.get(requireContext()).getSavedSearches(result -> {
+            if (!isAdded() || root == null) return;
+            View scroll = root.findViewById(R.id.worker_saved_searches_scroll);
+            ChipGroup row = root.findViewById(R.id.worker_saved_searches_row);
+            row.removeAllViews();
+            if (!result.ok || result.data == null || result.data.isEmpty()) {
+                scroll.setVisibility(View.GONE);
+                return;
+            }
+            scroll.setVisibility(View.VISIBLE);
+            for (SavedSearch search : result.data) {
+                Chip chip = new Chip(requireContext());
+                chip.setText(search.name);
+                chip.setChipIconResource(R.drawable.ic_search);
+                chip.setCheckable(false);
+                chip.setOnClickListener(v -> {
+                    category = search.category == null ? "" : search.category;
+                    province = search.provinceCode == null ? "" : search.provinceCode;
+                    municipality = search.municipalityCode == null ? "" : search.municipalityCode;
+                    query.setText(search.query == null ? "" : search.query);
+                    searchWorkers();
+                });
+                chip.setOnLongClickListener(v -> {
+                    new AlertDialog.Builder(requireContext()).setTitle(search.name)
+                            .setMessage("¿Eliminar esta búsqueda guardada?")
+                            .setPositiveButton(R.string.delete, (d, w) ->
+                                    Repository.get(requireContext()).deleteSavedSearch(search.filterId, ignored -> loadSavedSearchChips()))
+                            .setNegativeButton(R.string.cancel, null).show();
+                    return true;
+                });
+                row.addView(chip);
+            }
+        });
     }
 
     private void scheduleSearch() {
@@ -159,23 +159,21 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
 
     private void searchWorkers() {
         if (!isAdded() || query == null) return;
-        String q = value(query);
-        String provinceCode = value(province);
-        String municipalityCode = value(municipality);
-        String categoryValue = value(category);
-        int minimum = 0;
-        try {
-            if (!value(minMatch).isEmpty()) minimum = Math.max(0, Integer.parseInt(value(minMatch)));
-        } catch (NumberFormatException ignored) { }
-        Repository.get(requireContext()).getRecommendedWorkers(q.isEmpty() ? null : q,
-                provinceCode.isEmpty() ? null : provinceCode,
-                municipalityCode.isEmpty() ? null : municipalityCode,
-                categoryValue.isEmpty() ? null : categoryValue,
-                minimum, 100, result -> {
-                    if (!isAdded() || !result.ok || result.data == null) return;
+        Repository.get(requireContext()).getRecommendedWorkers(value(query).isEmpty() ? null : value(query),
+                province.isEmpty() ? null : province, municipality.isEmpty() ? null : municipality,
+                category.isEmpty() ? null : category, minMatch, 100, result -> {
+                    if (!isAdded()) return;
+                    View empty = root.findViewById(R.id.worker_empty);
+                    if (!result.ok || result.data == null) {
+                        adapter.setItems(new java.util.ArrayList<>());
+                        resultsCount.setText("No se pudieron cargar los trabajadores");
+                        empty.setVisibility(View.VISIBLE); return;
+                    }
                     if (sortByMatch) result.data.sort((a, b) -> Integer.compare(b.matchPercent, a.matchPercent));
                     adapter.setItems(result.data);
                     resultsCount.setText(result.data.size() + " trabajadores");
+                    empty.setVisibility(result.data.isEmpty() ? View.VISIBLE : View.GONE);
+                    root.findViewById(R.id.worker_list).setVisibility(result.data.isEmpty() ? View.GONE : View.VISIBLE);
                 });
     }
 
@@ -183,25 +181,16 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         return field == null || field.getText() == null ? "" : field.getText().toString().trim();
     }
 
-    @Override
-    public void onWorkerClick(RecommendedWorker w) { ((MainActivity) requireActivity()).openWorkerDetail(w); }
-    @Override
-    public void onProfileClick(RecommendedWorker w) { onWorkerClick(w); }
-    @Override
-    public void onInterestClick(RecommendedWorker w) { Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { }); }
-    @Override
-    public void onSaveClick(RecommendedWorker w) { Repository.get(requireContext()).saveCandidate(w.workerId, null, w.saved, r -> { }); }
-    @Override
-    public void onWhatsAppClick(RecommendedWorker w) {
-        if (w.phone != null && !w.phone.isEmpty()) {
-            startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,
-                    android.net.Uri.parse("https://wa.me/" + w.phone.replaceAll("[^0-9]", ""))));
-        }
+    @Override public void onWorkerClick(RecommendedWorker w) { ((MainActivity) requireActivity()).openWorkerDetail(w); }
+    @Override public void onProfileClick(RecommendedWorker w) { onWorkerClick(w); }
+    @Override public void onInterestClick(RecommendedWorker w) { Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { }); }
+    @Override public void onSaveClick(RecommendedWorker w) { Repository.get(requireContext()).saveCandidate(w.workerId, null, w.saved, r -> { }); }
+    @Override public void onWhatsAppClick(RecommendedWorker w) {
+        if (w.phone != null && !w.phone.isEmpty()) startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,
+                android.net.Uri.parse("https://wa.me/" + w.phone.replaceAll("[^0-9]", ""))));
     }
-
-    @Override
-    public void onDestroyView() {
+    @Override public void onDestroyView() {
         if (pendingSearch != null) searchHandler.removeCallbacks(pendingSearch);
-        super.onDestroyView();
+        root = null; super.onDestroyView();
     }
 }

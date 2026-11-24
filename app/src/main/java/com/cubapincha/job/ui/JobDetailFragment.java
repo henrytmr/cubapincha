@@ -262,10 +262,13 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         view.findViewById(R.id.list_similar).setVisibility(View.GONE);
         view.findViewById(R.id.btn_report).setVisibility(View.GONE);
         contentScroll.setVisibility(View.VISIBLE);
-        ctaBar.setVisibility(View.VISIBLE);
-        btnInterest.setText("Me interesa");
+        boolean companyViewer = "company".equals(SessionManager.get(requireContext()).getRole());
+        // Solo una empresa puede invitar a un trabajador. Un trabajador que
+        // abre otro perfil no debe ver el CTA de oferta/interés equivocado.
+        ctaBar.setVisibility(companyViewer ? View.VISIBLE : View.GONE);
+        btnInterest.setText("Invitar a trabajar");
         btnInterest.setIconResource(R.drawable.ic_send);
-        btnSaveBottom.setText(worker.saved ? R.string.saved : R.string.save_offer);
+        btnSaveBottom.setText(worker.saved ? "Trabajador guardado" : "Guardar trabajador");
         btnSaveTop.setImageResource(worker.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         if (animate) AnimUtils.fadeSlideIn(contentScroll);
     }

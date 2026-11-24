@@ -68,6 +68,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         AnimUtils.resetItemState(h.itemView);
         RecommendedWorker w = items.get(position);
         h.avatar.setText(TextUtils.initials(w.workerName));
+        h.avatar.setVisibility(View.VISIBLE);
         h.avatarPhoto.setVisibility(w.photoThumbUrl == null || w.photoThumbUrl.isEmpty() ? View.GONE : View.VISIBLE);
         if (h.avatarPhoto.getVisibility() == View.VISIBLE) NetworkImageLoader.load(h.avatarPhoto, w.photoThumbUrl);
         h.name.setText(w.workerName);
@@ -79,6 +80,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.ring.setPercent(w.matchPercent, true);
         h.matchLabel.setText(String.format(java.util.Locale.US, "%d%% de coincidencia", w.matchPercent));
         UiUtils.setDebouncedClickListener(h.profile, v -> listener.onProfileClick(w));
+        UiUtils.setDebouncedClickListener(h.avatar, v -> listener.onProfileClick(w));
+        UiUtils.setDebouncedClickListener(h.avatarPhoto, v -> listener.onProfileClick(w));
         h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
         PhotoSwipeBinder.bind(h.itemView, h.photo, h.photoEye, w.photoThumbUrl);

@@ -286,6 +286,15 @@
                 android:layout_marginTop="@dimen/space_8"
                 android:textAppearance="?attr/textAppearanceBodyMedium" />
 
+            <ImageView
+                android:id="@+id/job_photo"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:layout_marginTop="@dimen/space_16"
+                android:scaleType="centerCrop"
+                android:contentDescription="Foto del perfil o de la oferta"
+                android:visibility="gone" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_section_resp"
                 style="@style/Widget.CubaPincha.Button.Text"
