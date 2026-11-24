@@ -190,7 +190,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     class CardHolder extends RecyclerView.ViewHolder {
-        TextView avatar, title, company, location, mode, salary, date, matchLabel, closedLabel, ratingText;
+        TextView avatar, title, company, location, mode, salary, date, matchLabel, closedLabel;
         RatingStarsView ratingStars;
         ImageView verified;
         ImageButton saveBtn, whatsappBtn;
@@ -202,7 +202,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             avatar = itemView.findViewById(R.id.company_avatar);
             title = itemView.findViewById(R.id.job_title);
             company = itemView.findViewById(R.id.company_name);
-            ratingStars = itemView.findViewById(R.id.company_rating_stars); ratingText = itemView.findViewById(R.id.company_rating_text);
+            ratingStars = itemView.findViewById(R.id.company_rating_stars);
             verified = itemView.findViewById(R.id.verified_icon);
             location = itemView.findViewById(R.id.job_location);
             mode = itemView.findViewById(R.id.job_mode);
