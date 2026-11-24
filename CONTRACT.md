@@ -1,6 +1,6 @@
-# CubaPincha — Contrato API Edge/Supabase v25 / aplicación 2.11.3
+# CubaPincha — Contrato API Edge/Supabase v25 / aplicación 2.11.4
 
-Este es el contrato vigente de la aplicación Android 2.11.3 contra el servidor v25. La app autentica con Supabase Auth y envía el JWT en `Authorization: Bearer <jwt>` a `POST https://<proyecto>.supabase.co/functions/v1/api`. La respuesta tiene siempre `{ ok, data, error, requestId }`. `health`, `publicJob`, `publicWorker`, `listCatalogs` y `getRatings` son públicas; el resto exige JWT. El servidor v25 no fue modificado.
+Este es el contrato vigente de la aplicación Android 2.11.4 contra el servidor v25. La app autentica con Supabase Auth y envía el JWT en `Authorization: Bearer <jwt>` a `POST https://<proyecto>.supabase.co/functions/v1/api`. La respuesta tiene siempre `{ ok, data, error, requestId }`. `health`, `publicJob`, `publicWorker`, `listCatalogs` y `getRatings` son públicas; el resto exige JWT. El servidor v25 no fue modificado.
 
 ## Identidad y perfiles
 
@@ -29,10 +29,10 @@ FCM usa `google-services.json`; el token real se registra mediante `registerDevi
 ## Base de datos
 Aplicar `backend/sql/001_esquema.sql` a `005_permisos_service_role.sql` y después `006_valoraciones.sql`. La migración 006 crea `valoraciones`, índices, la unicidad anti-duplicados y RLS; las escrituras de la Edge Function usan `service_role` y la autorización de negocio se ejecuta en `rateApplication`.
 
-## Extensiones de aplicación 2.11.3
+## Extensiones de aplicación 2.11.4
 
 `publicWorker` recibe `workerId` y devuelve el perfil público del trabajador. Las recomendaciones exponen `invited` e `invitedOfferId`; `inviteWorker` marca la invitación y `uninviteWorker` la deshace. La app conserva el estado tras recarga y no modifica tablas, políticas, funciones ni endpoints del servidor.
 
 El filtro empresarial reutiliza el contrato de filtros del trabajador y admite provincia, municipio y `minMatch`. Los enlaces `cubapincha://trabajador/<id>` y `trabajador.html?id=<id>` se resuelven en la pantalla pública del trabajador. Las imágenes de perfil usan caché de memoria y disco, son utilizables offline y se pueden limpiar desde Perfil.
 
-Las mutaciones de guardado preservan el perfil completo en caché y revierten el estado local si la operación falla. Las acciones encolables se identifican por `clientActionId`, se muestran como pendientes y no deben duplicarse. El cliente no incluye secretos, `local.properties`, keystores ni contraseñas.
+Las mutaciones de guardado preservan el perfil completo en caché, entregan resultado explícito al callback, mantienen el estado local durante la operación y revierten correctamente si falla; aplica a publicaciones y perfiles en ambos roles. Las acciones encolables se identifican por `clientActionId`, se muestran como pendientes y no deben duplicarse. El cliente no incluye secretos, `local.properties`, keystores ni contraseñas.

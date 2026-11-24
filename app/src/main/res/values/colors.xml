@@ -8,7 +8,7 @@
     <color name="cpViolet">#123B5D</color>
     <color name="cpCoral">#21A6A6</color>
     <color name="cpMint">#21A6A6</color>
-    <color name="cpSun">#F4B942</color>
+    <color name="cpSun">#D39B2D</color>
     <color name="cpCream">#F7F5F0</color>
     <color name="cpWhite">#FFFFFF</color>
     <color name="cpOutline">#DCE5EA</color>
@@ -71,7 +71,7 @@
     <color name="brand_primary">@color/cpViolet</color>
     <color name="brand_primary_dark">@color/cpIndigo</color>
     <color name="confirm_green">#2E8B57</color>
-    <color name="amber_notice">#F4B942</color>
+    <color name="amber_notice">#D39B2D</color>
     <color name="error_red">#C74343</color>
 
     <!-- Claro -->

@@ -234,9 +234,12 @@
             android:orientation="horizontal">
             <ImageButton
                 android:id="@+id/btn_job_photo_eye"
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:visibility="gone" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Mostrar fotos"
+                android:src="@drawable/ic_visibility_off"
+                app:tint="?attr/colorPrimary" />
             <ImageView
                 android:id="@+id/job_photo"
                 android:layout_width="match_parent"

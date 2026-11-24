@@ -183,7 +183,7 @@ public class CreateJobFragment extends Fragment {
         qualityBar = view.findViewById(R.id.quality_bar);
         modeToggle = view.findViewById(R.id.mode_toggle);
         progress = view.findViewById(R.id.progress);
-        btnPublish = view.findViewById(R.id.btn_publish);
+        btnPublish = view.findViewById(R.id.btn_publish_top);
         btnDraft = view.findViewById(R.id.btn_draft);
         btnPreview = view.findViewById(R.id.btn_preview);
         extractText = view.findViewById(R.id.input_extract_text);

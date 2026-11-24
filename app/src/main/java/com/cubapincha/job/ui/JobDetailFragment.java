@@ -651,9 +651,20 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
 
     private void toggleSave() {
         if (worker != null) {
-            worker.saved = !worker.saved;
+            boolean requested = !worker.saved;
+            worker.saved = requested;
             bindWorker(false);
-            Repository.get(requireContext()).saveCandidate(worker.workerId, null, worker.saved, result -> { });
+            Repository.get(requireContext()).saveCandidate(worker.workerId, null, requested, result -> {
+                if (!isAdded()) return;
+                if (!result.ok && !result.queued) {
+                    worker.saved = !requested;
+                    bindWorker(false);
+                    Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                } else if (result.ok && result.data != null) {
+                    worker.saved = result.data;
+                    bindWorker(false);
+                }
+            });
             return;
         }
         if (job == null) return;
@@ -671,6 +682,16 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         updateSaveButton();
         Repository.get(requireContext()).saveJob(job.jobId, newState, result -> {
             if (!isAdded()) return;
+            if (!result.ok && !result.queued) {
+                job.saved = !newState;
+                updateSaveButton();
+                Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            if (result.ok && result.data != null) {
+                job.saved = result.data;
+                updateSaveButton();
+            }
             if (newState) {
                 Snackbar.make(requireView(), R.string.offer_saved, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {
@@ -719,7 +740,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         showIconChoiceDialog(R.string.report, new int[]{
                         R.drawable.ic_money, R.drawable.price_check_24px,
                         R.drawable.location_off_24px, R.drawable.ic_verified_badge,
-                        R.drawable.person_off_24px, R.drawable.ic_copy, R.drawable.ic_more},
+                        R.drawable.person_off_24px, R.drawable.ic_copy, R.drawable.ic_gpp_maybe},
                 new String[]{getString(R.string.report_money), getString(R.string.report_salary),
                         getString(R.string.report_location), getString(R.string.report_identity),
                         getString(R.string.report_harassment), getString(R.string.report_duplicate),
@@ -756,7 +777,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
             row.setPadding(dp(14), dp(12), dp(14), dp(12));
             ImageView icon = new ImageView(context);
             icon.setImageResource(icons[i]);
-            icon.setColorFilter(themeColor(android.R.attr.colorControlNormal));
+            icon.setColorFilter(themeColor(com.google.android.material.R.attr.colorPrimary));
             row.addView(icon, new LinearLayout.LayoutParams(dp(24), dp(24)));
             TextView label = new TextView(context);
             label.setText(labels[i]);
@@ -803,7 +824,12 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         boolean newState = !job.saved;
         job.saved = newState;
         Repository.get(requireContext()).saveJob(job.jobId, newState, result -> {
-            if (isAdded()) similarAdapter.updateJob(job);
+            if (!isAdded()) return;
+            if (!result.ok && !result.queued) {
+                job.saved = !newState;
+                Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+            }
+            similarAdapter.updateJob(job);
         });
     }
 

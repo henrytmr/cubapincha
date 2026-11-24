@@ -170,7 +170,20 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
             Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { if (r.ok) { w.invited = true; w.invitedOfferId = w.matchedOfferId == null ? "" : w.matchedOfferId; adapter.setItems(new java.util.ArrayList<>(java.util.Arrays.asList(w))); } });
         }
     }
-    @Override public void onSaveClick(RecommendedWorker w) { Repository.get(requireContext()).saveCandidate(w.workerId, null, w.saved, r -> { }); }
+    @Override public void onSaveClick(RecommendedWorker w) {
+        boolean requested = w.saved;
+        Repository.get(requireContext()).saveCandidate(w.workerId, null, requested, r -> {
+            if (!isAdded()) return;
+            if (!r.ok && !r.queued) {
+                w.saved = !requested;
+                adapter.notifyDataSetChanged();
+                Snackbar.make(root, r.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+            } else if (r.ok && r.data != null && r.data != w.saved) {
+                w.saved = r.data;
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
     @Override public void onWhatsAppClick(RecommendedWorker w) {
         if (w.phone != null && !w.phone.isEmpty()) startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,
                 android.net.Uri.parse("https://wa.me/" + w.phone.replaceAll("[^0-9]", ""))));

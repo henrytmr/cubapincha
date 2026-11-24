@@ -146,23 +146,15 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
 
         view.findViewById(R.id.btn_sort).setOnClickListener(v -> showSortDialog());
         updateViewToggleIcon(view);
-        ImageButton initialEye = view.findViewById(R.id.btn_photo_toggle);
+        ImageButton initialEye = view.findViewById(R.id.btn_photo_toggle_save);
         initialEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-        view.findViewById(R.id.btn_photo_toggle).setOnClickListener(v -> {
-            photosVisible = !photosVisible;
-            adapter.setPhotosVisible(photosVisible);
-            ImageButton eye = view.findViewById(R.id.btn_photo_toggle);
-            eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
-            AnimUtils.playAnimated(eye);
-        });
+        initialEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
         view.findViewById(R.id.btn_photo_toggle_save).setOnClickListener(v -> {
             photosVisible = !photosVisible;
             adapter.setPhotosVisible(photosVisible);
             ImageButton eye = view.findViewById(R.id.btn_photo_toggle_save);
-            ImageButton topEye = view.findViewById(R.id.btn_photo_toggle);
             int icon = photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off;
-            eye.setImageResource(icon); topEye.setImageResource(icon);
+            eye.setImageResource(icon);
             eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
         });
         view.findViewById(R.id.btn_view_toggle).setOnClickListener(v -> {
@@ -566,6 +558,13 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         job.saved = newState;
         Repository.get(requireContext()).saveJob(job.jobId, newState, result -> {
             if (!isAdded()) return;
+            if (!result.ok && !result.queued) {
+                job.saved = !newState;
+                adapter.updateJob(job);
+                Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            if (result.ok && result.data != null) job.saved = result.data;
             if (newState) {
                 Snackbar.make(requireView(), R.string.offer_saved, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {

@@ -356,6 +356,14 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
         job.saved = newState;
         Repository.get(requireContext()).saveJob(job.jobId, newState, result -> {
             if (!isAdded()) return;
+            if (!result.ok && !result.queued) {
+                job.saved = !newState;
+                recommendedAdapter.updateJob(job);
+                newAdapter.updateJob(job);
+                Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            if (result.ok && result.data != null) job.saved = result.data;
             if (newState) {
                 Snackbar.make(requireView(), R.string.offer_saved, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, v -> {

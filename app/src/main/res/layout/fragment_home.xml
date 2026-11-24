@@ -173,12 +173,6 @@
                     android:text="@string/recommended"
                     android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_view_toggle"
-                    style="@style/Widget.CubaPincha.Button.Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/change_view" />
                 <ImageButton
                     android:id="@+id/btn_home_photo_toggle"
                     android:layout_width="44dp"
@@ -188,6 +182,12 @@
                     android:contentDescription="Mostrar fotos"
                     android:src="@drawable/ic_visibility_off"
                     app:tint="?attr/colorPrimary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_toggle"
+                    style="@style/Widget.CubaPincha.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/change_view" />
             </LinearLayout>
 
             <LinearLayout

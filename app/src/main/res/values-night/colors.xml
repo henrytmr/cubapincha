@@ -6,7 +6,7 @@
     <color name="cpViolet">#65D8D8</color>
     <color name="cpCoral">#65D8D8</color>
     <color name="cpMint">#65D8D8</color>
-    <color name="cpSun">#FFD27A</color>
+    <color name="cpSun">#B98526</color>
     <color name="cpCream">#F4F3EE</color>
     <color name="cpWhite">#FFFFFF</color>
     <color name="cpOutline">#526574</color>
@@ -36,6 +36,6 @@
     <color name="icon_muted">#AABBC6</color>
     <color name="mint_soft">#29473D</color>
     <color name="night_blue">#65D8D8</color>
-    <color name="amber_notice">#FFD27A</color>
+    <color name="amber_notice">#B98526</color>
     <color name="error_red">#FF9A92</color>
 </resources>

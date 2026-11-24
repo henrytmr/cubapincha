@@ -85,7 +85,13 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         UiUtils.setDebouncedClickListener(h.avatarPhoto, v -> listener.onProfileClick(w));
         h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
-        h.photoEye.setVisibility(photosVisible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
+        h.photoEye.setVisibility(View.VISIBLE);
+        h.photoEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+        h.photoEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+        UiUtils.setDebouncedClickListener(h.photoEye, v -> {
+            photosVisible = !photosVisible;
+            notifyDataSetChanged();
+        });
         h.photo.setVisibility(photosVisible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
         if (h.photo.getVisibility() == View.VISIBLE) NetworkImageLoader.load(h.photo, w.photoThumbUrl);
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));

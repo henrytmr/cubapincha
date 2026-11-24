@@ -1,23 +1,21 @@
-# Registro de pruebas — CubaPincha 2.11.3
+# CubaPincha 2.11.4 — registro de pruebas
 
-## Validaciones ejecutadas
+## Comprobaciones estáticas
 
-- Rama creada desde la etiqueta segura `cubapincha-2.11.2-segura`, commit base `355ceea5e42da86af92276d670496cd9c87e5dda`.
-- `git diff --check`: correcto.
-- Parseo de todos los XML de `app/src/main/res`: correcto.
-- Balance de llaves Java en los archivos modificados: correcto.
-- Verificación de referencias nuevas: `input_min_match`, ojitos de Buscar/Inicio/empresa, `btn_clear_cache` y deep link de trabajador presentes en código y layouts.
-- El contrato v25 de `invited`, `invitedOfferId`, `uninviteWorker` y `publicWorker` quedó implementado solo en el cliente Android.
+- [x] Rama de trabajo derivada del punto de restauración 2.11.3.
+- [x] `versionName 2.11.4` y `versionCode 29`.
+- [x] Aviso sin conexión con amarillo más oscuro en claro y oscuro.
+- [x] Inicio: ojito antes de Cambiar vista.
+- [x] Ojitos de Inicio, Buscar, Panel empresa y tarjetas permanecen visibles y alternan abierto/cerrado.
+- [x] Buscar conserva un solo ojito junto a Guardar búsqueda.
+- [x] Reportar usa escudo `gpp_maybe` y colores del tema.
+- [x] Crear oferta: calidad, modo, foto, extracción; Publicar en la cabecera; sin destello final duplicado.
+- [x] Guardado de ofertas y perfiles: estado confirmado, bloqueo lógico/reversión ante error y cola offline preservada.
 
-## Compilación
+## Validación local
 
-- `./gradlew :app:assembleRelease` local: no ejecutable en este sandbox porque no existe Android SDK; el error exacto fue `SDK location not found`.
-- La validación de compilación release firmada queda asignada a Codemagic workflow `android-release`, después de publicar la rama y el commit exactos.
+La comprobación `./gradlew :app:assembleDebug` quedó bloqueada en este sandbox porque no existe Android SDK (`SDK location not found`); no se creó `local.properties`.
 
-## No ejecutado
+## Validación en dispositivo
 
-- [ ] Build firmado en Codemagic y descarga de `app-release.apk`.
-- [ ] Instalación y prueba física en teléfono.
-- [ ] Pruebas runtime con cuenta real: invitación/deshacer, filtro empresarial, compartir perfil y deep link, conexión WhatsApp, guardado offline, caché offline, borrado de caché, edición al 100%, estados de candidatura y avisos de vencimiento.
-
-La prueba física final corresponde al teléfono del usuario; esta bitácora no la presenta como realizada.
+Pendiente de ejecutar con la APK firmada de Codemagic en teléfono Android. Debe cubrir ambos roles, claro/oscuro, online/offline y doble toque.

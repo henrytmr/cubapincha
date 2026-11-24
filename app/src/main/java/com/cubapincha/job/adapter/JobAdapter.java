@@ -258,7 +258,13 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             bindSaveButton(saveBtn, job);
             bindWhatsappButton(whatsappBtn, job);
-            photoEye.setVisibility(View.GONE);
+            photoEye.setVisibility(View.VISIBLE);
+            photoEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            photoEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+            UiUtils.setDebouncedClickListener(photoEye, v -> {
+                photosVisible = !photosVisible;
+                notifyDataSetChanged();
+            });
             boolean hasPhoto = photosVisible && job.photoThumbUrl != null && !job.photoThumbUrl.isEmpty();
             photo.setVisibility(hasPhoto ? View.VISIBLE : View.GONE);
             photo.setBackgroundResource(hasPhoto ? R.drawable.bg_skeleton : android.R.color.transparent);

@@ -226,6 +226,14 @@
                 android:text="Trabajadores recomendados"
                 android:textAppearance="?attr/textAppearanceTitleMedium" />
             <ImageButton
+                android:id="@+id/btn_dashboard_photo_toggle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Mostrar fotos"
+                android:src="@drawable/ic_visibility_off"
+                app:tint="?attr/colorPrimary" />
+            <ImageButton
                 android:id="@+id/btn_explore_workers"
                 android:layout_width="40dp" android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"

@@ -33,6 +33,7 @@ import java.util.Locale;
 public class DashboardFragment extends Fragment implements RecommendedWorkerAdapter.Listener {
     private RecommendedWorkerAdapter recommendedAdapter;
     private View root;
+    private boolean photosVisible;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -65,7 +66,15 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
         RecyclerView list = view.findViewById(R.id.list_recommended);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         recommendedAdapter = new RecommendedWorkerAdapter(this);
+        recommendedAdapter.setPhotosVisible(photosVisible);
         list.setAdapter(recommendedAdapter);
+        android.widget.ImageButton eye = view.findViewById(R.id.btn_dashboard_photo_toggle);
+        eye.setOnClickListener(v -> {
+            photosVisible = !photosVisible;
+            recommendedAdapter.setPhotosVisible(photosVisible);
+            eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+        });
         View explorer = view.findViewById(R.id.btn_explore_workers);
         if (explorer != null) explorer.setOnClickListener(v -> ((MainActivity) requireActivity()).pushFragment(new WorkerSearchFragment()));
         view.findViewById(R.id.btn_publish).setOnClickListener(v -> activity.openCreateJob(null));
@@ -124,9 +133,19 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
     }
 
     @Override public void onSaveClick(RecommendedWorker worker) {
-        Repository.get(requireContext()).saveCandidate(worker.workerId, null, !worker.saved, result -> {
-            if (isAdded() && root != null) Snackbar.make(root,
-                    result.ok ? "Perfil guardado." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
+        boolean requested = worker.saved;
+        Repository.get(requireContext()).saveCandidate(worker.workerId, null, requested, result -> {
+            if (!isAdded() || root == null) return;
+            if (!result.ok && !result.queued) {
+                worker.saved = !requested;
+                recommendedAdapter.notifyDataSetChanged();
+            } else if (result.ok && result.data != null) {
+                worker.saved = result.data;
+                recommendedAdapter.notifyDataSetChanged();
+            }
+            Snackbar.make(root, result.ok || result.queued
+                    ? (requested ? "Perfil guardado." : "Perfil quitado de guardados.")
+                    : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
         });
     }
 

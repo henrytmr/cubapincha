@@ -653,6 +653,7 @@ public class Repository {
             if (isDemoMode()) {
                 ApiResult<Boolean> r = activeClient().saveJob(jobId, save);
                 if (!r.ok) db.setSaved(jobId, wasSaved);
+                else if (r.data != null) db.setSaved(jobId, r.data);
                 return r;
             }
             if (!isOnline()) {
@@ -675,6 +676,7 @@ public class Repository {
             }
             ApiResult<Boolean> r = activeClient().saveJob(jobId, save);
             if (!r.ok) db.setSaved(jobId, wasSaved);
+            else if (r.data != null) db.setSaved(jobId, r.data);
             return r;
         }, cb);
     }
@@ -703,9 +705,17 @@ public class Repository {
                 ApiResult<Boolean> result = offlineOr(() -> activeClient().saveCandidate(workerId, applicationId, save),
                         "saveCandidate", payload);
                 if (!result.ok && !result.queued) db.setSavedCandidate(cached, wasSaved);
+                else if (result.ok && result.data != null) db.setSavedCandidate(cached, result.data);
                 return result;
             } catch (Exception e) {
-                return ApiResult.fail("INTERNAL_ERROR", "");
+                // Nunca dejar el perfil marcado/desmarcado si la construcción de
+                // la petición o el almacenamiento local falla.
+                try {
+                    RecommendedWorker rollback = new RecommendedWorker();
+                    rollback.workerId = workerId;
+                    db.setSavedCandidate(rollback, wasSaved);
+                } catch (Exception ignored) { }
+                return ApiResult.fail("INTERNAL_ERROR", "No se pudo guardar el perfil. Inténtalo de nuevo.");
             }
         }, cb);
     }
