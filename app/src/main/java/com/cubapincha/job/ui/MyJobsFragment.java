@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Gravity;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
 import com.cubapincha.job.R;
 import com.cubapincha.job.adapter.CompanyJobAdapter;
 import com.cubapincha.job.data.JobFilter;
@@ -357,42 +358,53 @@ public class MyJobsFragment extends Fragment implements CompanyJobAdapter.Listen
                 () -> reactivate(job));
         if (canDelete) addActionCard(content, R.drawable.ic_trash, R.string.delete,
                 () -> confirmDelete(job));
-        new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(job.title)
                 .setView(content)
                 .setNegativeButton(R.string.cancel, null)
                 .show();
+        dialog.getWindow().setBackgroundDrawable(new GradientDrawable() {{
+            setColor(MaterialColors.getColor(content, com.google.android.material.R.attr.colorSurface));
+            setCornerRadius(20 * getResources().getDisplayMetrics().density);
+        }});
+        TextView cancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        int primary = MaterialColors.getColor(content, com.google.android.material.R.attr.colorPrimary);
+        GradientDrawable outline = new GradientDrawable();
+        outline.setColor(Color.TRANSPARENT);
+        outline.setCornerRadius(18 * getResources().getDisplayMetrics().density);
+        outline.setStroke((int) (1 * getResources().getDisplayMetrics().density), primary);
+        cancel.setTextColor(primary);
+        cancel.setBackground(outline);
+        cancel.setPadding((int) (16 * getResources().getDisplayMetrics().density), 0,
+                (int) (16 * getResources().getDisplayMetrics().density), 0);
     }
 
     private void addActionCard(LinearLayout parent, int iconRes, int textRes, Runnable action) {
         float density = getResources().getDisplayMetrics().density;
-        MaterialCardView card = new MaterialCardView(requireContext());
-        card.setRadius(18 * density);
-        card.setCardElevation(1 * density);
-        card.setClickable(true);
-        card.setFocusable(true);
         LinearLayout row = new LinearLayout(requireContext());
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding((int) (18 * density), (int) (6 * density),
-                (int) (18 * density), (int) (6 * density));
+        row.setPadding((int) (12 * density), (int) (8 * density),
+                (int) (12 * density), (int) (8 * density));
+        row.setClickable(true);
+        row.setFocusable(true);
         ImageView icon = new ImageView(requireContext());
         icon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), iconRes, requireContext().getTheme()));
         icon.setImageTintList(android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.brand_primary)));
-        row.addView(icon, new LinearLayout.LayoutParams((int) (40 * density), (int) (40 * density)));
+                MaterialColors.getColor(row, com.google.android.material.R.attr.colorPrimary)));
+        row.addView(icon, new LinearLayout.LayoutParams((int) (32 * density), (int) (32 * density)));
         TextView label = new TextView(requireContext());
         label.setText(textRes);
         label.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium);
         LinearLayout.LayoutParams textLp = new LinearLayout.LayoutParams(0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-        textLp.setMarginStart(12);
+        textLp.setMarginStart((int) (12 * density));
         row.addView(label, textLp);
-        card.addView(row);
-        LinearLayout.LayoutParams cardLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        cardLp.setMargins(0, (int) (4 * density), 0, (int) (4 * density));
-        parent.addView(card, cardLp);
-        card.setOnClickListener(v -> action.run());
+        parent.addView(row, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        View divider = new View(requireContext());
+        divider.setBackgroundColor(MaterialColors.getColor(parent, com.google.android.material.R.attr.colorOutlineVariant));
+        parent.addView(divider, new LinearLayout.LayoutParams(-1, Math.max(1, (int) density)));
+        row.setOnClickListener(v -> action.run());
     }
 
     private void publish(Job job) {

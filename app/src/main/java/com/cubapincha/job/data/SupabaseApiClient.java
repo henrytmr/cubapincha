@@ -560,9 +560,13 @@ public class SupabaseApiClient implements ApiClient {
     }
 
     @Override
-    public ApiResult<List<RecommendedWorker>> getRecommendedWorkers(int minMatch, int limit) {
+    public ApiResult<List<RecommendedWorker>> getRecommendedWorkers(String q, String provinceCode, String municipalityCode, String category, int minMatch, int limit) {
         try {
             JSONObject params = new JSONObject();
+            if (q != null && !q.trim().isEmpty()) params.put("q", q.trim());
+            if (provinceCode != null && !provinceCode.isEmpty()) params.put("provinceCode", provinceCode);
+            if (municipalityCode != null && !municipalityCode.isEmpty()) params.put("municipalityCode", municipalityCode);
+            if (category != null && !category.isEmpty()) params.put("category", category);
             params.put("minMatch", Math.max(0, Math.min(100, minMatch)));
             params.put("limit", Math.max(1, Math.min(20, limit)));
             JSONObject resp = doRead("matchWorkers", params);

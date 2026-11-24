@@ -64,6 +64,8 @@ public class Job {
     public String applicationStatus; // null si no hay interés
     public String contactPhone;  // solo demo / contacto autorizado
     public boolean whatsappEnabled;
+    public double ratingAverage;
+    public int ratingTotal;
 
     public Job() {}
 
@@ -289,6 +291,8 @@ public class Job {
                 ? o.optString("applicationStatus") : null;
         j.contactPhone = o.optString("contactPhone", "");
         j.whatsappEnabled = o.optBoolean("whatsappEnabled", false);
+        j.ratingAverage = o.optDouble("ratingAverage", 0d);
+        j.ratingTotal = o.optInt("ratingTotal", 0);
         return j;
     }
 

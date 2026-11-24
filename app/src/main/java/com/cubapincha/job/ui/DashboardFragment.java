@@ -66,6 +66,8 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         recommendedAdapter = new RecommendedWorkerAdapter(this);
         list.setAdapter(recommendedAdapter);
+        View explorer = view.findViewById(R.id.btn_explore_workers);
+        if (explorer != null) explorer.setOnClickListener(v -> ((MainActivity) requireActivity()).pushFragment(new WorkerSearchFragment()));
         view.findViewById(R.id.btn_publish).setOnClickListener(v -> activity.openCreateJob(null));
         SwipeRefreshLayout refresh = view.findViewById(R.id.swipe_refresh);
         refresh.setOnRefreshListener(() -> loadStats(view, refresh));
@@ -122,7 +124,7 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
     }
 
     @Override public void onSaveClick(RecommendedWorker worker) {
-        Repository.get(requireContext()).saveCandidate(worker.workerId, null, true, result -> {
+        Repository.get(requireContext()).saveCandidate(worker.workerId, null, !worker.saved, result -> {
             if (isAdded() && root != null) Snackbar.make(root,
                     result.ok ? "Perfil guardado." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
         });

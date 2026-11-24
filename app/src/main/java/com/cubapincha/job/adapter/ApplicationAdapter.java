@@ -6,6 +6,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +30,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         void onApplicationClick(Application app);
         void onTrackingClick(Application app);
         void onRateClick(Application app);
+        default void onSwipeWithdraw(Application app) { }
     }
 
     private final List<Application> items = new ArrayList<>();
@@ -100,6 +107,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     public int getItemCount() {
         return items.size();
     }
+    public void remove(Application app) { int i = items.indexOf(app); if (i >= 0) { items.remove(i); notifyItemRemoved(i); } }
 
     static class Holder extends RecyclerView.ViewHolder {
         TextView title, company, status, date, tracking, rate;

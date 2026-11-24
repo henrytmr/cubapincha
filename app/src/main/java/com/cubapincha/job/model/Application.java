@@ -35,6 +35,8 @@ public class Application {
     public String reminderSentAt;
     public String createdAt;
     public String updatedAt;
+    public double ratingAverage;
+    public int ratingTotal;
 
     public static String statusLabel(String status) {
         if (status == null) return "";
@@ -130,6 +132,8 @@ public class Application {
         a.reminderSentAt = o.optString("reminderSentAt", "");
         a.createdAt = o.optString("createdAt", "");
         a.updatedAt = o.optString("updatedAt", "");
+        a.ratingAverage = o.optDouble("ratingAverage", 0d);
+        a.ratingTotal = o.optInt("ratingTotal", 0);
         return a;
     }
 

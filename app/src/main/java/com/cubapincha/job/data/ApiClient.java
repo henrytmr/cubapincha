@@ -66,7 +66,8 @@ public interface ApiClient {
     /** Trabajadores guardados por la empresa, contrato v17. */
     ApiResult<List<RecommendedWorker>> getSavedCandidates(int limit, String cursor);
 
-    ApiResult<List<RecommendedWorker>> getRecommendedWorkers(int minMatch, int limit);
+    default ApiResult<List<RecommendedWorker>> getRecommendedWorkers(int minMatch, int limit) { return getRecommendedWorkers(null,null,null,null,minMatch,limit); }
+    ApiResult<List<RecommendedWorker>> getRecommendedWorkers(String q, String provinceCode, String municipalityCode, String category, int minMatch, int limit);
 
     ApiResult<Boolean> inviteWorker(String workerId, String offerId, String message);
 

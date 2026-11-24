@@ -10,6 +10,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +42,8 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public interface Listener {
         void onJobClick(Job job);
         void onSaveClick(Job job, ImageButton saveButton);
+        default void onRatingClick(Job job) { }
+        default void onRatingClick(Job job) { }
     }
 
     private final List<Job> jobs = new ArrayList<>();
@@ -183,7 +191,8 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     class CardHolder extends RecyclerView.ViewHolder {
-        TextView avatar, title, company, location, mode, salary, date, matchLabel, closedLabel;
+        TextView avatar, title, company, location, mode, salary, date, matchLabel, closedLabel, ratingText;
+        RatingStarsView ratingStars;
         ImageView verified;
         ImageButton saveBtn, whatsappBtn;
         View btnView;
@@ -194,6 +203,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             avatar = itemView.findViewById(R.id.company_avatar);
             title = itemView.findViewById(R.id.job_title);
             company = itemView.findViewById(R.id.company_name);
+            ratingStars = itemView.findViewById(R.id.company_rating_stars); ratingText = itemView.findViewById(R.id.company_rating_text);
             verified = itemView.findViewById(R.id.verified_icon);
             location = itemView.findViewById(R.id.job_location);
             mode = itemView.findViewById(R.id.job_mode);

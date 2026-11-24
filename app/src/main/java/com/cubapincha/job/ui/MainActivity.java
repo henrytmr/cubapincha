@@ -385,7 +385,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (session.isLoggedIn()) PushManager.refreshToken(this);
+        if (session.isLoggedIn()) {
+            PushManager.refreshToken(this);
+            if (android.os.Build.VERSION.SDK_INT >= 33 && androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1301);
+        }
         updateNotificationBadge();
         // Navegaciones que llegaron con la app en segundo plano.
         drainPendingNavigation();

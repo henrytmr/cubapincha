@@ -6,6 +6,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cubapincha.job.R;

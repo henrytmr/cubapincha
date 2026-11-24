@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import com.google.android.material.snackbar.Snackbar;
 
 import com.google.android.material.tabs.TabLayout;
 import com.cubapincha.job.R;
@@ -52,6 +54,15 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ApplicationAdapter(this);
         list.setAdapter(adapter);
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder a, @NonNull RecyclerView.ViewHolder b) { return false; }
+            @Override public void onSwiped(@NonNull RecyclerView.ViewHolder holder, int direction) {
+                int pos = holder.getBindingAdapterPosition(); if (pos == RecyclerView.NO_POSITION || shown == null || pos >= shown.size()) return;
+                Application app = shown.remove(pos); adapter.remove(app);
+                Repository.get(requireContext()).changeApplicationStatus(app.applicationId, "withdrawn", null, result -> { if (!result.ok && isAdded()) { shown.add(pos, app); adapter.setItems(shown); Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } });
+                Snackbar.make(requireView(), "Interés retirado", Snackbar.LENGTH_LONG).setAction("Deshacer", v -> { shown.add(pos, app); adapter.setItems(shown); Repository.get(requireContext()).changeApplicationStatus(app.applicationId, "sent", null, ignored -> { }); }).show();
+            }
+        }).attachToRecyclerView(list);
         skeletonContainer = view.findViewById(R.id.skeleton_container);
         emptyState = view.findViewById(R.id.empty_state);
         errorState = view.findViewById(R.id.error_state);

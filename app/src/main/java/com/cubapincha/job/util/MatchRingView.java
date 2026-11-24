@@ -84,14 +84,13 @@ public class MatchRingView extends View {
         int ringColor;
         int textColor;
         if (this.percent >= 90) {
-            ringColor = ContextCompat.getColor(getContext(), R.color.mint_400);
-            textColor = ContextCompat.getColor(getContext(), R.color.success_text);
-        } else if (this.percent >= 50) {
-            ringColor = ContextCompat.getColor(getContext(), R.color.violet_500);
-            textColor = ringColor;
-        } else {
             ringColor = ContextCompat.getColor(getContext(), R.color.sun_300);
             textColor = ContextCompat.getColor(getContext(), R.color.warning_text);
+        } else {
+            // El dorado comunica coincidencia excepcional únicamente; todo
+            // lo inferior a 90% mantiene el acento turquesa de la marca.
+            ringColor = ContextCompat.getColor(getContext(), R.color.mint_400);
+            textColor = ringColor;
         }
         fgPaint.setColor(ringColor);
         textPaint.setColor(textColor);

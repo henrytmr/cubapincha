@@ -595,7 +595,7 @@ public class DemoApiClient implements ApiClient {
     }
 
     @Override
-    public ApiResult<List<RecommendedWorker>> getRecommendedWorkers(int minMatch, int limit) {
+    public ApiResult<List<RecommendedWorker>> getRecommendedWorkers(String q, String provinceCode, String municipalityCode, String category, int minMatch, int limit) {
         latency();
         List<RecommendedWorker> out = new ArrayList<>();
         for (Application a : candidates) {
@@ -618,7 +618,7 @@ public class DemoApiClient implements ApiClient {
         java.util.Set<String> ids = new java.util.HashSet<>();
         JSONArray saved = db.getDemoState(KEY_SAVED_CANDIDATES);
         if (saved != null) for (int i = 0; i < saved.length(); i++) ids.add(saved.optString(i, ""));
-        List<RecommendedWorker> all = getRecommendedWorkers(0, 100).data;
+        List<RecommendedWorker> all = getRecommendedWorkers(null, null, null, null, 0, 100).data;
         List<RecommendedWorker> out = new ArrayList<>();
         for (RecommendedWorker w : all) if (ids.contains(w.workerId)) out.add(w);
         return ApiResult.success(out);

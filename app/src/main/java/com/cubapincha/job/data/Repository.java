@@ -692,7 +692,9 @@ public class Repository {
         }, cb);
     }
 
-    public void getRecommendedWorkers(int minMatch, int limit,
+    public void getRecommendedWorkers(int minMatch, int limit, ApiCallback<List<RecommendedWorker>> cb) { getRecommendedWorkers(null,null,null,null,minMatch,limit,cb); }
+
+    public void getRecommendedWorkers(String q, String provinceCode, String municipalityCode, String category, int minMatch, int limit,
                                       ApiCallback<List<RecommendedWorker>> cb) {
         run(() -> {
             if (!isDemoMode() && !isOnline()) {
@@ -701,7 +703,7 @@ public class Repository {
                         ? ApiResult.fail("NO_CONNECTION", "Necesitas conexión para cargar trabajadores recomendados.")
                         : ApiResult.success(cached);
             }
-            ApiResult<List<RecommendedWorker>> r = activeClient().getRecommendedWorkers(minMatch, limit);
+            ApiResult<List<RecommendedWorker>> r = activeClient().getRecommendedWorkers(q, provinceCode, municipalityCode, category, minMatch, limit);
             if (r.ok && r.data != null) db.cacheRecommendedWorkers(r.data);
             return r;
         }, cb);

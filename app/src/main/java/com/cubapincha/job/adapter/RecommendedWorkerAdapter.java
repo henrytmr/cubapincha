@@ -6,6 +6,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
+import androidx.fragment.app.Fragment;
+import com.cubapincha.job.ui.RatingStarsView;
+import com.cubapincha.job.ui.RatingUi;
 import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ImageButton;
 
@@ -55,7 +61,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.name.setText(w.workerName);
         h.headline.setText(w.headline == null || w.headline.isEmpty() ? "Perfil profesional" : w.headline);
         h.location.setText(w.locationText());
-        h.mode.setText(w.workModes == null || w.workModes.isEmpty() ? "Presencial" : w.workModes.get(0));
+        h.mode.setText(readableMode(w.workModes));
         h.salary.setText(w.salaryText());
         h.date.setText("Perfil profesional");
         h.ring.setPercent(w.matchPercent, true);
@@ -66,6 +72,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
         UiUtils.setDebouncedClickListener(h.save, v -> {
             AnimUtils.pop(h.save);
+            w.saved = !w.saved;
+            h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
             listener.onSaveClick(w);
         });
         int pos = h.getBindingAdapterPosition();
@@ -76,6 +84,15 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
     }
 
     @Override public int getItemCount() { return items.size(); }
+    private static String readableMode(List<String> modes) {
+        if (modes == null || modes.isEmpty()) return "Presencial";
+        String code = modes.get(0);
+        if ("por_zonas".equals(code)) return "Por zonas";
+        if ("hibrido".equals(code)) return "Híbrido";
+        if ("remoto".equals(code)) return "Remoto";
+        if ("presencial".equals(code)) return "Presencial";
+        return code.replace("_", " ");
+    }
 
     static class Holder extends RecyclerView.ViewHolder {
         TextView avatar, name, headline, location, mode, salary, date, profile, matchLabel;

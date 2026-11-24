@@ -56,6 +56,10 @@
                 android:layout_height="48dp" />
         </LinearLayout>
 
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8" android:gravity="center_vertical" android:orientation="horizontal">
+            <com.cubapincha.job.ui.RatingStarsView android:id="@+id/worker_rating_stars" android:layout_width="100dp" android:layout_height="22dp"/>
+            <TextView android:id="@+id/worker_rating_rating_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:textAppearance="?attr/textAppearanceBodySmall"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/job_info"
             android:layout_width="wrap_content"

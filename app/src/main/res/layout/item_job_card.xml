@@ -96,6 +96,10 @@
                 android:src="@drawable/ic_bookmark" />
         </LinearLayout>
 
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8" android:gravity="center_vertical" android:orientation="horizontal">
+            <com.cubapincha.job.ui.RatingStarsView android:id="@+id/company_rating_stars" android:layout_width="100dp" android:layout_height="22dp"/>
+            <TextView android:id="@+id/company_rating_rating_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:textAppearance="?attr/textAppearanceBodySmall"/>
+        </LinearLayout>
         <!-- Bloque de datos: ritmo uniforme de 12dp entre filas (antes 16/8,
              que se veía agrupado) y 6dp entre icono y texto. -->
         <LinearLayout

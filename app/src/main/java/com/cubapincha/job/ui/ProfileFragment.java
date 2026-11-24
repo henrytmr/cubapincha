@@ -107,6 +107,7 @@ public class ProfileFragment extends Fragment {
         roleStatus.setText(company ? "Empresa · " + statusLabel(session.getStatus())
                 : "Trabajador · " + statusLabel(session.getStatus()));
         View companyBell = view.findViewById(R.id.btn_company_notifications);
+        if (companyBell != null) companyBell.setVisibility(View.GONE);
         if (companyBell != null) {
             companyBell.setVisibility(View.GONE);
         }

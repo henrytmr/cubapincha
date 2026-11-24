@@ -460,6 +460,17 @@ public class CreateJobFragment extends Fragment {
     }
 
     private void publishFlow() {
+        Repository.get(requireContext()).me(profile -> {
+            if (!isAdded()) return;
+            if (!profile.ok || profile.data == null || profile.data.phone == null || profile.data.phone.trim().isEmpty()) {
+                Snackbar.make(snackbarAnchor(), "Agrega tu número de teléfono para publicar", Snackbar.LENGTH_LONG)
+                        .setAction("Perfil", v -> ((MainActivity) requireActivity()).openEditProfile()).show();
+                return;
+            }
+            publishFlowAfterPhone();
+        });
+    }
+    private void publishFlowAfterPhone() {
         Job draft = buildJob();
         if (draft == null) return;
         Repository repo = Repository.get(requireContext());

@@ -24,26 +24,7 @@
                 android:layout_weight="1"
                 android:text="@string/nav_profile"
                 android:textAppearance="?attr/textAppearanceTitleLarge" />
-            <FrameLayout
-                android:layout_width="48dp"
-                android:layout_height="48dp">
-                <ImageButton
-                    android:id="@+id/btn_company_notifications"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/nav_notifications"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_bell"
-                    app:tint="?attr/colorPrimary" />
-                <TextView
-                    android:id="@+id/company_notification_dot"
-                    android:layout_width="9dp"
-                    android:layout_height="9dp"
-                    android:layout_gravity="top|end"
-                    android:background="@drawable/bg_notification_dot"
-                    android:visibility="gone" />
-            </FrameLayout>
+
         </LinearLayout>
 
         <LinearLayout
