@@ -348,6 +348,8 @@ public class Job {
             if (applicationStatus != null) o.put("applicationStatus", applicationStatus);
             o.put("contactPhone", contactPhone);
             o.put("whatsappEnabled", whatsappEnabled);
+            o.put("photoUrl", photoUrl);
+            o.put("photoThumbUrl", photoThumbUrl);
         } catch (Exception ignored) { }
         return o;
     }

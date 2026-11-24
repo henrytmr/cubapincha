@@ -3,6 +3,7 @@ package com.cubapincha.job.ui;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import com.cubapincha.job.util.NetworkImageLoader;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -129,6 +130,11 @@ public class ProfileFragment extends Fragment {
         progress.setProgress(percent);
         repo.me(result -> {
             if (!isAdded() || !result.ok || result.data == null) return;
+            if (result.data.photoThumbUrl != null && !result.data.photoThumbUrl.isEmpty()) {
+                NetworkImageLoader.load(avatarPhoto, result.data.photoThumbUrl);
+                avatarPhoto.setVisibility(View.VISIBLE);
+                avatar.setVisibility(View.GONE);
+            }
             int freshPercent = Math.max(0, Math.min(100, result.data.profilePercent));
             percentText.setText(getString(R.string.profile_percent, freshPercent));
             progress.setProgress(freshPercent);

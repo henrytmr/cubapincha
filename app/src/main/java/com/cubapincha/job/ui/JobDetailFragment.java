@@ -36,6 +36,7 @@ import com.cubapincha.job.model.User;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
 import com.cubapincha.job.util.MatchUtils;
+import com.cubapincha.job.util.NetworkImageLoader;
 import com.cubapincha.job.util.ShareUtils;
 import com.cubapincha.job.util.TextUtils;
 
@@ -214,6 +215,9 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         view.findViewById(R.id.trust_today).setVisibility(View.GONE);
         view.findViewById(R.id.trust_contact).setVisibility(worker.phone == null || worker.phone.isEmpty() ? View.GONE : View.VISIBLE);
         view.findViewById(R.id.closed_label).setVisibility(View.GONE);
+        ImageView workerPhoto = view.findViewById(R.id.job_photo);
+        workerPhoto.setVisibility(worker.photoUrl == null || worker.photoUrl.isEmpty() ? View.GONE : View.VISIBLE);
+        if (workerPhoto.getVisibility() == View.VISIBLE) NetworkImageLoader.load(workerPhoto, worker.photoUrl);
         String modes = worker.workModes == null || worker.workModes.isEmpty() ? "Modalidad no especificada" : TextUtils.joinComma(worker.workModes);
         ((TextView) view.findViewById(R.id.job_meta)).setText(worker.locationText() + " · " + modes);
         ((TextView) view.findViewById(R.id.job_salary)).setText(worker.salaryText());
@@ -398,6 +402,9 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         date.setText("Publicada " + TextUtils.timeAgo(job.publishedAt).toLowerCase());
         TextView description = view.findViewById(R.id.job_description);
         description.setText(job.description);
+        ImageView jobPhoto = view.findViewById(R.id.job_photo);
+        jobPhoto.setVisibility(job.photoUrl == null || job.photoUrl.isEmpty() ? View.GONE : View.VISIBLE);
+        if (jobPhoto.getVisibility() == View.VISIBLE) NetworkImageLoader.load(jobPhoto, job.photoUrl);
         setListText(view, R.id.job_responsibilities, job.responsibilities);
         setListText(view, R.id.job_requirements, job.requirements);
         setListText(view, R.id.job_benefits, job.benefits);

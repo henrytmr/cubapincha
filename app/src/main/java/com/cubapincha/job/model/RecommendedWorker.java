@@ -63,6 +63,8 @@ public class RecommendedWorker {
             o.put("ratingAverage", ratingAverage); o.put("ratingTotal", ratingTotal); o.put("matchPercent", matchPercent);
             o.put("matchReasons", Job.listToJson(matchReasons)); o.put("matchedOfferId", matchedOfferId); o.put("matchedOfferTitle", matchedOfferTitle);
             o.put("saved", saved);
+            o.put("photoUrl", photoUrl);
+            o.put("photoThumbUrl", photoThumbUrl);
         } catch (Exception ignored) { }
         return o;
     }

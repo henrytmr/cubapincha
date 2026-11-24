@@ -114,6 +114,14 @@
             android:maxLines="3"
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceBodySmall" />
+        <ImageView
+            android:id="@+id/job_photo"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="@dimen/space_16"
+            android:scaleType="centerCrop"
+            android:contentDescription="Foto de la oferta"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"

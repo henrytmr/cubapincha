@@ -25,6 +25,7 @@ import com.cubapincha.job.model.Job;
 import com.cubapincha.job.ui.UiUtils;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
+import com.cubapincha.job.util.PhotoSwipeBinder;
 import com.cubapincha.job.util.TextUtils;
 
 import java.util.ArrayList;
@@ -193,8 +194,8 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class CardHolder extends RecyclerView.ViewHolder {
         TextView avatar, title, company, location, mode, salary, date, matchLabel, closedLabel;
         RatingStarsView ratingStars;
-        ImageView verified;
-        ImageButton saveBtn, whatsappBtn;
+        ImageView verified, photo;
+        ImageButton saveBtn, whatsappBtn, photoEye;
         View btnView;
         MatchRingView ring;
 
@@ -213,6 +214,8 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             closedLabel = itemView.findViewById(R.id.closed_label);
             saveBtn = itemView.findViewById(R.id.btn_save);
             whatsappBtn = itemView.findViewById(R.id.btn_whatsapp);
+            photoEye = itemView.findViewById(R.id.btn_job_photo_eye);
+            photo = itemView.findViewById(R.id.job_photo);
             btnView = itemView.findViewById(R.id.btn_view);
             ring = itemView.findViewById(R.id.match_ring);
         }
@@ -241,6 +244,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             bindSaveButton(saveBtn, job);
             bindWhatsappButton(whatsappBtn, job);
+            PhotoSwipeBinder.bind(itemView, photo, photoEye, job.photoThumbUrl);
             bindClick(itemView, job);
             bindClick(btnView, job);
             if (position > lastAnimatedPosition) {

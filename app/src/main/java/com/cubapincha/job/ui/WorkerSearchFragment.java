@@ -22,6 +22,7 @@ import com.cubapincha.job.R;
 import com.cubapincha.job.adapter.RecommendedWorkerAdapter;
 import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.model.SavedSearch;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -36,6 +37,7 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     private TextView resultsCount;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
+    private boolean sortByMatch;
 
     @Nullable
     @Override
@@ -98,8 +100,24 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
 
         filtersButton.setOnClickListener(v ->
                 filters.setVisibility(filters.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
-        sortButton.setOnClickListener(v -> Snackbar.make(root, "Orden: mayor coincidencia", Snackbar.LENGTH_SHORT).show());
-        saveSearch.setOnClickListener(v -> Snackbar.make(root, "Búsqueda lista para guardar desde tu perfil.", Snackbar.LENGTH_SHORT).show());
+        sortButton.setOnClickListener(v -> {
+            sortByMatch = !sortByMatch;
+            sortButton.setText(sortByMatch ? "Mayor coincidencia" : "Ordenar por");
+            searchWorkers();
+        });
+        saveSearch.setOnClickListener(v -> {
+            SavedSearch saved = new SavedSearch();
+            saved.name = value(query).isEmpty() ? "Trabajadores recomendados" : value(query);
+            saved.query = value(query);
+            saved.category = value(category);
+            saved.provinceCode = value(province);
+            saved.municipalityCode = value(municipality);
+            saved.sort = sortByMatch ? "match" : "recent";
+            saved.frequency = "off";
+            Repository.get(requireContext()).saveFilter(saved, result -> {
+                if (isAdded()) Snackbar.make(root, result.ok ? "Búsqueda guardada." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
+            });
+        });
 
         RecyclerView list = new RecyclerView(requireContext());
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -155,6 +173,7 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
                 categoryValue.isEmpty() ? null : categoryValue,
                 minimum, 100, result -> {
                     if (!isAdded() || !result.ok || result.data == null) return;
+                    if (sortByMatch) result.data.sort((a, b) -> Integer.compare(b.matchPercent, a.matchPercent));
                     adapter.setItems(result.data);
                     resultsCount.setText(result.data.size() + " trabajadores");
                 });

@@ -20,6 +20,8 @@ import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.ui.UiUtils;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
+import com.cubapincha.job.util.NetworkImageLoader;
+import com.cubapincha.job.util.PhotoSwipeBinder;
 import com.cubapincha.job.util.TextUtils;
 
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         AnimUtils.resetItemState(h.itemView);
         RecommendedWorker w = items.get(position);
         h.avatar.setText(TextUtils.initials(w.workerName));
+        h.avatarPhoto.setVisibility(w.photoThumbUrl == null || w.photoThumbUrl.isEmpty() ? View.GONE : View.VISIBLE);
+        if (h.avatarPhoto.getVisibility() == View.VISIBLE) NetworkImageLoader.load(h.avatarPhoto, w.photoThumbUrl);
         h.name.setText(w.workerName);
         h.headline.setText(w.headline == null || w.headline.isEmpty() ? "Perfil profesional" : w.headline);
         h.location.setText(w.locationText());
@@ -77,6 +81,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         UiUtils.setDebouncedClickListener(h.profile, v -> listener.onProfileClick(w));
         h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
+        PhotoSwipeBinder.bind(h.itemView, h.photo, h.photoEye, w.photoThumbUrl);
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
         UiUtils.setDebouncedClickListener(h.save, v -> {
             AnimUtils.pop(h.save);
@@ -104,11 +109,13 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
 
     static class Holder extends RecyclerView.ViewHolder {
         TextView avatar, name, headline, location, mode, salary, date, profile, matchLabel;
-        ImageButton save;
+        ImageButton save, photoEye;
+        android.widget.ImageView photo, avatarPhoto;
         MatchRingView ring;
         Holder(View v) {
             super(v);
             avatar = v.findViewById(R.id.recommended_avatar);
+            avatarPhoto = v.findViewById(R.id.recommended_avatar_photo);
             name = v.findViewById(R.id.recommended_name);
             headline = v.findViewById(R.id.recommended_headline);
             location = v.findViewById(R.id.recommended_location);
@@ -119,6 +126,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
             matchLabel = v.findViewById(R.id.recommended_match_label);
             ring = v.findViewById(R.id.recommended_match_ring);
             save = v.findViewById(R.id.btn_recommended_save);
+            photoEye = v.findViewById(R.id.btn_worker_photo_eye);
+            photo = v.findViewById(R.id.worker_photo);
         }
     }
 }
