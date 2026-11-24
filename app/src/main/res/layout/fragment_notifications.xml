@@ -42,8 +42,9 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_mark_all"
             style="@style/Widget.CubaPincha.Button.Text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/mark_all_read" />
 
         <com.google.android.material.button.MaterialButton

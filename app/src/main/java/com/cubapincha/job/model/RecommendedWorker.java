@@ -12,6 +12,8 @@ public class RecommendedWorker {
     public String userId;
     public String workerName;
     public String headline;
+    public String description;
+    public String availability;
     public String city;
     public String provinceName;
     public String municipalityName;
@@ -50,7 +52,7 @@ public class RecommendedWorker {
         JSONObject o = new JSONObject();
         try {
             o.put("workerId", workerId); o.put("userId", userId); o.put("workerName", workerName);
-            o.put("headline", headline); o.put("city", city); o.put("provinceName", provinceName);
+            o.put("headline", headline); o.put("description", description); o.put("availability", availability); o.put("city", city); o.put("provinceName", provinceName);
             o.put("municipalityName", municipalityName); o.put("skills", Job.listToJson(skills));
             if (experienceYears != null) o.put("experienceYears", experienceYears);
             o.put("workModes", Job.listToJson(workModes));
@@ -69,6 +71,8 @@ public class RecommendedWorker {
         w.userId = o.optString("userId", "");
         w.workerName = o.optString("workerName", o.optString("displayName", "Trabajador"));
         w.headline = o.optString("headline", "");
+        w.description = o.optString("description", "");
+        w.availability = o.optString("availability", "");
         w.city = o.optString("city", "");
         w.provinceName = o.optString("provinceName", "");
         w.municipalityName = o.optString("municipalityName", "");

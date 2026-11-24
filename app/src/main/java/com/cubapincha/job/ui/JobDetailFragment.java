@@ -218,15 +218,42 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         ((TextView) view.findViewById(R.id.job_meta)).setText(worker.locationText() + " · " + modes);
         ((TextView) view.findViewById(R.id.job_salary)).setText(worker.salaryText());
         ((TextView) view.findViewById(R.id.job_date)).setText("Perfil profesional");
-        ((TextView) view.findViewById(R.id.job_description)).setText(worker.headline == null || worker.headline.isEmpty() ? "Trabajador disponible para nuevas oportunidades." : worker.headline);
-        view.findViewById(R.id.btn_section_resp).setVisibility(View.GONE);
+        ((TextView) view.findViewById(R.id.job_description)).setText(worker.description == null || worker.description.isEmpty()
+                ? (worker.headline == null || worker.headline.isEmpty() ? "Trabajador disponible para nuevas oportunidades." : worker.headline)
+                : worker.description);
+        view.findViewById(R.id.btn_section_resp).setVisibility(View.VISIBLE);
+        ((MaterialButton) view.findViewById(R.id.btn_section_resp)).setText("Disponibilidad");
+        setListText(view, R.id.job_responsibilities,
+                worker.availability == null || worker.availability.isEmpty()
+                        ? java.util.Collections.singletonList("Consultar disponibilidad")
+                        : java.util.Collections.singletonList(worker.availability));
         ((MaterialButton) view.findViewById(R.id.btn_section_req)).setText("Habilidades");
         setListText(view, R.id.job_requirements, worker.skills);
-        ((MaterialButton) view.findViewById(R.id.btn_section_benefits)).setText("Experiencia y disponibilidad");
+        ((MaterialButton) view.findViewById(R.id.btn_section_benefits)).setText("Experiencia");
         List<String> experience = new ArrayList<>();
         if (worker.experienceYears != null) experience.add(worker.experienceYears + " años de experiencia");
         if (worker.workModes != null && !worker.workModes.isEmpty()) experience.add("Modalidades: " + modes);
         setListText(view, R.id.job_benefits, experience);
+        LinearLayout reasons = view.findViewById(R.id.match_reasons_row);
+        reasons.removeAllViews();
+        if (worker.matchReasons != null && !worker.matchReasons.isEmpty()) {
+            view.findViewById(R.id.match_reasons_label).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.match_reasons_scroll).setVisibility(View.VISIBLE);
+            for (String reason : worker.matchReasons) {
+                TextView chip = new TextView(requireContext());
+                chip.setText(reason);
+                chip.setBackgroundResource(R.drawable.bg_chip_soft);
+                chip.setTextColor(UiUtils.resolveThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurface));
+                chip.setTextSize(13);
+                chip.setPadding(dp(10), dp(4), dp(10), dp(4));
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
+                lp.setMarginEnd(dp(8));
+                reasons.addView(chip, lp);
+            }
+        } else {
+            view.findViewById(R.id.match_reasons_label).setVisibility(View.GONE);
+            view.findViewById(R.id.match_reasons_scroll).setVisibility(View.GONE);
+        }
         view.findViewById(R.id.similar_title).setVisibility(View.GONE);
         view.findViewById(R.id.list_similar).setVisibility(View.GONE);
         view.findViewById(R.id.btn_report).setVisibility(View.GONE);

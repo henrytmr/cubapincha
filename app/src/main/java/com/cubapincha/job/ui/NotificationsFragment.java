@@ -225,7 +225,7 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
     }
 
     private void confirmClearHistory() {
-        new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle("Borrar historial")
                 .setMessage("Se eliminarán todas tus notificaciones. Esta acción no se puede deshacer.")
                 .setNegativeButton("Cancelar", null)
@@ -240,7 +240,10 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
                                 ((MainActivity) requireActivity()).updateNotificationBadge();
                                 Snackbar.make(requireView(), "Historial vaciado", Snackbar.LENGTH_SHORT).show();
                             } else Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
-                        })).show();
+                        })).create();
+        dialog.setOnShowListener(ignored -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(requireContext().getColor(R.color.error_red)));
+        dialog.show();
     }
 
     @Override
