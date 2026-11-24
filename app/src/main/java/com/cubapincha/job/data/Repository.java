@@ -683,9 +683,9 @@ public class Repository {
 
     public void saveCandidate(String workerId, String applicationId, boolean save, ApiCallback<Boolean> cb) {
         run(() -> {
+            boolean wasSaved = false;
             try {
                 RecommendedWorker cached = null;
-                boolean wasSaved = false;
                 for (RecommendedWorker existing : db.getSavedCandidates()) {
                     if (workerId != null && workerId.equals(existing.workerId)) {
                         cached = existing; wasSaved = true; break;
