@@ -319,6 +319,23 @@ public class SupabaseApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<JSONObject> extractJob(String text) {
+        try {
+            String value = text == null ? "" : text.trim();
+            if (value.isEmpty()) return ApiResult.fail("VALIDATION_ERROR", "Pega el texto de la oferta primero.");
+            if (value.length() > 4000) return ApiResult.fail("VALIDATION_ERROR", "El texto no puede superar 4000 caracteres.");
+            JSONObject body = new JSONObject();
+            body.put("action", "extractJob");
+            body.put("text", value);
+            JSONObject resp = doPost(body);
+            return unwrap(resp, data -> {
+                JSONObject d = (JSONObject) data;
+                return d.optJSONObject("fields") != null ? d.optJSONObject("fields") : new JSONObject();
+            });
+        } catch (Exception e) { return failOf(e); }
+    }
+
+    @Override
     public ApiResult<Page<Job>> getJobs(JobFilter filter, String cursor) {
         try {
             JSONObject params = new JSONObject();

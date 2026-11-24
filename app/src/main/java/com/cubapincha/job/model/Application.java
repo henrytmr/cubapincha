@@ -20,6 +20,7 @@ public class Application {
     public String companyName;
     public boolean companyVerified;
     public String workerName;
+    public String workerPhotoThumbUrl = "";
     public String workerHeadline;
     public String workerCity;
     public String workerProvinceName;
@@ -87,6 +88,7 @@ public class Application {
         if (isEmpty(companyName)) companyName = existing.companyName;
         if (!companyVerified) companyVerified = existing.companyVerified;
         if (isEmpty(workerName)) workerName = existing.workerName;
+        if (isEmpty(workerPhotoThumbUrl)) workerPhotoThumbUrl = existing.workerPhotoThumbUrl;
         if (isEmpty(workerHeadline)) workerHeadline = existing.workerHeadline;
         if (isEmpty(workerCity)) workerCity = existing.workerCity;
         if (isEmpty(workerProvinceName)) workerProvinceName = existing.workerProvinceName;
@@ -118,6 +120,7 @@ public class Application {
         a.companyName = o.optString("companyName", "");
         a.companyVerified = o.optBoolean("companyVerified", false);
         a.workerName = o.optString("workerName", "");
+        a.workerPhotoThumbUrl = o.optString("workerPhotoThumbUrl", "");
         a.workerHeadline = o.optString("workerHeadline", "");
         a.workerCity = o.optString("workerCity", "");
         a.workerProvinceName = o.optString("workerProvinceName", "");
@@ -153,6 +156,7 @@ public class Application {
             o.put("companyName", companyName);
             o.put("companyVerified", companyVerified);
             o.put("workerName", workerName);
+            o.put("workerPhotoThumbUrl", workerPhotoThumbUrl);
             o.put("workerHeadline", workerHeadline);
             o.put("workerCity", workerCity);
             o.put("workerProvinceName", workerProvinceName);

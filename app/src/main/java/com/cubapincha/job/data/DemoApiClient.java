@@ -266,6 +266,11 @@ public class DemoApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<JSONObject> extractJob(String text) {
+        return ApiResult.fail("DEMO_UNSUPPORTED", "La extracción inteligente requiere una sesión conectada.");
+    }
+
+    @Override
     public ApiResult<User> me() {
         latency();
         User saved = loadDemoUser();

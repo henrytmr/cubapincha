@@ -34,6 +34,35 @@
                 android:textAppearance="?attr/textAppearanceTitleLarge" />
         </LinearLayout>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_offer_photo"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:strokeColor="?attr/colorPrimary"
+            app:strokeWidth="1dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/photo_library_24px"
+                    android:contentDescription="@null"
+                    app:tint="?attr/colorPrimary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cargar foto de la oferta"
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Modo rápido / completo -->
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/mode_toggle"
@@ -490,11 +519,49 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_offer_photo"
-            style="@style/Widget.CubaPincha.Button.Secondary"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_extract_toggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Extracción inteligente"
+            android:src="@drawable/auto_awesome"
+            app:tint="?attr/colorPrimary" />
+
+        <LinearLayout
+            android:id="@+id/extract_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_16"
-            android:text="Añadir o cambiar foto de la oferta" />
+            android:orientation="vertical"
+            android:visibility="gone">
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pega solo texto de la oferta">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    android:id="@+id/input_extract_text"
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="top"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_extract_job"
+                style="@style/Widget.CubaPincha.Button.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:text="Extraer datos" />
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_publish"

@@ -35,6 +35,9 @@ public interface ApiClient {
 
     ApiResult<User> updateProfile(User user);
 
+    /** Extrae campos de una oferta sin crearla ni publicarla. */
+    ApiResult<org.json.JSONObject> extractJob(String text);
+
     ApiResult<Page<Job>> getJobs(JobFilter filter, String cursor);
 
     ApiResult<Job> getJob(String jobId);

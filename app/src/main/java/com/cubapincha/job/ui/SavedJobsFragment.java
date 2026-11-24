@@ -20,6 +20,7 @@ import com.cubapincha.job.R;
 import com.cubapincha.job.adapter.JobAdapter;
 import com.cubapincha.job.adapter.RecommendedWorkerAdapter;
 import com.cubapincha.job.data.Repository;
+import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.util.AnimUtils;
@@ -62,8 +63,14 @@ public class SavedJobsFragment extends Fragment implements JobAdapter.Listener,
         view.findViewById(R.id.btn_retry).setOnClickListener(v -> loadSaved());
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
                 requireActivity().getOnBackPressedDispatcher().onBackPressed());
-        view.findViewById(R.id.btn_explore).setOnClickListener(v ->
-                ((MainActivity) requireActivity()).selectTab(R.id.nav_search));
+        view.findViewById(R.id.btn_explore).setOnClickListener(v -> {
+            MainActivity activity = (MainActivity) requireActivity();
+            if ("company".equals(SessionManager.get(requireContext()).getRole())) {
+                activity.pushFragment(new WorkerSearchFragment());
+            } else {
+                activity.selectTab(R.id.nav_search);
+            }
+        });
         loadSaved();
     }
 

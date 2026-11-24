@@ -68,6 +68,8 @@ public class Job {
     public int ratingTotal;
     public String photoUrl = "";
     public String photoThumbUrl = "";
+    /** Miniatura del perfil de la empresa que publica la oferta. */
+    public String companyPhotoThumbUrl = "";
 
     public Job() {}
 
@@ -297,6 +299,7 @@ public class Job {
         j.ratingTotal = o.optInt("ratingTotal", 0);
         j.photoUrl = o.optString("photoUrl", "");
         j.photoThumbUrl = o.optString("photoThumbUrl", "");
+        j.companyPhotoThumbUrl = o.optString("companyPhotoThumbUrl", "");
         return j;
     }
 
@@ -350,6 +353,7 @@ public class Job {
             o.put("whatsappEnabled", whatsappEnabled);
             o.put("photoUrl", photoUrl);
             o.put("photoThumbUrl", photoThumbUrl);
+            o.put("companyPhotoThumbUrl", companyPhotoThumbUrl);
         } catch (Exception ignored) { }
         return o;
     }

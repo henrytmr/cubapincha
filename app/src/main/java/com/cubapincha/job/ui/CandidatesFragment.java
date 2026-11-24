@@ -14,6 +14,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -65,6 +69,26 @@ public class CandidatesFragment extends Fragment implements CandidateAdapter.Lis
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new CandidateAdapter(this);
         list.setAdapter(adapter);
+        ItemTouchHelper.SimpleCallback swipe = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            @Override public boolean onMove(@NonNull RecyclerView r, @NonNull RecyclerView.ViewHolder a, @NonNull RecyclerView.ViewHolder b) { return false; }
+            @Override public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int direction) {
+                int pos = vh.getBindingAdapterPosition();
+                if (pos == RecyclerView.NO_POSITION) { loadCandidates(); return; }
+                Application app = adapter.getItemAt(pos);
+                if (app == null) { loadCandidates(); return; }
+                if (direction == ItemTouchHelper.RIGHT) onDeleteClick(app);
+                else onDiscard(app);
+            }
+            @Override public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView r, @NonNull RecyclerView.ViewHolder vh, float dx, float dy, int state, boolean active) {
+                View item = vh.itemView; paint.setColor(dx > 0 ? Color.rgb(198, 40, 40) : Color.rgb(80, 80, 80));
+                c.drawRect(item.getLeft(), item.getTop(), item.getRight(), item.getBottom(), paint);
+                paint.setColor(Color.WHITE); paint.setTextSize(15 * getResources().getDisplayMetrics().scaledDensity); paint.setFakeBoldText(true);
+                c.drawText(dx > 0 ? "Eliminar" : "Descartar", dx > 0 ? item.getLeft()+32 : item.getRight()-120, item.getTop()+item.getHeight()/2f, paint);
+                super.onChildDraw(c, r, vh, dx, dy, state, active);
+            }
+        };
+        new ItemTouchHelper(swipe).attachToRecyclerView(list);
         skeletonContainer = view.findViewById(R.id.skeleton_container);
         emptyState = view.findViewById(R.id.empty_state);
         errorState = view.findViewById(R.id.error_state);
@@ -184,7 +208,8 @@ public class CandidatesFragment extends Fragment implements CandidateAdapter.Lis
                                 }
                             });
                 })
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, (dialog, which) -> loadCandidates())
+                .setOnCancelListener(dialog -> loadCandidates())
                 .show();
     }
 
@@ -195,6 +220,14 @@ public class CandidatesFragment extends Fragment implements CandidateAdapter.Lis
                 Snackbar.make(requireView(), result.ok ? getString(R.string.candidate_saved)
                         : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
             }
+        });
+    }
+
+    private void onDiscard(Application app) {
+        Repository.get(requireContext()).changeApplicationStatus(app.applicationId, "rejected", null, result -> {
+            if (!isAdded()) return;
+            Snackbar.make(requireView(), result.ok ? "Candidatura descartada." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
+            loadCandidates();
         });
     }
 
@@ -210,7 +243,8 @@ public class CandidatesFragment extends Fragment implements CandidateAdapter.Lis
                                     : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
                             if (result.ok) loadCandidates();
                         }))
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, (dialog, which) -> loadCandidates())
+                .setOnCancelListener(dialog -> loadCandidates())
                 .show();
     }
 

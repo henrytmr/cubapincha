@@ -25,7 +25,7 @@ import com.cubapincha.job.model.Job;
 import com.cubapincha.job.ui.UiUtils;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
-import com.cubapincha.job.util.PhotoSwipeBinder;
+import com.cubapincha.job.util.NetworkImageLoader;
 import com.cubapincha.job.util.TextUtils;
 
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Listener listener;
     private int lastAnimatedPosition = -1;
     private int viewMode = VIEW_CARD;
+    private boolean photosVisible;
 
     public JobAdapter(Listener listener) {
         this.listener = listener;
@@ -62,6 +63,12 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             notifyDataSetChanged();
         }
     }
+
+    public void setPhotosVisible(boolean visible) {
+        if (photosVisible != visible) { photosVisible = visible; notifyDataSetChanged(); }
+    }
+
+    public boolean arePhotosVisible() { return photosVisible; }
 
     public int getViewMode() {
         return viewMode;
@@ -196,12 +203,14 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         RatingStarsView ratingStars;
         ImageView verified, photo;
         ImageButton saveBtn, whatsappBtn, photoEye;
+        ImageView avatarPhoto;
         View btnView;
         MatchRingView ring;
 
         CardHolder(View itemView) {
             super(itemView);
             avatar = itemView.findViewById(R.id.company_avatar);
+            avatarPhoto = itemView.findViewById(R.id.company_avatar_photo);
             title = itemView.findViewById(R.id.job_title);
             company = itemView.findViewById(R.id.company_name);
             ratingStars = itemView.findViewById(R.id.company_rating_stars);
@@ -223,6 +232,11 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void bind(Job job, int position) {
             Context ctx = itemView.getContext();
             avatar.setText(TextUtils.initials(job.companyName));
+            boolean hasCompanyPhoto = job.companyPhotoThumbUrl != null && !job.companyPhotoThumbUrl.isEmpty();
+            avatarPhoto.setVisibility(hasCompanyPhoto ? View.VISIBLE : View.GONE);
+            avatar.setVisibility(hasCompanyPhoto ? View.GONE : View.VISIBLE);
+            if (!hasCompanyPhoto) avatarPhoto.setImageDrawable(null);
+            if (avatarPhoto.getVisibility() == View.VISIBLE) NetworkImageLoader.load(avatarPhoto, job.companyPhotoThumbUrl);
             title.setText(job.title);
             company.setText(job.companyName);
             verified.setVisibility(job.companyVerified ? View.VISIBLE : View.GONE);
@@ -244,7 +258,12 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             bindSaveButton(saveBtn, job);
             bindWhatsappButton(whatsappBtn, job);
-            PhotoSwipeBinder.bind(itemView, photo, photoEye, job.photoThumbUrl);
+            photoEye.setVisibility(View.GONE);
+            boolean hasPhoto = photosVisible && job.photoThumbUrl != null && !job.photoThumbUrl.isEmpty();
+            photo.setVisibility(hasPhoto ? View.VISIBLE : View.GONE);
+            photo.setBackgroundResource(hasPhoto ? R.drawable.bg_skeleton : android.R.color.transparent);
+            if (!hasPhoto) photo.setImageDrawable(null);
+            if (photo.getVisibility() == View.VISIBLE) NetworkImageLoader.load(photo, job.photoThumbUrl);
             bindClick(itemView, job);
             bindClick(btnView, job);
             if (position > lastAnimatedPosition) {

@@ -3,6 +3,7 @@ package com.cubapincha.job.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.cubapincha.job.ui.UiUtils;
 import com.cubapincha.job.model.Application;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
+import com.cubapincha.job.util.NetworkImageLoader;
 import com.cubapincha.job.util.TextUtils;
 
 import java.util.ArrayList;
@@ -62,6 +64,11 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
         AnimUtils.resetItemState(h.itemView);
         Application app = items.get(position);
         h.avatar.setText(TextUtils.initials(app.workerName));
+        boolean hasPhoto = app.workerPhotoThumbUrl != null && !app.workerPhotoThumbUrl.isEmpty();
+        h.avatarPhoto.setVisibility(hasPhoto ? View.VISIBLE : View.GONE);
+        h.avatar.setVisibility(hasPhoto ? View.GONE : View.VISIBLE);
+        if (hasPhoto) NetworkImageLoader.load(h.avatarPhoto, app.workerPhotoThumbUrl);
+        else h.avatarPhoto.setImageDrawable(null);
         h.name.setText(app.workerName);
         h.headline.setText(app.workerHeadline != null && !app.workerHeadline.isEmpty()
                 ? app.workerHeadline : app.workerLocationText());
@@ -104,9 +111,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
         UiUtils.setDebouncedClickListener(h.save, v -> {
             if (listener != null) listener.onSaveClick(app);
         });
-        UiUtils.setDebouncedClickListener(h.delete, v -> {
-            if (listener != null) listener.onDeleteClick(app);
-        });
         UiUtils.setDebouncedClickListener(h.rate, v -> {
             if (listener != null) listener.onRateClick(app);
         });
@@ -123,19 +127,24 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
         AnimUtils.resetItemState(holder.itemView);
     }
 
-    @Override
+    public Application getItemAt(int position) {
+        return position >= 0 && position < items.size() ? items.get(position) : null;
+    }
+
     public int getItemCount() {
         return items.size();
     }
 
     static class Holder extends RecyclerView.ViewHolder {
         TextView avatar, name, headline, jobInfo, skills, status;
-        TextView reviewing, interview, hire, reject, note, save, delete, rate;
+        ImageView avatarPhoto;
+        TextView reviewing, interview, hire, reject, note, save, rate;
         MatchRingView ring;
 
         Holder(View itemView) {
             super(itemView);
             avatar = itemView.findViewById(R.id.worker_avatar);
+            avatarPhoto = itemView.findViewById(R.id.worker_avatar_photo);
             name = itemView.findViewById(R.id.worker_name);
             headline = itemView.findViewById(R.id.worker_headline);
             jobInfo = itemView.findViewById(R.id.job_info);
@@ -148,7 +157,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
             reject = itemView.findViewById(R.id.btn_reject);
             note = itemView.findViewById(R.id.btn_note);
             save = itemView.findViewById(R.id.btn_save);
-            delete = itemView.findViewById(R.id.btn_delete);
             rate = itemView.findViewById(R.id.btn_rate_work);
         }
     }

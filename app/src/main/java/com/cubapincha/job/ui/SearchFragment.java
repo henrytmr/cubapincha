@@ -62,6 +62,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
     // además de la carga explícita (doble carga).
     private boolean suppressWatcher = false;
     private boolean sortDialogShowing = false;
+    private boolean photosVisible = false;
 
     @Nullable
     @Override
@@ -80,6 +81,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
             JobFilter restored = JobFilter.fromBundle(savedInstanceState.getBundle("filter"));
             if (restored != null) filter = restored;
             viewMode = savedInstanceState.getInt("viewMode", JobAdapter.VIEW_CARD);
+            photosVisible = savedInstanceState.getBoolean("photosVisible", false);
         } else {
             JobFilter pending = activity.takePendingSearchFilter();
             if (pending != null) filter = pending;
@@ -99,6 +101,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         listJobs.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new JobAdapter(this);
         adapter.setViewMode(viewMode);
+        adapter.setPhotosVisible(photosVisible);
         listJobs.setAdapter(adapter);
         listJobs.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -143,6 +146,16 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
 
         view.findViewById(R.id.btn_sort).setOnClickListener(v -> showSortDialog());
         updateViewToggleIcon(view);
+        ImageButton initialEye = view.findViewById(R.id.btn_photo_toggle);
+        initialEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+        view.findViewById(R.id.btn_photo_toggle).setOnClickListener(v -> {
+            photosVisible = !photosVisible;
+            adapter.setPhotosVisible(photosVisible);
+            ImageButton eye = view.findViewById(R.id.btn_photo_toggle);
+            eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+            AnimUtils.playAnimated(eye);
+        });
         view.findViewById(R.id.btn_view_toggle).setOnClickListener(v -> {
             viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL : JobAdapter.VIEW_CARD;
             adapter.setViewMode(viewMode);
@@ -196,6 +209,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         super.onSaveInstanceState(outState);
         outState.putBundle("filter", filter.toBundle());
         outState.putInt("viewMode", viewMode);
+        outState.putBoolean("photosVisible", photosVisible);
     }
 
     /** Aplica un filtro completo desde fuera (chip de categoría, búsqueda

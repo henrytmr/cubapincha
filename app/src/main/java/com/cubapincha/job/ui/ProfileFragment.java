@@ -33,6 +33,8 @@ import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.RatingsPage;
 import com.cubapincha.job.util.PushManager;
+import com.cubapincha.job.util.PhotoPicker;
+import com.cubapincha.job.util.PhotoPayload;
 import com.cubapincha.job.util.TextUtils;
 
 /** Perfil y ajustes: modo demo/conectado, URL de la API, tema, sincronización. */
@@ -47,6 +49,7 @@ public class ProfileFragment extends Fragment {
     private boolean ratingsLoading;
     private SwitchMaterial notifSwitch;
     private ActivityResultLauncher<String> requestNotifications;
+    private PhotoPicker photoPicker;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +74,26 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 });
+        photoPicker = new PhotoPicker(this, new PhotoPicker.Callback() {
+            @Override public void onPhotoPicked(Uri uri) {
+                try {
+                    PhotoPayload payload = PhotoPayload.fromUri(requireContext(), uri);
+                    Repository.get(requireContext()).uploadPhoto("profile", null, payload.detailBase64, payload.thumbBase64, result -> {
+                        if (!isAdded()) return;
+                        if (result.ok) {
+                            SessionManager.get(requireContext()).setPhotoUri(uri.toString());
+                            ImageView image = requireView().findViewById(R.id.avatar_photo);
+                            TextView initials = requireView().findViewById(R.id.avatar);
+                            image.setImageURI(uri); image.setVisibility(View.VISIBLE); initials.setVisibility(View.GONE);
+                            Snackbar.make(requireView(), "Foto de perfil actualizada.", Snackbar.LENGTH_SHORT).show();
+                        } else Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                    });
+                } catch (Exception e) { if (isAdded()) Snackbar.make(requireView(), "No se pudo preparar la foto.", Snackbar.LENGTH_LONG).show(); }
+            }
+            @Override public void onPhotoDenied(String reason) { }
+        });
     }
+
 
     @Nullable
     @Override
@@ -94,6 +116,8 @@ public class ProfileFragment extends Fragment {
         avatar.setText(TextUtils.initials(session.getDisplayName()));
         // Foto de perfil / logotipo, si se eligió una en el registro.
         ImageView avatarPhoto = view.findViewById(R.id.avatar_photo);
+        avatar.setOnClickListener(v -> photoPicker.showChoice());
+        avatarPhoto.setOnClickListener(v -> photoPicker.showChoice());
         String photoUri = session.getPhotoUri();
         if (photoUri != null && !photoUri.isEmpty()) {
             try {

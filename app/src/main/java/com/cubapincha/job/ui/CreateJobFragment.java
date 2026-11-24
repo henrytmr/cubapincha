@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,8 +38,11 @@ import com.cubapincha.job.model.Job;
 import com.cubapincha.job.util.TextUtils;
 import com.cubapincha.job.util.PhotoPayload;
 import com.cubapincha.job.util.PhotoPicker;
+import com.cubapincha.job.util.AnimUtils;
 
 import java.util.Calendar;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Crear / editar oferta por bloques, con vista previa y publicación.
@@ -95,6 +99,9 @@ public class CreateJobFragment extends Fragment {
     private View btnPublish, btnDraft, btnPreview;
     private PhotoPicker photoPicker;
     private PhotoPayload offerPhoto;
+    private TextInputEditText extractText;
+    private View extractPanel, extractButton;
+    private ImageButton extractToggle;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -179,7 +186,20 @@ public class CreateJobFragment extends Fragment {
         btnPublish = view.findViewById(R.id.btn_publish);
         btnDraft = view.findViewById(R.id.btn_draft);
         btnPreview = view.findViewById(R.id.btn_preview);
+        extractText = view.findViewById(R.id.input_extract_text);
+        extractPanel = view.findViewById(R.id.extract_panel);
+        extractButton = view.findViewById(R.id.btn_extract_job);
+        extractToggle = view.findViewById(R.id.btn_extract_toggle);
         view.findViewById(R.id.btn_offer_photo).setOnClickListener(v -> photoPicker.showChoice());
+        View photoCard = view.findViewById(R.id.card_offer_photo);
+        if (photoCard != null) photoCard.setOnClickListener(v -> photoPicker.showChoice());
+        extractToggle.setOnClickListener(v -> {
+            boolean open = extractPanel.getVisibility() != View.VISIBLE;
+            extractPanel.setVisibility(open ? View.VISIBLE : View.GONE);
+            extractToggle.setRotation(open ? 90f : 0f);
+            AnimUtils.playAnimated(extractToggle);
+        });
+        extractButton.setOnClickListener(v -> extractJobFields());
 
         LocationPicker.setup(province, municipality, this::updateQuality);
         UiUtils.setupDropdown(category, SeedData.CATEGORIES);
@@ -257,6 +277,71 @@ public class CreateJobFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         // La vista ya restauró el texto de provincia: recargar sus municipios.
         LocationPicker.refreshMunicipalities(province, municipality);
+    }
+
+    private void extractJobFields() {
+        String text = extractText == null ? "" : extractText.getText().toString().trim();
+        if (text.isEmpty()) {
+            Snackbar.make(requireView(), "Pega el texto de la oferta primero.", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        if (text.length() > 4000) {
+            Snackbar.make(requireView(), "El texto no puede superar 4000 caracteres.", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        extractButton.setEnabled(false);
+        extractToggle.setEnabled(false);
+        Repository.get(requireContext()).extractJob(text, result -> {
+            extractButton.setEnabled(true);
+            extractToggle.setEnabled(true);
+            if (!isAdded()) return;
+            if (!result.ok || result.data == null) {
+                Snackbar.make(requireView(), result.friendlyMessage().isEmpty()
+                        ? "No se pudieron extraer los datos. Inténtalo de nuevo." : result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            applyExtractedFields(result.data);
+            updateSalaryRowVisibility();
+            updateQuality();
+            Snackbar.make(requireView(), "Datos extraídos. Revisa el formulario antes de publicar.", Snackbar.LENGTH_LONG).show();
+        });
+    }
+
+    private void applyExtractedFields(JSONObject f) {
+        setIfEmpty(title, f.optString("title", ""));
+        setIfEmpty(category, f.optString("category", ""));
+        setIfEmpty(description, f.optString("description", ""));
+        setIfEmpty(responsibilities, joinJson(f.optJSONArray("responsibilities")));
+        setIfEmpty(requirements, joinJson(f.optJSONArray("requirements")));
+        String work = f.optString("workMode", "");
+        if ("Presencial".equalsIgnoreCase(work) || "Remoto".equalsIgnoreCase(work) || "Híbrido".equalsIgnoreCase(work)) setIfEmpty(mode, work);
+        if (f.has("salaryMin") && !f.isNull("salaryMin")) setIfEmpty(salaryMin, String.valueOf(f.optInt("salaryMin")));
+        if (f.has("salaryMax") && !f.isNull("salaryMax")) setIfEmpty(salaryMax, String.valueOf(f.optInt("salaryMax")));
+        String period = f.optString("salaryPeriod", "");
+        if ("day".equals(period)) salaryPeriod.setText(Job.salaryPeriodLabel("diario"), false);
+        else if ("month".equals(period)) salaryPeriod.setText(Job.salaryPeriodLabel("mensual"), false);
+        else if ("hour".equals(period)) salaryPeriod.setText(Job.salaryPeriodLabel("por_hora"), false);
+        String provinceCode = f.optString("provinceCode", "");
+        if (!provinceCode.isEmpty() && UiUtils.text(province).isEmpty()) {
+            String municipalityCode = f.optString("municipalityCode", "");
+            String municipalityName = municipalityCode.isEmpty() ? ""
+                    : com.cubapincha.job.data.CubaCatalog.municipalityName(provinceCode, municipalityCode);
+            LocationPicker.setSelection(province, municipality, provinceCode, municipalityName);
+        }
+        setIfEmpty(locality, f.optString("locality", ""));
+        setIfEmpty(contactHours, f.optString("contactHours", ""));
+    }
+
+    private static String joinJson(JSONArray array) {
+        if (array == null || array.length() == 0) return "";
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < array.length(); i++) {
+            String value = array.optString(i, "").trim();
+            if (value.isEmpty()) continue;
+            if (out.length() > 0) out.append(", ");
+            out.append(value);
+        }
+        return out.toString();
     }
 
     private void applyMode() {

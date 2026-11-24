@@ -21,7 +21,6 @@ import com.cubapincha.job.ui.UiUtils;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
 import com.cubapincha.job.util.NetworkImageLoader;
-import com.cubapincha.job.util.PhotoSwipeBinder;
 import com.cubapincha.job.util.TextUtils;
 
 import java.util.ArrayList;
@@ -84,7 +83,9 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         UiUtils.setDebouncedClickListener(h.avatarPhoto, v -> listener.onProfileClick(w));
         h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
-        PhotoSwipeBinder.bind(h.itemView, h.photo, h.photoEye, w.photoThumbUrl);
+        h.photoEye.setVisibility(View.GONE);
+        h.photo.setVisibility(w.photoThumbUrl == null || w.photoThumbUrl.isEmpty() ? View.GONE : View.VISIBLE);
+        if (h.photo.getVisibility() == View.VISIBLE) NetworkImageLoader.load(h.photo, w.photoThumbUrl);
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
         UiUtils.setDebouncedClickListener(h.save, v -> {
             AnimUtils.pop(h.save);

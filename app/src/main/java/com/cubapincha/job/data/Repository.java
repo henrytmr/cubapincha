@@ -467,6 +467,18 @@ public class Repository {
         }, cb);
     }
 
+    public void extractJob(String text, ApiCallback<JSONObject> cb) {
+        run(() -> {
+            if (text == null || text.trim().isEmpty())
+                return ApiResult.fail("VALIDATION_ERROR", "Pega el texto de la oferta primero.");
+            if (text.trim().length() > 4000)
+                return ApiResult.fail("VALIDATION_ERROR", "El texto no puede superar 4000 caracteres.");
+            if (!isDemoMode() && !isOnline())
+                return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para extraer los datos.");
+            return activeClient().extractJob(text.trim());
+        }, cb);
+    }
+
     public void health(String apiUrl, ApiCallback<String> cb) {
         runPlain(() -> new SupabaseApiClient(appContext, apiUrl).health(), cb);
     }
