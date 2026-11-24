@@ -31,6 +31,7 @@ import com.cubapincha.job.data.JobFilter;
 import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Job;
+import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.model.User;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
@@ -49,6 +50,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
              "identidad_no_confirmada", "acoso", "duplicada", "otro"};
     private static final String ARG_JOB_ID = "job_id";
     private static final String ARG_JOB_JSON = "job_json";
+    private static final String ARG_WORKER_JSON = "worker_json";
 
     public static JobDetailFragment newInstance(String jobId) {
         JobDetailFragment f = new JobDetailFragment();
@@ -69,8 +71,17 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         return f;
     }
 
+    public static JobDetailFragment newWorkerInstance(RecommendedWorker worker) {
+        JobDetailFragment f = new JobDetailFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_WORKER_JSON, worker.toJson().toString());
+        f.setArguments(args);
+        return f;
+    }
+
     private String jobId;
     private Job job;
+    private RecommendedWorker worker;
     private User currentUser;
     private LinearLayout skeletonContainer, errorState, ctaBar;
     private ScrollView contentScroll;
@@ -125,6 +136,13 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         // Si venimos de una tarjeta, la oferta ya viaja en los argumentos:
         // se muestra de inmediato y se refresca en silencio. Si solo hay un
         // id (notificación, candidatura), se carga con skeleton.
+        String workerJson = getArguments() != null ? getArguments().getString(ARG_WORKER_JSON) : null;
+        worker = parseWorkerJson(workerJson);
+        if (worker != null) {
+            bindWorker(true);
+            loadWorkerContact();
+            return;
+        }
         String jobJson = getArguments() != null ? getArguments().getString(ARG_JOB_JSON) : null;
         Job instant = parseJobJson(jobJson);
         if (instant != null) {
@@ -177,6 +195,60 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static RecommendedWorker parseWorkerJson(String json) {
+        if (json == null || json.isEmpty()) return null;
+        try { return RecommendedWorker.fromJson(new org.json.JSONObject(json)); }
+        catch (Exception e) { return null; }
+    }
+
+    private void bindWorker(boolean animate) {
+        View view = requireView();
+        ((TextView) view.findViewById(R.id.job_title)).setText(worker.workerName);
+        ((TextView) view.findViewById(R.id.company_name)).setText(worker.headline == null || worker.headline.isEmpty() ? "Perfil profesional" : worker.headline);
+        view.findViewById(R.id.verified_icon).setVisibility(View.GONE);
+        view.findViewById(R.id.match_block).setVisibility(View.VISIBLE);
+        ((MatchRingView) view.findViewById(R.id.match_ring)).setPercent(worker.matchPercent);
+        view.findViewById(R.id.trust_verified).setVisibility(View.GONE);
+        view.findViewById(R.id.trust_today).setVisibility(View.GONE);
+        view.findViewById(R.id.trust_contact).setVisibility(worker.phone == null || worker.phone.isEmpty() ? View.GONE : View.VISIBLE);
+        view.findViewById(R.id.closed_label).setVisibility(View.GONE);
+        String modes = worker.workModes == null || worker.workModes.isEmpty() ? "Modalidad no especificada" : TextUtils.joinComma(worker.workModes);
+        ((TextView) view.findViewById(R.id.job_meta)).setText(worker.locationText() + " · " + modes);
+        ((TextView) view.findViewById(R.id.job_salary)).setText(worker.salaryText());
+        ((TextView) view.findViewById(R.id.job_date)).setText("Perfil profesional");
+        ((TextView) view.findViewById(R.id.job_description)).setText(worker.headline == null || worker.headline.isEmpty() ? "Trabajador disponible para nuevas oportunidades." : worker.headline);
+        view.findViewById(R.id.btn_section_resp).setVisibility(View.GONE);
+        ((MaterialButton) view.findViewById(R.id.btn_section_req)).setText("Habilidades");
+        setListText(view, R.id.job_requirements, worker.skills);
+        ((MaterialButton) view.findViewById(R.id.btn_section_benefits)).setText("Experiencia y disponibilidad");
+        List<String> experience = new ArrayList<>();
+        if (worker.experienceYears != null) experience.add(worker.experienceYears + " años de experiencia");
+        if (worker.workModes != null && !worker.workModes.isEmpty()) experience.add("Modalidades: " + modes);
+        setListText(view, R.id.job_benefits, experience);
+        view.findViewById(R.id.similar_title).setVisibility(View.GONE);
+        view.findViewById(R.id.list_similar).setVisibility(View.GONE);
+        view.findViewById(R.id.btn_report).setVisibility(View.GONE);
+        contentScroll.setVisibility(View.VISIBLE);
+        ctaBar.setVisibility(View.VISIBLE);
+        btnInterest.setText("Me interesa");
+        btnInterest.setIconResource(R.drawable.ic_send);
+        btnSaveBottom.setText(worker.saved ? R.string.saved : R.string.save_offer);
+        btnSaveTop.setImageResource(worker.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
+        if (animate) AnimUtils.fadeSlideIn(contentScroll);
+    }
+
+    private void loadWorkerContact() {
+        MaterialButton whatsapp = requireView().findViewById(R.id.btn_whatsapp);
+        MaterialButton call = requireView().findViewById(R.id.btn_call);
+        boolean available = worker.phone != null && !worker.phone.trim().isEmpty();
+        whatsapp.setVisibility(available ? View.VISIBLE : View.GONE);
+        call.setVisibility(View.GONE);
+        if (available) whatsapp.setOnClickListener(v -> {
+            try { startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://wa.me/" + worker.phone.replaceAll("[^0-9]", "")))); }
+            catch (Exception e) { Snackbar.make(requireView(), "No pudimos abrir WhatsApp.", Snackbar.LENGTH_LONG).show(); }
+        });
     }
 
     /** Actualiza la oferta en segundo plano sin skeleton ni parpadeos: solo
@@ -420,6 +492,12 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
     }
 
     private void onInterestClick() {
+        if (worker != null) {
+            Repository.get(requireContext()).inviteWorker(worker.workerId, worker.matchedOfferId, "", result -> {
+                if (isAdded()) Snackbar.make(requireView(), result.ok ? "Invitación enviada al trabajador." : result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+            });
+            return;
+        }
         if (job == null) return;
         boolean sent = job.applicationStatus != null
                 && !"withdrawn".equals(job.applicationStatus)
@@ -513,6 +591,12 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
     private long lastSaveTapMs = 0;
 
     private void toggleSave() {
+        if (worker != null) {
+            worker.saved = !worker.saved;
+            bindWorker(false);
+            Repository.get(requireContext()).saveCandidate(worker.workerId, null, worker.saved, result -> { });
+            return;
+        }
         if (job == null) return;
         long now = System.currentTimeMillis();
         if (now - lastSaveTapMs < 350) return;

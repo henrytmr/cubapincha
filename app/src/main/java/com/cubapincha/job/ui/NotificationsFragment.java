@@ -226,10 +226,10 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
 
     private void confirmClearHistory() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Vaciar historial")
+                .setTitle("Borrar historial")
                 .setMessage("Se eliminarán todas tus notificaciones. Esta acción no se puede deshacer.")
                 .setNegativeButton("Cancelar", null)
-                .setPositiveButton("Vaciar", (d, w) -> Repository.get(requireContext())
+                .setPositiveButton("Borrar", (d, w) -> Repository.get(requireContext())
                         .deleteNotifications(null, true, result -> {
                             if (!isAdded()) return;
                             if (result.ok) {

@@ -109,22 +109,7 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
     }
 
     @Override public void onWorkerClick(RecommendedWorker worker) {
-        StringBuilder details = new StringBuilder();
-        details.append(worker.headline == null ? "Perfil profesional" : worker.headline).append("\n\n")
-                .append("Coincidencia: ").append(worker.matchPercent).append("%\n")
-                .append("Ubicación: ").append(worker.locationText()).append("\n")
-                .append(worker.salaryText()).append("\n");
-        if (worker.experienceYears != null) details.append("Experiencia: ").append(worker.experienceYears).append(" años\n");
-        if (!worker.workModes.isEmpty()) details.append("Modalidad: ").append(join(worker.workModes)).append("\n");
-        if (!worker.skills.isEmpty()) details.append("Habilidades: ").append(join(worker.skills)).append("\n");
-        if (!worker.matchReasons.isEmpty()) details.append("\nPor qué coincide:\n• ").append(join(worker.matchReasons, "\n• "));
-        new AlertDialog.Builder(requireContext())
-                .setTitle(worker.workerName)
-                .setMessage(details.toString())
-                .setPositiveButton("Me interesa", (d, w) -> onInterestClick(worker))
-                .setNeutralButton("Guardar", (d, w) -> onSaveClick(worker))
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+        ((MainActivity) requireActivity()).openWorkerDetail(worker);
     }
 
     @Override public void onInterestClick(RecommendedWorker worker) {

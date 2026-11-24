@@ -9,7 +9,7 @@
     <color name="cpCoral">#21A6A6</color>
     <color name="cpMint">#21A6A6</color>
     <color name="cpSun">#F4B942</color>
-    <color name="cpCream">#F7F9FB</color>
+    <color name="cpCream">#F7F5F0</color>
     <color name="cpWhite">#FFFFFF</color>
     <color name="cpOutline">#DCE5EA</color>
     <!-- Los colores del apretón (muestreados del diseño de Henry). -->
@@ -44,7 +44,7 @@
 
     <!-- Superficies, bordes y estados -->
     <color name="border">@color/cpOutline</color>
-    <color name="chip_checked">#D8E3E9</color>
+    <color name="chip_checked">#E3F0E8</color>
     <color name="splash_tagline">#D8E0E5</color>
     <color name="splash_glow">#243A4C</color>
     <color name="splash_dawn">#0B141F</color>
@@ -58,7 +58,7 @@
     <color name="warning_text">#F4B942</color>
     <color name="verified_tint">#2E8B57</color>
     <color name="on_verified">#FFFFFF</color>
-    <color name="surface_violet">#EFF2F3</color>
+    <color name="surface_violet">#EEF6F0</color>
     <color name="icon_muted">#C6D0D6</color>
     <color name="mint_soft">#DFF0E8</color>
 

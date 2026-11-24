@@ -108,8 +108,7 @@ public class ProfileFragment extends Fragment {
                 : "Trabajador · " + statusLabel(session.getStatus()));
         View companyBell = view.findViewById(R.id.btn_company_notifications);
         if (companyBell != null) {
-            companyBell.setVisibility(company ? View.VISIBLE : View.GONE);
-            companyBell.setOnClickListener(v -> activity.pushFragment(new NotificationsFragment()));
+            companyBell.setVisibility(View.GONE);
         }
 
         ratingsUserId = session.getUserId();

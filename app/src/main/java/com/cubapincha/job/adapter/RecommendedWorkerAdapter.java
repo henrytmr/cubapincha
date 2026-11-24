@@ -7,12 +7,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.button.MaterialButton;
+import android.widget.ImageButton;
 
 import com.cubapincha.job.R;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.ui.UiUtils;
-import com.cubapincha.job.ui.RatingStarsView;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
 import com.cubapincha.job.util.TextUtils;
@@ -56,26 +55,19 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.name.setText(w.workerName);
         h.headline.setText(w.headline == null || w.headline.isEmpty() ? "Perfil profesional" : w.headline);
         h.location.setText(w.locationText());
+        h.mode.setText(w.workModes == null || w.workModes.isEmpty() ? "Presencial" : w.workModes.get(0));
         h.salary.setText(w.salaryText());
-        int stars = Math.max(0, Math.min(5, (int) Math.round(w.ratingAverage)));
-        h.rating.setRating(stars);
-        h.rating.setContentDescription(String.format(java.util.Locale.US, "%.1f de 5, %d valoraciones",
-                w.ratingAverage, w.ratingTotal));
-        String skills = TextUtils.joinComma(w.skills);
-        h.skills.setText(skills.isEmpty() ? "" : "Habilidades: " + skills);
-        h.skills.setVisibility(skills.isEmpty() ? View.GONE : View.VISIBLE);
+        h.date.setText("Perfil profesional");
         h.ring.setPercent(w.matchPercent, true);
+        h.matchLabel.setText(String.format(java.util.Locale.US, "%d%% de coincidencia", w.matchPercent));
         UiUtils.setDebouncedClickListener(h.profile, v -> listener.onProfileClick(w));
-        h.save.setText("");
-        h.save.setIconResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
+        h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
-        UiUtils.setDebouncedClickListener(h.interest, v -> listener.onInterestClick(w));
         UiUtils.setDebouncedClickListener(h.save, v -> {
             AnimUtils.pop(h.save);
             listener.onSaveClick(w);
         });
-        UiUtils.setDebouncedClickListener(h.whatsapp, v -> listener.onWhatsAppClick(w));
         int pos = h.getBindingAdapterPosition();
         if (pos != RecyclerView.NO_POSITION && pos > lastAnimatedPosition) {
             lastAnimatedPosition = pos;
@@ -86,10 +78,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
     @Override public int getItemCount() { return items.size(); }
 
     static class Holder extends RecyclerView.ViewHolder {
-        TextView avatar, name, headline, location, salary, skills, profile;
-        TextView interest, whatsapp;
-        MaterialButton save;
-        RatingStarsView rating;
+        TextView avatar, name, headline, location, mode, salary, date, profile, matchLabel;
+        ImageButton save;
         MatchRingView ring;
         Holder(View v) {
             super(v);
@@ -98,13 +88,12 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
             headline = v.findViewById(R.id.recommended_headline);
             location = v.findViewById(R.id.recommended_location);
             salary = v.findViewById(R.id.recommended_salary);
-            rating = v.findViewById(R.id.recommended_rating);
-            skills = v.findViewById(R.id.recommended_skills);
+            mode = v.findViewById(R.id.recommended_mode);
+            date = v.findViewById(R.id.recommended_date);
             profile = v.findViewById(R.id.recommended_profile);
+            matchLabel = v.findViewById(R.id.recommended_match_label);
             ring = v.findViewById(R.id.recommended_match_ring);
-            interest = v.findViewById(R.id.btn_recommended_interest);
             save = v.findViewById(R.id.btn_recommended_save);
-            whatsapp = v.findViewById(R.id.btn_recommended_whatsapp);
         }
     }
 }

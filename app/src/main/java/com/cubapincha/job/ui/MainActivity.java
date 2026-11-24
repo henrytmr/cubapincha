@@ -625,6 +625,10 @@ public class MainActivity extends AppCompatActivity {
         pushFragment(JobDetailFragment.newInstance(job));
     }
 
+    public void openWorkerDetail(com.cubapincha.job.model.RecommendedWorker worker) {
+        pushFragment(JobDetailFragment.newWorkerInstance(worker));
+    }
+
     public void openSavedJobs() {
         pushFragment(new SavedJobsFragment());
     }
