@@ -39,6 +39,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
     private final List<RecommendedWorker> items = new ArrayList<>();
     private final Listener listener;
     private int lastAnimatedPosition = -1;
+    private boolean photosVisible;
+    public void setPhotosVisible(boolean visible) { photosVisible = visible; notifyDataSetChanged(); }
 
     public RecommendedWorkerAdapter(Listener listener) { this.listener = listener; }
 
@@ -83,8 +85,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         UiUtils.setDebouncedClickListener(h.avatarPhoto, v -> listener.onProfileClick(w));
         h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
-        h.photoEye.setVisibility(View.GONE);
-        h.photo.setVisibility(w.photoThumbUrl == null || w.photoThumbUrl.isEmpty() ? View.GONE : View.VISIBLE);
+        h.photoEye.setVisibility(photosVisible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
+        h.photo.setVisibility(photosVisible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
         if (h.photo.getVisibility() == View.VISIBLE) NetworkImageLoader.load(h.photo, w.photoThumbUrl);
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
         UiUtils.setDebouncedClickListener(h.save, v -> {

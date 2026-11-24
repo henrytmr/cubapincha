@@ -620,6 +620,26 @@ public class SupabaseApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<Boolean> uninviteWorker(String workerId, String offerId) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("action", "uninviteWorker");
+            body.put("workerId", workerId);
+            if (offerId != null && !offerId.isEmpty()) body.put("offerId", offerId);
+            JSONObject resp = doPost(body);
+            return unwrap(resp, data -> data instanceof JSONObject
+                    ? ((JSONObject) data).optBoolean("invited", false) : false);
+        } catch (Exception e) { return failOf(e); }
+    }
+    @Override
+    public ApiResult<RecommendedWorker> getPublicWorker(String workerId) {
+        try {
+            JSONObject params = new JSONObject(); params.put("id", workerId);
+            JSONObject resp = doRead("publicWorker", params);
+            return unwrap(resp, data -> RecommendedWorker.fromJson((JSONObject) data));
+        } catch (Exception e) { return failOf(e); }
+    }
+    @Override
     public ApiResult<NotificationPage> getNotifications(boolean unreadOnly) {
         try {
             JSONObject params = new JSONObject();

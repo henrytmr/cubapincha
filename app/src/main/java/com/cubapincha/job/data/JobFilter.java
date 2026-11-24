@@ -19,6 +19,7 @@ public class JobFilter {
     public boolean onlyWithSalary;
     public String status; // empresa: draft|published|paused|closed|expired|archived
     public String sort = "recent"; // recent | salary | match
+    public int minMatch = 0;
     public int limit = 20;
 
     public JobFilter copy() {
@@ -28,7 +29,7 @@ public class JobFilter {
         f.mobilityScope = mobilityScope;
         f.minSalary = minSalary; f.maxSalary = maxSalary;
         f.verifiedOnly = verifiedOnly; f.onlyWithSalary = onlyWithSalary;
-        f.status = status; f.sort = sort; f.limit = limit;
+        f.status = status; f.sort = sort; f.minMatch = minMatch; f.limit = limit;
         return f;
     }
 
@@ -61,6 +62,7 @@ public class JobFilter {
         b.putBoolean("onlyWithSalary", onlyWithSalary);
         b.putString("status", status);
         b.putString("sort", sort);
+        b.putInt("minMatch", minMatch);
         b.putInt("limit", limit);
         return b;
     }
@@ -82,6 +84,7 @@ public class JobFilter {
         f.onlyWithSalary = b.getBoolean("onlyWithSalary", false);
         f.status = b.getString("status");
         f.sort = b.getString("sort", "recent");
+        f.minMatch = b.getInt("minMatch", 0);
         f.limit = b.getInt("limit", 20);
         return f;
     }

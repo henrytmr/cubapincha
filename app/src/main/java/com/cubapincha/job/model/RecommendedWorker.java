@@ -32,6 +32,9 @@ public class RecommendedWorker {
     public String matchedOfferId;
     public String matchedOfferTitle;
     public boolean saved;
+    /** Estado de invitación de ESTA empresa, enviado por servidor v25. */
+    public boolean invited;
+    public String invitedOfferId = "";
     public String photoUrl = "";
     public String photoThumbUrl = "";
 
@@ -63,6 +66,8 @@ public class RecommendedWorker {
             o.put("ratingAverage", ratingAverage); o.put("ratingTotal", ratingTotal); o.put("matchPercent", matchPercent);
             o.put("matchReasons", Job.listToJson(matchReasons)); o.put("matchedOfferId", matchedOfferId); o.put("matchedOfferTitle", matchedOfferTitle);
             o.put("saved", saved);
+            o.put("invited", invited);
+            o.put("invitedOfferId", invitedOfferId);
             o.put("photoUrl", photoUrl);
             o.put("photoThumbUrl", photoThumbUrl);
         } catch (Exception ignored) { }
@@ -95,6 +100,8 @@ public class RecommendedWorker {
         w.matchedOfferId = o.optString("matchedOfferId", "");
         w.matchedOfferTitle = o.optString("matchedOfferTitle", "");
         w.saved = o.optBoolean("saved", false);
+        w.invited = o.optBoolean("invited", false);
+        w.invitedOfferId = o.optString("invitedOfferId", "");
         w.photoUrl = o.optString("photoUrl", "");
         w.photoThumbUrl = o.optString("photoThumbUrl", "");
         return w;

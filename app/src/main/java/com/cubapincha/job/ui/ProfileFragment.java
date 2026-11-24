@@ -246,6 +246,10 @@ public class ProfileFragment extends Fragment {
             });
         });
 
+        view.findViewById(R.id.btn_clear_cache).setOnClickListener(v -> {
+            repo.clearDownloadedCache();
+            Snackbar.make(view, "Caché e información descargada eliminadas.", Snackbar.LENGTH_SHORT).show();
+        });
         view.findViewById(R.id.btn_logout).setOnClickListener(v ->
                 new AlertDialog.Builder(requireContext())
                         .setTitle(R.string.logout)

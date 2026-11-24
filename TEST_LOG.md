@@ -1,35 +1,23 @@
-# Registro de pruebas — CubaPincha DEV
+# Registro de pruebas — CubaPincha 2.11.3
 
-## Continuación Android 2.11.0 — 2026-11-22
+## Validaciones ejecutadas
 
-### Cambios revisados estáticamente
+- Rama creada desde la etiqueta segura `cubapincha-2.11.2-segura`, commit base `355ceea5e42da86af92276d670496cd9c87e5dda`.
+- `git diff --check`: correcto.
+- Parseo de todos los XML de `app/src/main/res`: correcto.
+- Balance de llaves Java en los archivos modificados: correcto.
+- Verificación de referencias nuevas: `input_min_match`, ojitos de Buscar/Inicio/empresa, `btn_clear_cache` y deep link de trabajador presentes en código y layouts.
+- El contrato v25 de `invited`, `invitedOfferId`, `uninviteWorker` y `publicWorker` quedó implementado solo en el cliente Android.
 
-- FCM usa `FirebaseApp.initializeApp(context)` con la configuración generada por Google Services; se eliminó el gate de cuatro preferencias manuales.
-- El JSON Firebase de DEV se validó por paquete/proyecto contra el adjunto privado sin imprimir claves o identificadores.
-- `ApiClient`, `SupabaseApiClient`, `DemoApiClient` y `Repository` incluyen `getRatings` y `rateApplication`.
-- `getRatings` construye una lectura pública sin JWT; `rateApplication` usa la autorización normal del cliente. La valoración no se manda a `syncActions` ni a la cola offline.
-- CTA de valoración limitada al estado `hired`; formulario limita comentarios a 1000 caracteres y consulta valoraciones paginadas antes de mostrarlo.
-- Perfil propio, candidato y empresa disponen de rutas para consultar estrellas/media/lista de valoraciones.
-- `gradlew` confirmado con permiso `755`.
-- Versión de fuente: 2.11.0 / versionCode 26.
+## Compilación
 
-### Validaciones estáticas ejecutadas
+- `./gradlew :app:assembleRelease` local: no ejecutable en este sandbox porque no existe Android SDK; el error exacto fue `SDK location not found`.
+- La validación de compilación release firmada queda asignada a Codemagic workflow `android-release`, después de publicar la rama y el commit exactos.
 
-- Parseo correcto del manifiesto y los 156 XML de recursos (157 XML en total).
-- Sin IDs duplicados en `fragment_profile.xml`, `item_application.xml` y `item_candidate.xml`; `btn_rate_work` existe en ambos layouts de candidaturas.
-- `google-services.json` es JSON válido e incluye el paquete Android esperado; no se imprimieron valores de configuración.
-- `ShareUtils` usa la URL web canónica de GitHub Pages; `gradlew` tiene modo `755` y no se ejecutó.
-- `local.properties` no está en el árbol fuente; no se detectó patrón de JWT en Java/XML/Gradle.
-- El bloque antiguo de configuración manual de conexión/FCM quedó visualmente oculto en Perfil.
+## No ejecutado
 
-### No ejecutado (por instrucción del usuario)
+- [ ] Build firmado en Codemagic y descarga de `app-release.apk`.
+- [ ] Instalación y prueba física en teléfono.
+- [ ] Pruebas runtime con cuenta real: invitación/deshacer, filtro empresarial, compartir perfil y deep link, conexión WhatsApp, guardado offline, caché offline, borrado de caché, edición al 100%, estados de candidatura y avisos de vencimiento.
 
-- [ ] Gradle `assembleDebug` / cualquier compilación.
-- [ ] Android Lint o pruebas instrumentadas.
-- [ ] Instalación limpia y recepción real de FCM.
-- [ ] Llamada real a `rateApplication`, escritura de datos o prueba con cuenta personal.
-- [ ] Prueba de integración contra Edge v9; el backend no se llamó ni se modificó en esta sesión.
-- [ ] Validación en el Motorola y confirmación de JDK 21 en Muse.
-- [ ] Verificación del APK actualmente instalado; la fuente DEV de compartir ya usa el enlace web canónico.
-
-**Conclusión:** fuente Android modificada y revisada de forma estática; no es evidencia de APK compilada ni de funcionamiento runtime. Muse debe compilar, instalar y ejecutar las pruebas pendientes antes de distribuir.
+La prueba física final corresponde al teléfono del usuario; esta bitácora no la presenta como realizada.

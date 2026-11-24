@@ -28,7 +28,7 @@ import com.cubapincha.job.util.PhotoPicker;
 
 /** Edición de perfil (trabajador o empresa): ubicación cubana, contacto y preferencias. */
 public class EditProfileFragment extends Fragment {
-    private TextInputEditText displayName, headline, skills, experience;
+    private TextInputEditText displayName, headline, skills, experience, availability, workModes, salaryMin;
     private TextInputEditText locality, phone, contactHours;
     private TextInputEditText description, industry, website;
     private AutoCompleteTextView province, municipality, mobility, salaryPeriod, contactPreference, orgType;
@@ -83,6 +83,9 @@ public class EditProfileFragment extends Fragment {
         headline = view.findViewById(R.id.input_headline);
         skills = view.findViewById(R.id.input_skills);
         experience = view.findViewById(R.id.input_experience);
+        availability = view.findViewById(R.id.input_availability);
+        workModes = view.findViewById(R.id.input_work_modes);
+        salaryMin = view.findViewById(R.id.input_salary_min);
         locality = view.findViewById(R.id.input_locality);
         phone = view.findViewById(R.id.input_phone);
         contactHours = view.findViewById(R.id.input_contact_hours);
@@ -148,6 +151,9 @@ public class EditProfileFragment extends Fragment {
                 u.headline = UiUtils.text(headline);
                 u.skills = TextUtils.splitComma(UiUtils.text(skills));
                 u.experienceYears = UiUtils.parseIntOrNull(UiUtils.text(experience));
+                u.availability = UiUtils.text(availability);
+                u.workModes = TextUtils.splitComma(UiUtils.text(workModes));
+                u.salaryMin = UiUtils.parseIntOrNull(UiUtils.text(salaryMin));
                 String mob = UiUtils.text(mobility);
                 if (mob.equals(getString(R.string.mobility_my_municipality))) u.mobilityScope = "mi_municipio";
                 else if (mob.equals(getString(R.string.mobility_my_province))) u.mobilityScope = "mi_provincia";
@@ -241,6 +247,9 @@ public class EditProfileFragment extends Fragment {
                 if (currentUser.experienceYears != null) {
                     setIfEmpty(experience, String.valueOf(currentUser.experienceYears));
                 }
+                setIfEmpty(availability, currentUser.availability);
+                setIfEmpty(workModes, TextUtils.joinComma(currentUser.workModes));
+                if (currentUser.salaryMin != null) setIfEmpty(salaryMin, String.valueOf(currentUser.salaryMin));
                 if (currentUser.mobilityScope != null && !currentUser.mobilityScope.isEmpty()
                         && UiUtils.text(mobility).isEmpty()) {
                     mobility.setText(JobFilter.mobilityScopeLabel(currentUser.mobilityScope), false);

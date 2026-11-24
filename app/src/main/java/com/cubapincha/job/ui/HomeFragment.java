@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
     private List<Job> cachedRecommended;
     private List<Job> cachedRecent;
     private boolean jobsLoaded = false;
+    private boolean photosVisible;
     // Vigilante del esqueleto: si la red no responde en 15 s, el esqueleto
     // se esconde y aparece el estado de reintento (nunca se queda colgado).
     private final Handler watchdogHandler = new Handler(Looper.getMainLooper());
@@ -75,6 +76,7 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
         String firstName = name.contains(" ") ? name.substring(0, name.indexOf(' ')) : name;
         greeting.setText(getString(R.string.hello_name, firstName.isEmpty() ? "bienvenido" : firstName));
         avatar.setText(TextUtils.initials(name));
+        avatar.setOnClickListener(v -> activity.openEditProfile());
 
         View demoBadge = view.findViewById(R.id.demo_badge);
         demoBadge.setVisibility(repo.isDemoMode() ? View.VISIBLE : View.GONE);
@@ -127,9 +129,18 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
         newAdapter = new JobAdapter(this);
         recommendedAdapter.setViewMode(viewMode);
         newAdapter.setViewMode(viewMode);
+        recommendedAdapter.setPhotosVisible(photosVisible);
+        newAdapter.setPhotosVisible(photosVisible);
         listRecommended.setAdapter(recommendedAdapter);
         listNew.setAdapter(newAdapter);
 
+        view.findViewById(R.id.btn_home_photo_toggle).setOnClickListener(v -> {
+            photosVisible = !photosVisible;
+            recommendedAdapter.setPhotosVisible(photosVisible); newAdapter.setPhotosVisible(photosVisible);
+            ImageButton eye = view.findViewById(R.id.btn_home_photo_toggle);
+            eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+        });
         view.findViewById(R.id.btn_view_toggle).setOnClickListener(v -> {
             viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL : JobAdapter.VIEW_CARD;
             recommendedAdapter.setViewMode(viewMode);

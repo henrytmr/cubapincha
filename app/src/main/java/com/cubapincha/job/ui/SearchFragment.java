@@ -156,6 +156,15 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
             eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
             AnimUtils.playAnimated(eye);
         });
+        view.findViewById(R.id.btn_photo_toggle_save).setOnClickListener(v -> {
+            photosVisible = !photosVisible;
+            adapter.setPhotosVisible(photosVisible);
+            ImageButton eye = view.findViewById(R.id.btn_photo_toggle_save);
+            ImageButton topEye = view.findViewById(R.id.btn_photo_toggle);
+            int icon = photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off;
+            eye.setImageResource(icon); topEye.setImageResource(icon);
+            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+        });
         view.findViewById(R.id.btn_view_toggle).setOnClickListener(v -> {
             viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL : JobAdapter.VIEW_CARD;
             adapter.setViewMode(viewMode);

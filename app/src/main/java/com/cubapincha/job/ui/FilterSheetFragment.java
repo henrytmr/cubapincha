@@ -63,6 +63,7 @@ public class FilterSheetFragment extends BottomSheetDialogFragment {
         AutoCompleteTextView contract = view.findViewById(R.id.input_contract);
         TextInputEditText salaryMin = view.findViewById(R.id.input_salary_min);
         TextInputEditText salaryMax = view.findViewById(R.id.input_salary_max);
+        TextInputEditText minMatch = view.findViewById(R.id.input_min_match);
         CheckBox verified = view.findViewById(R.id.check_verified);
         CheckBox onlySalary = view.findViewById(R.id.check_salary);
 
@@ -87,6 +88,7 @@ public class FilterSheetFragment extends BottomSheetDialogFragment {
         if (current.contractType != null) contract.setText(Job.contractLabel(current.contractType), false);
         if (current.minSalary != null) salaryMin.setText(String.valueOf(current.minSalary));
         if (current.maxSalary != null) salaryMax.setText(String.valueOf(current.maxSalary));
+        if (current.minMatch > 0) minMatch.setText(String.valueOf(current.minMatch));
         verified.setChecked(current.verifiedOnly);
         onlySalary.setChecked(current.onlyWithSalary);
 
@@ -123,6 +125,8 @@ public class FilterSheetFragment extends BottomSheetDialogFragment {
             else if (c.equals("Prácticas")) f.contractType = "practicas";
             f.minSalary = UiUtils.parseIntOrNull(UiUtils.text(salaryMin));
             f.maxSalary = UiUtils.parseIntOrNull(UiUtils.text(salaryMax));
+            Integer parsedMatch = UiUtils.parseIntOrNull(UiUtils.text(minMatch));
+            f.minMatch = parsedMatch == null ? 0 : Math.max(0, Math.min(100, parsedMatch));
             f.verifiedOnly = verified.isChecked();
             f.onlyWithSalary = onlySalary.isChecked();
             deliver(f);

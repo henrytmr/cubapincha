@@ -182,6 +182,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_16"
+                android:hint="Disponibilidad">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_availability"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="Modalidades de trabajo (separadas por coma)">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_work_modes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
+                android:hint="Salario mínimo">
+                <com.cubapincha.job.util.NoHighlightEditText
+                    style="@style/Widget.CubaPincha.TextInputEditText"
+                    android:id="@+id/input_salary_min"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.CubaPincha.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16"
                 android:hint="@string/mobility"
                 app:endIconMode="dropdown_menu">
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView

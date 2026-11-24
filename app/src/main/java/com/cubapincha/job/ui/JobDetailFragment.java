@@ -266,8 +266,13 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         // Solo una empresa puede invitar a un trabajador. Un trabajador que
         // abre otro perfil no debe ver el CTA de oferta/interés equivocado.
         ctaBar.setVisibility(companyViewer ? View.VISIBLE : View.GONE);
-        btnInterest.setText("Invitar a trabajar");
-        btnInterest.setIconResource(R.drawable.ic_send);
+        if (worker != null && worker.invited) {
+            btnInterest.setText("Invitación enviada · Retirar");
+            btnInterest.setIconResource(R.drawable.ic_check_circle);
+        } else {
+            btnInterest.setText("Invitar a trabajar");
+            btnInterest.setIconResource(R.drawable.ic_send);
+        }
         btnSaveBottom.setText(worker.saved ? "Trabajador guardado" : "Guardar trabajador");
         btnSaveTop.setImageResource(worker.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         if (animate) AnimUtils.fadeSlideIn(contentScroll);
@@ -504,6 +509,15 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         return base;
     }
 
+    private void updateWorkerInviteButton() {
+        if (worker == null) return;
+        btnInterest.setText(worker.invited ? "Invitación enviada · Retirar" : "Invitar a trabajar");
+        btnInterest.setIconResource(worker.invited ? R.drawable.ic_check_circle : R.drawable.ic_send);
+    }
+    private String inviteMessage() {
+        String title = worker.matchedOfferTitle == null ? "una oportunidad" : worker.matchedOfferTitle;
+        return "Hola " + worker.workerName + ", te invitamos a trabajar en " + title + ".";
+    }
     private void updateInterestButton() {
         boolean sent = job.applicationStatus != null
                 && !"withdrawn".equals(job.applicationStatus)
@@ -530,9 +544,17 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
 
     private void onInterestClick() {
         if (worker != null) {
-            Repository.get(requireContext()).inviteWorker(worker.workerId, worker.matchedOfferId, "", result -> {
-                if (isAdded()) Snackbar.make(requireView(), result.ok ? "Invitación enviada al trabajador." : result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
-            });
+            if (worker.invited) {
+                Repository.get(requireContext()).uninviteWorker(worker.workerId, worker.invitedOfferId == null || worker.invitedOfferId.isEmpty() ? worker.matchedOfferId : worker.invitedOfferId, result -> {
+                    if (isAdded() && result.ok) { worker.invited = false; worker.invitedOfferId = ""; updateWorkerInviteButton(); }
+                    if (isAdded() && !result.ok) Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                });
+            } else {
+                Repository.get(requireContext()).inviteWorker(worker.workerId, worker.matchedOfferId, inviteMessage(), result -> {
+                    if (isAdded() && result.ok) { worker.invited = true; worker.invitedOfferId = worker.matchedOfferId == null ? "" : worker.matchedOfferId; updateWorkerInviteButton(); Snackbar.make(requireView(), "Invitación enviada al trabajador.", Snackbar.LENGTH_LONG).show(); }
+                    else if (isAdded()) Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                });
+            }
             return;
         }
         if (job == null) return;
@@ -663,6 +685,15 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
     }
 
     private void shareJob() {
+        if (worker != null) {
+            showIconChoiceDialog(R.string.share, new int[]{R.drawable.ic_share, R.drawable.ic_copy, R.drawable.ic_whatsapp},
+                    new String[]{getString(R.string.share), getString(R.string.copy_link), getString(R.string.whatsapp)}, which -> {
+                        if (which == 0) ShareUtils.shareWorkerSystem(requireContext(), worker);
+                        else if (which == 1) { android.content.ClipboardManager cm = (android.content.ClipboardManager) requireContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE); if (cm != null) cm.setPrimaryClip(android.content.ClipData.newPlainText("CubaPincha", ShareUtils.workerUrl(worker.workerId))); Snackbar.make(requireView(), R.string.link_copied, Snackbar.LENGTH_SHORT).show(); }
+                        else ShareUtils.shareWorkerWhatsApp(requireContext(), worker);
+                    });
+            return;
+        }
         if (job == null) return;
         showIconChoiceDialog(R.string.share, new int[]{
                         R.drawable.ic_share, R.drawable.ic_copy, R.drawable.ic_whatsapp,

@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private com.cubapincha.job.data.JobFilter pendingSearchFilter;
     /** Oferta de un enlace compartido, pendiente hasta entrar al menú principal. */
     private String pendingDeepLinkJobId;
+    private String pendingDeepLinkWorkerId;
     /** Navegaciones que llegaron con el estado ya guardado (p. ej. un
      *  callback de red con la app en segundo plano): se ejecutan en onResume. */
     private final Queue<Runnable> pendingNavigation = new ArrayDeque<>();
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         session = SessionManager.get(this);
         if (savedInstanceState != null) {
             pendingDeepLinkJobId = savedInstanceState.getString("pending_deep_link_job_id");
+            pendingDeepLinkWorkerId = savedInstanceState.getString("pending_deep_link_worker_id");
         }
 
         bottomNav = findViewById(R.id.bottom_nav);
@@ -190,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
         // antes de entrar, se perdería.
         if (pendingDeepLinkJobId != null) {
             outState.putString("pending_deep_link_job_id", pendingDeepLinkJobId);
+        }
+        if (pendingDeepLinkWorkerId != null) {
+            outState.putString("pending_deep_link_worker_id", pendingDeepLinkWorkerId);
         }
     }
 
@@ -316,13 +321,18 @@ public class MainActivity extends AppCompatActivity {
         if (intent == null || intent.getData() == null) return;
         android.net.Uri uri = intent.getData();
         if (!Intent.ACTION_VIEW.equals(intent.getAction())) return;
+        String workerId = null;
         String jobId = null;
-        if ("cubapincha".equals(uri.getScheme()) && "oferta".equals(uri.getHost())) {
+        if ("cubapincha".equals(uri.getScheme()) && "trabajador".equals(uri.getHost())) {
+            workerId = uri.getLastPathSegment();
+        } else if ("cubapincha".equals(uri.getScheme()) && "oferta".equals(uri.getHost())) {
             jobId = uri.getLastPathSegment();
         } else if ("https".equals(uri.getScheme()) && "henrytmr.github.io".equals(uri.getHost())) {
             // Formato nuevo: /cubapincha/oferta.html?id={jobId}
             String id = uri.getQueryParameter("id");
-            if (id != null && !id.isEmpty()) {
+            if (uri.getPath() != null && uri.getPath().endsWith("/trabajador.html")) {
+                workerId = id;
+            } else if (id != null && !id.isEmpty()) {
                 jobId = id;
             } else {
                 // Compatibilidad con formato antiguo /ofertas/{id} si alguien lo usa
@@ -332,6 +342,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        if (workerId != null && !workerId.isEmpty()) {
+            pendingDeepLinkWorkerId = workerId; openPendingWorkerDeepLink(); return;
+        }
         if (jobId == null || jobId.isEmpty()) return;
         pendingDeepLinkJobId = jobId;
         openPendingDeepLink();
@@ -339,6 +352,16 @@ public class MainActivity extends AppCompatActivity {
 
     /** Abre la oferta pendiente del enlace, solo con la sesión dentro y el
      *  menú principal visible (si no, enterMain lo intentará de nuevo). */
+    private void openPendingWorkerDeepLink() {
+        if (pendingDeepLinkWorkerId == null || !session.isLoggedIn()) return;
+        Fragment current = currentFragment();
+        if (current == null || !isTabRoot(current)) return;
+        String id = pendingDeepLinkWorkerId; pendingDeepLinkWorkerId = null;
+        repository.getPublicWorker(id, result -> {
+            if (!isFinishing() && result.ok && result.data != null) openWorkerDetail(result.data);
+            else if (!isFinishing()) Snackbar.make(findViewById(R.id.fragment_container), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+        });
+    }
     private void openPendingDeepLink() {
         if (pendingDeepLinkJobId == null) return;
         if (!session.isLoggedIn()) return;
@@ -394,6 +417,7 @@ public class MainActivity extends AppCompatActivity {
         drainPendingNavigation();
         // Enlace pendiente que llegó con un detalle abierto.
         openPendingDeepLink();
+        openPendingWorkerDeepLink();
         // La sesión del servidor caducó y no se pudo renovar sola:
         // volver al inicio de sesión con un aviso claro.
         if (session.isAuthExpired()) {

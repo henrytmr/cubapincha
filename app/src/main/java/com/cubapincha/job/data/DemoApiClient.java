@@ -644,6 +644,16 @@ public class DemoApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<Boolean> uninviteWorker(String workerId, String offerId) {
+        latency(); return ApiResult.success(false);
+    }
+    @Override
+    public ApiResult<RecommendedWorker> getPublicWorker(String workerId) {
+        List<RecommendedWorker> all = getRecommendedWorkers(null,null,null,null,0,100).data;
+        if (all != null) for (RecommendedWorker w : all) if (workerId.equals(w.workerId)) return ApiResult.success(w);
+        return ApiResult.fail("NOT_FOUND", "Trabajador no encontrado.");
+    }
+    @Override
     public ApiResult<NotificationPage> getNotifications(boolean unreadOnly) {
         latency();
         NotificationPage page = new NotificationPage();

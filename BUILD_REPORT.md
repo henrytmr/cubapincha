@@ -1,27 +1,26 @@
-# CubaPincha — informe de construcción (Android DEV 2.11.0)
+# CubaPincha — informe de construcción Android 2.11.3
 
-**Estado:** fuente Android actualizada a 2.11.0 / versionCode 26. **No compilada** por instrucción del usuario; no hay APK nuevo en esta entrega.
+**Base:** `cubapincha-2.11.2-segura` / `355ceea5e42da86af92276d670496cd9c87e5dda`.
+**Versión:** `versionName 2.11.3`, `versionCode 28`.
+**Servidor:** v25 existente; no se modificó.
 
-## Cambios incluidos
+## Cambios de aplicación
 
-- FCM ahora usa los recursos Firebase generados por Google Services y no exige cuatro valores manuales en preferencias para arrancar en instalación limpia.
-- Se añadieron modelos y llamadas Android `rateApplication`/`getRatings` contra el contrato existente de Edge v9. El `getRatings` público no transmite JWT; la escritura sí usa la sesión del usuario y no entra en la cola offline.
-- Se añadió valoración en candidaturas `hired`, con estrellas 1–5, comentario opcional de hasta 1000 caracteres, consulta paginada para no permitir duplicados en la UI y tratamiento de conflictos del servidor.
-- Perfil propio muestra promedio, estrellas, total y valoraciones recibidas con paginación. Se añadieron puntos de entrada a las valoraciones públicas del candidato y de la empresa.
-- El archivo Firebase incluido ya coincidía con la configuración de referencia para `com.cubapincha.job`; no se sustituyó ni se imprimieron sus valores.
-- `gradlew` tiene permiso ejecutable `755`.
-- Se verificó la fuente de compartir: ya usa la URL web canónica; no se cambió.
+- Invitaciones de empresa persistentes mediante `invited`/`invitedOfferId`, con `uninviteWorker` y estado visual de check.
+- Filtro empresarial reutilizando el bottom sheet común, catálogo de provincia/municipio y mínimo de coincidencia.
+- Compartir perfil de trabajador mediante página web y deep links `cubapincha://trabajador/<id>`.
+- Ojito persistente junto a Guardar búsqueda en Buscar, en Inicio y en búsqueda empresarial.
+- Caché de fotos en memoria y disco para miniaturas offline, con limpieza explícita desde Perfil.
+- Guardado de trabajadores usando el objeto completo cacheado, evitando tarjetas vacías y conservando reversión en error.
+- Editar perfil incluye disponibilidad, modalidades y salario mínimo.
+- La versión y esta documentación quedan alineadas con la entrega 2.11.3.
 
-## Backend y operaciones remotas
+## Validación
 
-El usuario confirmó que SQL 006 y la Edge Function v9 ya están aplicadas y verificadas. No se volvió a ejecutar migración, no se llamó a la Edge Function para escritura, no se desplegó ni se modificó backend.
+La validación estática local pasó parseo de los XML de recursos, balance de llaves Java en los archivos modificados y `git diff --check`. La compilación local no pudo comenzar porque este sandbox no tiene Android SDK (`SDK location not found`); la compilación release firmada debe ejecutarse en Codemagic mediante `android-release` usando exactamente la rama/commit publicados.
 
-## Estado de build / pruebas
-
-No se ejecutó Gradle, Android Lint, instalación o prueba en dispositivo. No se creó APK/AAB y no se envió ninguna valoración real. La sincronización con JDK 21 en el PC de Muse sigue pendiente de confirmar. Las verificaciones realizadas en esta sesión son estáticas y se registran en `TEST_LOG.md`.
-
-La revisión estática posterior confirmó 157 XML parseables, IDs no duplicados en los tres layouts afectados, JSON Firebase válido con el paquete esperado, `gradlew` en modo `755`, enlace web canónico y ausencia de `local.properties` en el árbol fuente. También se ocultaron los contenedores de conexión/FCM que aún dejaban etiquetas visibles en Perfil.
+No se afirma prueba física en teléfono: corresponde al usuario.
 
 ## Seguridad
 
-No incluir `service_role`, contraseñas de firma ni tokens en la aplicación. La `service_role` compartida en el chat debe rotarse coordinadamente; esta sesión no la usó ni la rotó.
+El árbol de fuente no incluye `local.properties`, contraseñas, claves privadas ni keystore. No se modificó ni desplegó servidor.

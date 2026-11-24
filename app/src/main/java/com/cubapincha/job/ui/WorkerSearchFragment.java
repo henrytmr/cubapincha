@@ -35,10 +35,8 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     private TextView resultsCount;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
-    private String category = "";
-    private String province = "";
-    private String municipality = "";
-    private int minMatch = 0;
+    private com.cubapincha.job.data.JobFilter workerFilter = new com.cubapincha.job.data.JobFilter();
+    private boolean photosVisible;
     private boolean sortByMatch;
     private View root;
 
@@ -60,13 +58,22 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new RecommendedWorkerAdapter(this);
         list.setAdapter(adapter);
-        filters.setOnClickListener(v -> showWorkerFilters());
+        filters.setOnClickListener(v -> {
+            if (getParentFragmentManager().findFragmentByTag("worker_filters") == null)
+                FilterSheetFragment.newInstance(workerFilter).show(getParentFragmentManager(), "worker_filters");
+        });
+        getParentFragmentManager().setFragmentResultListener(FilterSheetFragment.REQUEST_KEY, this, (key, result) -> {
+            workerFilter = com.cubapincha.job.data.JobFilter.fromBundle(result.getBundle(FilterSheetFragment.KEY_FILTER));
+            searchWorkers();
+        });
         sort.setOnClickListener(v -> {
             sortByMatch = !sortByMatch;
             sort.setText(sortByMatch ? "Mayor coincidencia" : "Ordenar por");
             searchWorkers();
         });
         save.setOnClickListener(v -> saveSearch());
+        android.widget.ImageButton eye = view.findViewById(R.id.worker_photo_toggle);
+        eye.setOnClickListener(v -> { photosVisible = !photosVisible; adapter.setPhotosVisible(photosVisible); eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off); eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos"); });
         loadSavedSearchChips();
         query.addTextChangedListener(new android.text.TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -76,39 +83,11 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         searchWorkers();
     }
 
-    private void showWorkerFilters() {
-        int pad = (int) (20 * getResources().getDisplayMetrics().density);
-        LinearLayout content = new LinearLayout(requireContext());
-        content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(pad, 0, pad, 0);
-        EditText cat = field("Categoría u oficio", category);
-        EditText prov = field("Provincia", province);
-        EditText mun = field("Municipio", municipality);
-        EditText min = field("Mínimo % de coincidencia", minMatch == 0 ? "" : String.valueOf(minMatch));
-        min.setInputType(InputType.TYPE_CLASS_NUMBER);
-        content.addView(cat); content.addView(prov); content.addView(mun); content.addView(min);
-        new AlertDialog.Builder(requireContext()).setTitle("Filtros").setView(content)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton("Aplicar", (d, which) -> {
-                    category = value(cat); province = value(prov); municipality = value(mun);
-                    try { minMatch = value(min).isEmpty() ? 0 : Math.max(0, Integer.parseInt(value(min))); }
-                    catch (NumberFormatException e) { minMatch = 0; }
-                    searchWorkers();
-                }).show();
-    }
-
-    private EditText field(String hint, String text) {
-        EditText field = new EditText(requireContext());
-        field.setHint(hint); field.setSingleLine(true); field.setText(text); field.setTextSize(16);
-        field.setPadding(0, 12, 0, 12);
-        return field;
-    }
-
     private void saveSearch() {
         SavedSearch saved = new SavedSearch();
         saved.name = value(query).isEmpty() ? "Trabajadores" : value(query);
-        saved.query = value(query); saved.category = category;
-        saved.provinceCode = province; saved.municipalityCode = municipality;
+        saved.query = value(query); saved.category = workerFilter.category;
+        saved.provinceCode = workerFilter.provinceCode; saved.municipalityCode = workerFilter.municipalityCode;
         saved.sort = sortByMatch ? "match" : "recent"; saved.frequency = "off";
         Repository.get(requireContext()).saveFilter(saved, result -> {
             if (isAdded()) Snackbar.make(root, result.ok ? "Búsqueda guardada." : result.friendlyMessage(), Snackbar.LENGTH_SHORT).show();
@@ -132,9 +111,9 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
                 chip.setChipIconResource(R.drawable.ic_search);
                 chip.setCheckable(false);
                 chip.setOnClickListener(v -> {
-                    category = search.category == null ? "" : search.category;
-                    province = search.provinceCode == null ? "" : search.provinceCode;
-                    municipality = search.municipalityCode == null ? "" : search.municipalityCode;
+                    workerFilter.category = search.category == null ? "" : search.category;
+                    workerFilter.provinceCode = search.provinceCode == null ? "" : search.provinceCode;
+                    workerFilter.municipalityCode = search.municipalityCode == null ? "" : search.municipalityCode;
                     query.setText(search.query == null ? "" : search.query);
                     searchWorkers();
                 });
@@ -160,8 +139,9 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     private void searchWorkers() {
         if (!isAdded() || query == null) return;
         Repository.get(requireContext()).getRecommendedWorkers(value(query).isEmpty() ? null : value(query),
-                province.isEmpty() ? null : province, municipality.isEmpty() ? null : municipality,
-                category.isEmpty() ? null : category, minMatch, 100, result -> {
+                workerFilter.provinceCode == null || workerFilter.provinceCode.isEmpty() ? null : workerFilter.provinceCode,
+                workerFilter.municipalityCode == null || workerFilter.municipalityCode.isEmpty() ? null : workerFilter.municipalityCode,
+                workerFilter.category == null || workerFilter.category.isEmpty() ? null : workerFilter.category, workerFilter.minMatch, 100, result -> {
                     if (!isAdded()) return;
                     View empty = root.findViewById(R.id.worker_empty);
                     if (!result.ok || result.data == null) {
@@ -183,7 +163,13 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
 
     @Override public void onWorkerClick(RecommendedWorker w) { ((MainActivity) requireActivity()).openWorkerDetail(w); }
     @Override public void onProfileClick(RecommendedWorker w) { onWorkerClick(w); }
-    @Override public void onInterestClick(RecommendedWorker w) { Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { }); }
+    @Override public void onInterestClick(RecommendedWorker w) {
+        if (w.invited) {
+            Repository.get(requireContext()).uninviteWorker(w.workerId, w.invitedOfferId == null || w.invitedOfferId.isEmpty() ? w.matchedOfferId : w.invitedOfferId, r -> { if (r.ok) { w.invited = false; w.invitedOfferId = ""; adapter.setItems(new java.util.ArrayList<>(java.util.Arrays.asList(w))); } });
+        } else {
+            Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { if (r.ok) { w.invited = true; w.invitedOfferId = w.matchedOfferId == null ? "" : w.matchedOfferId; adapter.setItems(new java.util.ArrayList<>(java.util.Arrays.asList(w))); } });
+        }
+    }
     @Override public void onSaveClick(RecommendedWorker w) { Repository.get(requireContext()).saveCandidate(w.workerId, null, w.saved, r -> { }); }
     @Override public void onWhatsAppClick(RecommendedWorker w) {
         if (w.phone != null && !w.phone.isEmpty()) startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,

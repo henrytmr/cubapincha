@@ -521,6 +521,15 @@ public class LocalDb extends SQLiteOpenHelper {
         }
     }
 
+    /** Borra únicamente contenido descargado, conservando sesión, guardados y cola. */
+    public void clearDownloadedCache() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("cached_jobs", null, null);
+        db.delete("cached_applications", null, null);
+        db.delete("cached_notifications", null, null);
+        db.delete("cached_recommended_workers", null, null);
+        db.delete("cached_profile", null, null);
+    }
     /** Borra la cola offline y los borradores: solo cuando entra una cuenta
      *  distinta a la que los creó (no le pertenecen a la nueva cuenta). */
     public void clearPendingAndDrafts() {

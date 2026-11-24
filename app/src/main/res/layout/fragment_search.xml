@@ -90,6 +90,14 @@
             android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceBodyMedium" />
 
+        <ImageButton
+            android:id="@+id/btn_photo_toggle_save"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Mostrar fotos"
+            android:src="@drawable/ic_visibility_off"
+            app:tint="?attr/colorPrimary" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_search"
             style="@style/Widget.CubaPincha.Button.Text"

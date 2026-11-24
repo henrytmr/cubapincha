@@ -71,6 +71,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceBodyMedium" />
+        <ImageButton
+            android:id="@+id/worker_photo_toggle"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Mostrar fotos"
+            android:src="@drawable/ic_visibility_off"
+            app:tint="?attr/colorPrimary" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/worker_save_search"
             style="@style/Widget.CubaPincha.Button.Text"

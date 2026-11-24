@@ -179,6 +179,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/change_view" />
+                <ImageButton
+                    android:id="@+id/btn_home_photo_toggle"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Mostrar fotos"
+                    android:src="@drawable/ic_visibility_off"
+                    app:tint="?attr/colorPrimary" />
             </LinearLayout>
 
             <LinearLayout

@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import com.cubapincha.job.R;
 import com.cubapincha.job.model.Job;
+import com.cubapincha.job.model.RecommendedWorker;
 
 /**
  * Compartir ofertas con enlace canónico estable.
@@ -27,6 +28,20 @@ public final class ShareUtils {
 
     public static String jobDeepLink(String jobId) {
         return DEEP_LINK_SCHEME + jobId;
+    }
+    public static String workerUrl(String workerId) { return WEB_BASE + "/trabajador.html?id=" + workerId; }
+    public static String workerDeepLink(String workerId) { return "cubapincha://trabajador/" + workerId; }
+    public static String shareText(RecommendedWorker worker) {
+        return worker.workerName + " · " + (worker.headline == null ? "Perfil profesional" : worker.headline)
+                + " (" + worker.locationText() + ")\n" + workerUrl(worker.workerId) + "\nVía CubaPincha";
+    }
+    public static void shareWorkerSystem(Context ctx, RecommendedWorker worker) {
+        Intent share = new Intent(Intent.ACTION_SEND); share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, shareText(worker));
+        ctx.startActivity(Intent.createChooser(share, ctx.getString(R.string.share)));
+    }
+    public static void shareWorkerWhatsApp(Context ctx, RecommendedWorker worker) {
+        openExternal(ctx, "https://wa.me/?text=" + Uri.encode(shareText(worker)));
     }
 
     /** Texto corto para compartir: título, empresa, municipio, salario, enlace. */

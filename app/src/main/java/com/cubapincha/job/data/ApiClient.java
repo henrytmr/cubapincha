@@ -73,6 +73,8 @@ public interface ApiClient {
     ApiResult<List<RecommendedWorker>> getRecommendedWorkers(String q, String provinceCode, String municipalityCode, String category, int minMatch, int limit);
 
     ApiResult<Boolean> inviteWorker(String workerId, String offerId, String message);
+    ApiResult<Boolean> uninviteWorker(String workerId, String offerId);
+    ApiResult<RecommendedWorker> getPublicWorker(String workerId);
 
     ApiResult<NotificationPage> getNotifications(boolean unreadOnly);
 

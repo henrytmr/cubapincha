@@ -682,15 +682,19 @@ public class Repository {
     public void saveCandidate(String workerId, String applicationId, boolean save, ApiCallback<Boolean> cb) {
         run(() -> {
             try {
-                RecommendedWorker cached = new RecommendedWorker();
-                cached.workerId = workerId;
+                RecommendedWorker cached = null;
                 boolean wasSaved = false;
                 for (RecommendedWorker existing : db.getSavedCandidates()) {
                     if (workerId != null && workerId.equals(existing.workerId)) {
-                        wasSaved = true;
-                        break;
+                        cached = existing; wasSaved = true; break;
                     }
                 }
+                if (cached == null) {
+                    for (RecommendedWorker existing : db.getCachedRecommendedWorkers()) {
+                        if (workerId != null && workerId.equals(existing.workerId)) { cached = existing; break; }
+                    }
+                }
+                if (cached == null) { cached = new RecommendedWorker(); cached.workerId = workerId; }
                 db.setSavedCandidate(cached, save);
                 JSONObject payload = new JSONObject();
                 payload.put("workerId", workerId);
@@ -715,6 +719,10 @@ public class Repository {
         }, cb);
     }
 
+    public void clearDownloadedCache() {
+        db.clearDownloadedCache();
+        com.cubapincha.job.util.NetworkImageLoader.clearCache(appContext);
+    }
     public void uploadPhoto(String kind, String jobId, String imageBase64, String thumbBase64,
                             ApiCallback<JSONObject> cb) {
         run(() -> activeClient().uploadPhoto(kind, jobId, imageBase64, thumbBase64), cb);
@@ -737,6 +745,15 @@ public class Repository {
         }, cb);
     }
 
+    public void uninviteWorker(String workerId, String offerId, ApiCallback<Boolean> cb) {
+        run(() -> {
+            if (!isDemoMode() && !isOnline()) return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para retirar la invitación.");
+            return activeClient().uninviteWorker(workerId, offerId);
+        }, cb);
+    }
+    public void getPublicWorker(String workerId, ApiCallback<RecommendedWorker> cb) {
+        run(() -> activeClient().getPublicWorker(workerId), cb);
+    }
     public void inviteWorker(String workerId, String offerId, String message,
                              ApiCallback<Boolean> cb) {
         run(() -> {
