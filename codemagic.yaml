@@ -8,25 +8,20 @@ workflows:
       android_signing:
         - cubapincha-release
     scripts:
-      - name: Extract complete corrected release source
+      - name: Configure release build from selected commit
         script: |
-          unzip -q cuba-pincha-android-source-full-release.zip -d codigo-fuente
-          chmod +x codigo-fuente/gradlew
-      - name: Configure connected release build
-        script: |
-          cd codigo-fuente
           cat > local.properties <<PROPS
-          supabaseUrl=https://ogimwehtnhegfoamiwzm.supabase.co
-          supabaseAnonKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naW13ZWh0bmhlZ2ZvYW1pd3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxODEzODUsImV4cCI6MjExMDc1NzM4NX0.2TK332LJh9dPpfjzfrNKYVr0IrBOIrKD2YiUYuxVMBs
-          googleWebClientId=654632132778-4odjvp1nv1sp6d5rtfhj8fmookg6hdr6.apps.googleusercontent.com
+          supabaseUrl=${SUPABASE_URL:-}
+          supabaseAnonKey=${SUPABASE_ANON_KEY:-}
+          googleWebClientId=${GOOGLE_WEB_CLIENT_ID:-}
           storeFile=$CM_KEYSTORE_PATH
           storePassword=$CM_KEYSTORE_PASSWORD
           keyAlias=$CM_KEY_ALIAS
           keyPassword=$CM_KEYSTORE_PASSWORD
           PROPS
+          chmod +x ./gradlew
       - name: Assemble signed release APK
         script: |
-          cd codigo-fuente
           ./gradlew clean assembleRelease --stacktrace
     artifacts:
-      - codigo-fuente/app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.apk
