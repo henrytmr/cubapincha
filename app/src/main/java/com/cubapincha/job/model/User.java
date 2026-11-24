@@ -15,6 +15,8 @@ public class User {
     public String phone; // teléfono de contacto (WhatsApp / llamada)
     public int profilePercent;
     public int unreadNotifications;
+    public String photoUrl = "";
+    public String photoThumbUrl = "";
 
     // Perfil trabajador
     public String workerId;
@@ -158,6 +160,8 @@ public class User {
         u.emailMasked = o.optString("emailMasked", "");
         u.phone = o.optString("phone", "");
         u.unreadNotifications = o.optInt("unreadNotifications", 0);
+        u.photoUrl = o.optString("photoUrl", "");
+        u.photoThumbUrl = o.optString("photoThumbUrl", "");
         JSONObject p = o.optJSONObject("profile");
         if (p != null) {
             if (u.isWorker()) {

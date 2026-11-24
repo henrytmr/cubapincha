@@ -127,6 +127,12 @@ public class ProfileFragment extends Fragment {
         percentText.setText(getString(R.string.profile_percent, percent));
         LinearProgressIndicator progress = view.findViewById(R.id.profile_progress);
         progress.setProgress(percent);
+        repo.me(result -> {
+            if (!isAdded() || !result.ok || result.data == null) return;
+            int freshPercent = Math.max(0, Math.min(100, result.data.profilePercent));
+            percentText.setText(getString(R.string.profile_percent, freshPercent));
+            progress.setProgress(freshPercent);
+        });
         view.findViewById(R.id.card_profile_progress).setOnClickListener(v -> activity.openEditProfile());
         view.findViewById(R.id.card_saved_jobs).setOnClickListener(v -> activity.openSavedJobs());
         view.findViewById(R.id.card_saved_searches).setOnClickListener(v -> {

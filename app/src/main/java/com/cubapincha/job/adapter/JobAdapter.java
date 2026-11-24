@@ -172,7 +172,8 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Context ctx = btn.getContext();
             String message = "Hola, vi en CubaPincha la oferta de " + job.title
                     + " en " + job.locationText() + ".";
-            if (job.contactPhone != null && !job.contactPhone.isEmpty()) {
+            if (Repository.get(ctx).isDemoMode()
+                    && job.contactPhone != null && !job.contactPhone.isEmpty()) {
                 Repository.get(ctx).contactEvent("job", job.jobId, "whatsapp");
                 UiUtils.openWhatsApp(ctx, job.contactPhone, message);
                 return;

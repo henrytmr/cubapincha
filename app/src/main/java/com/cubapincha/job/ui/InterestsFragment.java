@@ -3,6 +3,10 @@ package com.cubapincha.job.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,12 +59,54 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
         adapter = new ApplicationAdapter(this);
         list.setAdapter(adapter);
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            private final Paint deletePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            {
+                deletePaint.setColor(Color.parseColor("#D94B4B"));
+                textPaint.setColor(Color.WHITE);
+                textPaint.setTextSize(14 * getResources().getDisplayMetrics().scaledDensity);
+                textPaint.setTypeface(android.graphics.Typeface.create("sans-serif-medium", 0));
+            }
+
+            @Override public int getMovementFlags(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder holder) {
+                int pos = holder.getBindingAdapterPosition();
+                boolean allowed = pos != RecyclerView.NO_POSITION && shown != null && pos < shown.size()
+                        && ("sent".equals(shown.get(pos).status) || "reviewing".equals(shown.get(pos).status));
+                return makeMovementFlags(0, allowed ? ItemTouchHelper.RIGHT : 0);
+            }
+
+            @Override public void onChildDraw(@NonNull Canvas canvas, @NonNull RecyclerView rv,
+                                              @NonNull RecyclerView.ViewHolder holder, float dX, float dY,
+                                              int actionState, boolean isCurrentlyActive) {
+                if (dX > 0) {
+                    View item = holder.itemView;
+                    float right = item.getLeft() + dX;
+                    canvas.drawRect(item.getLeft(), item.getTop(), right, item.getBottom(), deletePaint);
+                    canvas.drawText("✕ Eliminar", item.getLeft() + 20 * getResources().getDisplayMetrics().density,
+                            item.getTop() + item.getHeight() / 2f + 5 * getResources().getDisplayMetrics().density,
+                            textPaint);
+                }
+                super.onChildDraw(canvas, rv, holder, dX, dY, actionState, isCurrentlyActive);
+            }
+
             @Override public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder a, @NonNull RecyclerView.ViewHolder b) { return false; }
             @Override public void onSwiped(@NonNull RecyclerView.ViewHolder holder, int direction) {
                 int pos = holder.getBindingAdapterPosition(); if (pos == RecyclerView.NO_POSITION || shown == null || pos >= shown.size()) return;
-                Application app = shown.remove(pos); adapter.remove(app);
-                Repository.get(requireContext()).changeApplicationStatus(app.applicationId, "withdrawn", null, result -> { if (!result.ok && isAdded()) { shown.add(pos, app); adapter.setItems(shown); Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } });
-                Snackbar.make(requireView(), "Interés retirado", Snackbar.LENGTH_LONG).setAction("Deshacer", v -> { shown.add(pos, app); adapter.setItems(shown); Repository.get(requireContext()).changeApplicationStatus(app.applicationId, "sent", null, ignored -> { }); }).show();
+                Application app = shown.get(pos);
+                String previousStatus = app.status;
+                shown.remove(pos); adapter.remove(app);
+                Repository.get(requireContext()).changeApplicationStatus(app.applicationId, "withdrawn", null, result -> {
+                    if (!result.ok && isAdded()) {
+                        app.status = previousStatus;
+                        shown.add(Math.min(pos, shown.size()), app); adapter.setItems(shown);
+                        Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                    }
+                });
+                Snackbar.make(requireView(), "Interés retirado", Snackbar.LENGTH_LONG).setAction("Deshacer", v -> {
+                    app.status = previousStatus;
+                    shown.add(Math.min(pos, shown.size()), app); adapter.setItems(shown);
+                    Repository.get(requireContext()).changeApplicationStatus(app.applicationId, previousStatus, null, ignored -> { });
+                }).show();
             }
         }).attachToRecyclerView(list);
         skeletonContainer = view.findViewById(R.id.skeleton_container);
@@ -144,6 +190,8 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
         for (Application a : apps) {
             if ("closed".equals(status)) {
                 if ("rejected".equals(a.status) || "withdrawn".equals(a.status)) out.add(a);
+            } else if ((status == null || status.isEmpty()) && "withdrawn".equals(a.status)) {
+                // Los retirados solo se muestran en la pestaña Cerrado.
             } else if (status == null || status.isEmpty() || status.equals(a.status)) {
                 out.add(a);
             }
@@ -155,7 +203,7 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
     private void loadApplicationsQuiet() {
         Repository.get(requireContext()).getApplications(currentStatus, result -> {
             if (!isAdded() || !result.ok || result.data == null) return;
-            List<Application> items = result.data;
+            List<Application> items = filterByStatus(result.data, currentStatus);
             if (items.isEmpty()) {
                 shown = items;
                 list.setVisibility(View.GONE);
@@ -217,12 +265,12 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
             if (!isAdded()) return;
             if (result.ok && result.data != null) {
                 errorState.setVisibility(View.GONE);
-                shown = result.data;
-                if (result.data.isEmpty()) {
+                shown = filterByStatus(result.data, currentStatus);
+                if (shown.isEmpty()) {
                     emptyState.setVisibility(View.VISIBLE);
                 } else {
                     list.setVisibility(View.VISIBLE);
-                    adapter.setItems(result.data);
+                    adapter.setItems(shown);
                 }
             } else {
                 // Un fallo no es "sin intereses": estado de error con reintento.

@@ -885,6 +885,12 @@ public class DemoApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<org.json.JSONObject> uploadPhoto(String kind, String jobId,
+                                                       String imageBase64, String thumbBase64) {
+        return ApiResult.success(new org.json.JSONObject());
+    }
+
+    @Override
     public ApiResult<Void> registerDevice(String token) {
         return ApiResult.success(null);
     }

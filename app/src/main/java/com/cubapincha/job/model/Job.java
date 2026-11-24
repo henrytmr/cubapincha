@@ -66,6 +66,8 @@ public class Job {
     public boolean whatsappEnabled;
     public double ratingAverage;
     public int ratingTotal;
+    public String photoUrl = "";
+    public String photoThumbUrl = "";
 
     public Job() {}
 
@@ -293,6 +295,8 @@ public class Job {
         j.whatsappEnabled = o.optBoolean("whatsappEnabled", false);
         j.ratingAverage = o.optDouble("ratingAverage", 0d);
         j.ratingTotal = o.optInt("ratingTotal", 0);
+        j.photoUrl = o.optString("photoUrl", "");
+        j.photoThumbUrl = o.optString("photoThumbUrl", "");
         return j;
     }
 

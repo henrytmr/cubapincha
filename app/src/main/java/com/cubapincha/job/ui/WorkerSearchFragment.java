@@ -22,6 +22,8 @@ import com.cubapincha.job.R;
 import com.cubapincha.job.adapter.RecommendedWorkerAdapter;
 import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 /** Explorador de trabajadores para empresas; reutiliza la misma tarjeta del panel. */
 public class WorkerSearchFragment extends Fragment implements RecommendedWorkerAdapter.Listener {
@@ -31,6 +33,7 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     private EditText province;
     private EditText municipality;
     private EditText minMatch;
+    private TextView resultsCount;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
 
@@ -56,9 +59,32 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         root.addView(bar);
 
         TextView title = new TextView(requireContext());
-        title.setText("Explorar trabajadores");
-        title.setTextSize(20);
+        title.setText("Buscar");
+        title.setTextSize(24);
         root.addView(title);
+
+        LinearLayout actions = new LinearLayout(requireContext());
+        actions.setGravity(Gravity.CENTER_VERTICAL);
+        MaterialButton filtersButton = new MaterialButton(requireContext());
+        filtersButton.setText("Filtros");
+        filtersButton.setIconResource(R.drawable.ic_filter);
+        MaterialButton sortButton = new MaterialButton(requireContext());
+        sortButton.setText("Ordenar por");
+        sortButton.setIconResource(R.drawable.ic_sort);
+        actions.addView(filtersButton, new LinearLayout.LayoutParams(0, 48 * dp, 1));
+        LinearLayout.LayoutParams sortLp = new LinearLayout.LayoutParams(0, 48 * dp, 1);
+        sortLp.setMarginStart(8 * dp);
+        actions.addView(sortButton, sortLp);
+        root.addView(actions);
+
+        LinearLayout resultHeader = new LinearLayout(requireContext());
+        resultHeader.setGravity(Gravity.CENTER_VERTICAL);
+        resultsCount = new TextView(requireContext());
+        resultHeader.addView(resultsCount, new LinearLayout.LayoutParams(0, 44 * dp, 1));
+        MaterialButton saveSearch = new MaterialButton(requireContext());
+        saveSearch.setText("Guardar búsqueda");
+        resultHeader.addView(saveSearch, new LinearLayout.LayoutParams(-2, 44 * dp));
+        root.addView(resultHeader);
 
         LinearLayout filters = new LinearLayout(requireContext());
         filters.setOrientation(LinearLayout.VERTICAL);
@@ -67,7 +93,13 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         municipality = addFilter(filters, "Municipio");
         minMatch = addFilter(filters, "Mínimo %");
         minMatch.setInputType(InputType.TYPE_CLASS_NUMBER);
+        filters.setVisibility(View.GONE);
         root.addView(filters, new LinearLayout.LayoutParams(-1, -2));
+
+        filtersButton.setOnClickListener(v ->
+                filters.setVisibility(filters.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
+        sortButton.setOnClickListener(v -> Snackbar.make(root, "Orden: mayor coincidencia", Snackbar.LENGTH_SHORT).show());
+        saveSearch.setOnClickListener(v -> Snackbar.make(root, "Búsqueda lista para guardar desde tu perfil.", Snackbar.LENGTH_SHORT).show());
 
         RecyclerView list = new RecyclerView(requireContext());
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -124,6 +156,7 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
                 minimum, 100, result -> {
                     if (!isAdded() || !result.ok || result.data == null) return;
                     adapter.setItems(result.data);
+                    resultsCount.setText(result.data.size() + " trabajadores");
                 });
     }
 

@@ -107,6 +107,9 @@ public interface ApiClient {
 
     ApiResult<Void> contactEvent(String entityType, String entityId, String channel);
 
+    ApiResult<org.json.JSONObject> uploadPhoto(String kind, String jobId,
+                                                String imageBase64, String thumbBase64);
+
     ApiResult<Void> registerDevice(String token);
 
     /** Da de baja un token push (al cerrar sesión). */

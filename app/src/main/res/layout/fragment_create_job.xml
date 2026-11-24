@@ -489,6 +489,14 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_offer_photo"
+            style="@style/Widget.CubaPincha.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:text="Añadir o cambiar foto de la oferta" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_publish"
             style="@style/Widget.CubaPincha.Button.Primary"
             android:layout_width="match_parent"

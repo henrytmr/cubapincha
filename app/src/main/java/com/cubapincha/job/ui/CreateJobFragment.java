@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.net.Uri;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -34,6 +35,8 @@ import com.cubapincha.job.data.SeedData;
 import com.cubapincha.job.model.Application;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.util.TextUtils;
+import com.cubapincha.job.util.PhotoPayload;
+import com.cubapincha.job.util.PhotoPicker;
 
 import java.util.Calendar;
 
@@ -90,6 +93,25 @@ public class CreateJobFragment extends Fragment {
     private ProgressBar progress;
     private ScrollView scrollRoot;
     private View btnPublish, btnDraft, btnPreview;
+    private PhotoPicker photoPicker;
+    private PhotoPayload offerPhoto;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        photoPicker = new PhotoPicker(this, new PhotoPicker.Callback() {
+            @Override public void onPhotoPicked(Uri uri) {
+                try {
+                    offerPhoto = PhotoPayload.fromUri(requireContext(), uri);
+                    if (isAdded()) Snackbar.make(requireView(), "Foto preparada para la oferta.", Snackbar.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    offerPhoto = null;
+                    if (isAdded()) Snackbar.make(requireView(), "No se pudo preparar la foto.", Snackbar.LENGTH_LONG).show();
+                }
+            }
+            @Override public void onPhotoDenied(String reason) { }
+        });
+    }
 
     @Nullable
     @Override
@@ -157,6 +179,7 @@ public class CreateJobFragment extends Fragment {
         btnPublish = view.findViewById(R.id.btn_publish);
         btnDraft = view.findViewById(R.id.btn_draft);
         btnPreview = view.findViewById(R.id.btn_preview);
+        view.findViewById(R.id.btn_offer_photo).setOnClickListener(v -> photoPicker.showChoice());
 
         LocationPicker.setup(province, municipality, this::updateQuality);
         UiUtils.setupDropdown(category, SeedData.CATEGORIES);
@@ -506,7 +529,7 @@ public class CreateJobFragment extends Fragment {
             draft.jobId = editing.jobId;
             repo.updateJob(draft, update -> {
                 if (!isAdded()) return;
-                if (update.ok) publish(editing.jobId);
+                if (update.ok) uploadThenPublish(editing.jobId);
                 else {
                     setLoading(false);
                     Snackbar.make(requireView(), update.friendlyMessage(), Snackbar.LENGTH_LONG).show();
@@ -515,7 +538,7 @@ public class CreateJobFragment extends Fragment {
         } else {
             repo.createJob(draft, created -> {
                 if (!isAdded()) return;
-                if (created.ok && created.data != null) publish(created.data.jobId);
+                if (created.ok && created.data != null) uploadThenPublish(created.data.jobId);
                 else {
                     setLoading(false);
                     Snackbar.make(requireView(), created.friendlyMessage(), Snackbar.LENGTH_LONG).show();
@@ -534,6 +557,22 @@ public class CreateJobFragment extends Fragment {
                 Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void uploadThenPublish(String jobId) {
+        if (offerPhoto == null) {
+            publish(jobId);
+            return;
+        }
+        Repository.get(requireContext()).uploadPhoto("offer", jobId,
+                offerPhoto.detailBase64, offerPhoto.thumbBase64, uploaded -> {
+                    if (!isAdded()) return;
+                    if (uploaded.ok) publish(jobId);
+                    else {
+                        setLoading(false);
+                        Snackbar.make(requireView(), "La oferta se creó, pero la foto no pudo subirse. Puedes reintentarlo al editarla.", Snackbar.LENGTH_LONG).show();
+                    }
+                });
     }
 
     /** Publicación completada (§6): el botón pasa a menta con check y,

@@ -1,6 +1,7 @@
 package com.cubapincha.job.ui;
 
 import android.os.Bundle;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.User;
 import com.cubapincha.job.util.TextUtils;
+import com.cubapincha.job.util.PhotoPayload;
+import com.cubapincha.job.util.PhotoPicker;
 
 /** Edición de perfil (trabajador o empresa): ubicación cubana, contacto y preferencias. */
 public class EditProfileFragment extends Fragment {
@@ -38,6 +41,31 @@ public class EditProfileFragment extends Fragment {
     /** Guardar solo se habilita cuando el perfil cargó: guardar con el
      *  formulario vacío borraría los datos guardados del usuario. */
     private boolean profileLoaded;
+    private PhotoPicker photoPicker;
+
+    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        photoPicker = new PhotoPicker(this, new PhotoPicker.Callback() {
+            @Override public void onPhotoPicked(Uri uri) {
+                try {
+                    PhotoPayload payload = PhotoPayload.fromUri(requireContext(), uri);
+                    Repository.get(requireContext()).uploadPhoto("profile", null,
+                            payload.detailBase64, payload.thumbBase64, result -> {
+                                if (!isAdded()) return;
+                                if (result.ok) {
+                                    SessionManager.get(requireContext()).setPhotoUri(uri.toString());
+                                    Snackbar.make(requireView(), "Foto de perfil actualizada.", Snackbar.LENGTH_SHORT).show();
+                                } else {
+                                    Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+                                }
+                            });
+                } catch (Exception e) {
+                    if (isAdded()) Snackbar.make(requireView(), "No se pudo preparar la foto.", Snackbar.LENGTH_LONG).show();
+                }
+            }
+            @Override public void onPhotoDenied(String reason) { }
+        });
+    }
 
     @Nullable
     @Override
@@ -91,6 +119,7 @@ public class EditProfileFragment extends Fragment {
         view.findViewById(R.id.company_fields).setVisibility(company ? View.VISIBLE : View.GONE);
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
                 requireActivity().getOnBackPressedDispatcher().onBackPressed());
+        view.findViewById(R.id.btn_profile_photo).setOnClickListener(v -> photoPicker.showChoice());
 
         displayName.setText(session.getDisplayName());
         displayName.addTextChangedListener(new TextWatcher() {

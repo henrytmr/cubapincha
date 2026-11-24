@@ -99,6 +99,7 @@ public class SavedJobsFragment extends Fragment implements JobAdapter.Listener,
             if (result.ok && result.data != null) {
                 candidatesEmpty = result.data.isEmpty();
                 if (!candidatesEmpty) {
+                    for (RecommendedWorker worker : result.data) worker.saved = true;
                     candidatesTitle.setVisibility(View.VISIBLE);
                     candidatesList.setVisibility(View.VISIBLE);
                     candidateAdapter.setItems(result.data);
@@ -128,21 +129,28 @@ public class SavedJobsFragment extends Fragment implements JobAdapter.Listener,
     }
 
     @Override public void onWorkerClick(RecommendedWorker worker) {
-        StringBuilder text = new StringBuilder();
-        text.append(worker.headline == null || worker.headline.isEmpty() ? "Perfil profesional" : worker.headline)
-                .append("\n\nUbicación: ").append(worker.locationText())
-                .append("\n").append(worker.salaryText());
-        if (worker.experienceYears != null) text.append("\nExperiencia: ").append(worker.experienceYears).append(" años");
-        if (!worker.workModes.isEmpty()) text.append("\nModalidad: ").append(join(worker.workModes));
-        if (!worker.skills.isEmpty()) text.append("\nHabilidades: ").append(join(worker.skills));
-        new AlertDialog.Builder(requireContext()).setTitle(worker.workerName).setMessage(text.toString())
-                .setNegativeButton(R.string.cancel, null).show();
+        ((MainActivity) requireActivity()).openWorkerDetail(worker);
     }
 
     @Override public void onProfileClick(RecommendedWorker worker) { onWorkerClick(worker); }
     @Override public void onInterestClick(RecommendedWorker worker) { }
     @Override public void onWhatsAppClick(RecommendedWorker worker) { }
-    @Override public void onSaveClick(RecommendedWorker worker) { }
+    @Override public void onSaveClick(RecommendedWorker worker) {
+        if (!worker.saved) {
+            candidateAdapter.remove(worker);
+            candidatesEmpty = candidateAdapter.getItemCount() == 0;
+            if (candidatesEmpty) {
+                candidatesList.setVisibility(View.GONE);
+                candidatesTitle.setVisibility(View.GONE);
+                updateEmptyState();
+            }
+            Repository.get(requireContext()).saveCandidate(worker.workerId, null, false, result -> {
+                if (!isAdded() || result.ok) return;
+                loadSaved();
+                Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+            });
+        }
+    }
 
     private static String join(List<String> values) {
         StringBuilder out = new StringBuilder();

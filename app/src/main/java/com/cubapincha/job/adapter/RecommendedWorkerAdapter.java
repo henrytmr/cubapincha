@@ -48,6 +48,14 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         notifyDataSetChanged();
     }
 
+    public void remove(RecommendedWorker worker) {
+        int index = items.indexOf(worker);
+        if (index >= 0) {
+            items.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
     @NonNull @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new Holder(LayoutInflater.from(parent.getContext())

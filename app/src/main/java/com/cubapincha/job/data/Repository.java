@@ -155,6 +155,7 @@ public class Repository {
         long expiresAt = auth.expiresAtEpochSec > 0 ? auth.expiresAtEpochSec
                 : (auth.expiresInSec > 0 ? java.time.Instant.now().getEpochSecond() + auth.expiresInSec : 0);
         s.expiresAt = expiresAt > 0 ? java.time.Instant.ofEpochSecond(expiresAt).toString() : "";
+        session.setProfilePercent(user.profilePercent);
         return s;
     }
 
@@ -438,6 +439,7 @@ public class Repository {
         run(() -> {
             if (!isDemoMode() && !isOnline()) {
                 User cached = db.getCachedProfile(session.getUserId());
+                if (cached != null) session.setProfilePercent(cached.profilePercent);
                 return cached == null ? ApiResult.fail("NO_CONNECTION", "Necesitas conexión para cargar tu perfil.")
                         : ApiResult.success(cached);
             }
@@ -670,13 +672,22 @@ public class Repository {
             try {
                 RecommendedWorker cached = new RecommendedWorker();
                 cached.workerId = workerId;
+                boolean wasSaved = false;
+                for (RecommendedWorker existing : db.getSavedCandidates()) {
+                    if (workerId != null && workerId.equals(existing.workerId)) {
+                        wasSaved = true;
+                        break;
+                    }
+                }
                 db.setSavedCandidate(cached, save);
                 JSONObject payload = new JSONObject();
                 payload.put("workerId", workerId);
                 if (applicationId != null && !applicationId.isEmpty()) payload.put("applicationId", applicationId);
                 payload.put("active", save);
-                return offlineOr(() -> activeClient().saveCandidate(workerId, applicationId, save),
+                ApiResult<Boolean> result = offlineOr(() -> activeClient().saveCandidate(workerId, applicationId, save),
                         "saveCandidate", payload);
+                if (!result.ok && !result.queued) db.setSavedCandidate(cached, wasSaved);
+                return result;
             } catch (Exception e) {
                 return ApiResult.fail("INTERNAL_ERROR", "");
             }
@@ -690,6 +701,11 @@ public class Repository {
             if (r.ok && r.data != null) for (RecommendedWorker w : r.data) db.setSavedCandidate(w, true);
             return r;
         }, cb);
+    }
+
+    public void uploadPhoto(String kind, String jobId, String imageBase64, String thumbBase64,
+                            ApiCallback<JSONObject> cb) {
+        run(() -> activeClient().uploadPhoto(kind, jobId, imageBase64, thumbBase64), cb);
     }
 
     public void getRecommendedWorkers(int minMatch, int limit, ApiCallback<List<RecommendedWorker>> cb) { getRecommendedWorkers(null,null,null,null,minMatch,limit,cb); }

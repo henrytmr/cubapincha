@@ -2,8 +2,8 @@
 <resources>
     <color name="cpInk">#F4F3EE</color>
     <color name="cpNight">#111B25</color>
-    <color name="cpIndigo">#8CC7E8</color>
-    <color name="cpViolet">#9FD4F0</color>
+    <color name="cpIndigo">#65D8D8</color>
+    <color name="cpViolet">#65D8D8</color>
     <color name="cpCoral">#65D8D8</color>
     <color name="cpMint">#65D8D8</color>
     <color name="cpSun">#FFD27A</color>
@@ -21,8 +21,8 @@
     <color name="sun_300">@color/cpSun</color>
     <color name="cream_50">@color/cpCream</color>
     <color name="outline">@color/cpOutline</color>
-    <color name="violet_300">#C6E5F7</color>
-    <color name="violet_night">#9FD4F0</color>
+    <color name="violet_300">#65D8D8</color>
+    <color name="violet_night">#65D8D8</color>
     <color name="outline_night">#526574</color>
     <color name="border">#526574</color>
     <color name="brand_primary">@color/cpViolet</color>
@@ -35,7 +35,7 @@
     <color name="surface_violet">#293C4D</color>
     <color name="icon_muted">#AABBC6</color>
     <color name="mint_soft">#29473D</color>
-    <color name="night_blue">#A8D1E8</color>
+    <color name="night_blue">#65D8D8</color>
     <color name="amber_notice">#FFD27A</color>
     <color name="error_red">#FF9A92</color>
 </resources>

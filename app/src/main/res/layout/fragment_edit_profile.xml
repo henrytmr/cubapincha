@@ -33,6 +33,15 @@
                 android:textAppearance="?attr/textAppearanceTitleLarge" />
         </LinearLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_profile_photo"
+            style="@style/Widget.CubaPincha.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Añadir o cambiar foto de perfil"
+            app:icon="@drawable/ic_camera" />
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.CubaPincha.TextInput"
             android:layout_width="match_parent"

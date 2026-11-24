@@ -32,6 +32,8 @@ public class RecommendedWorker {
     public String matchedOfferId;
     public String matchedOfferTitle;
     public boolean saved;
+    public String photoUrl = "";
+    public String photoThumbUrl = "";
 
     public String locationText() {
         if (municipalityName != null && !municipalityName.isEmpty()
@@ -91,6 +93,8 @@ public class RecommendedWorker {
         w.matchedOfferId = o.optString("matchedOfferId", "");
         w.matchedOfferTitle = o.optString("matchedOfferTitle", "");
         w.saved = o.optBoolean("saved", false);
+        w.photoUrl = o.optString("photoUrl", "");
+        w.photoThumbUrl = o.optString("photoThumbUrl", "");
         return w;
     }
 

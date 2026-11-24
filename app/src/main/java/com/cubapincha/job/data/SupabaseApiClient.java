@@ -949,6 +949,21 @@ public class SupabaseApiClient implements ApiClient {
     }
 
     @Override
+    public ApiResult<JSONObject> uploadPhoto(String kind, String jobId, String imageBase64, String thumbBase64) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("action", "uploadPhoto");
+            body.put("kind", kind);
+            if (jobId != null && !jobId.isEmpty()) body.put("jobId", jobId);
+            body.put("imageBase64", imageBase64);
+            body.put("thumbBase64", thumbBase64);
+            return unwrap(doPost(body), data -> (JSONObject) data);
+        } catch (Exception e) {
+            return failOf(e);
+        }
+    }
+
+    @Override
     public ApiResult<Void> registerDevice(String token) {
         try {
             JSONObject body = new JSONObject();
