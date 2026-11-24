@@ -43,7 +43,6 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onJobClick(Job job);
         void onSaveClick(Job job, ImageButton saveButton);
         default void onRatingClick(Job job) { }
-        default void onRatingClick(Job job) { }
     }
 
     private final List<Job> jobs = new ArrayList<>();
