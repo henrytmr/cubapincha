@@ -213,11 +213,6 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         outState.putInt("viewMode", viewMode);
         outState.putBoolean("photosVisible", photosVisible);
     }
-    @Override public void onDestroyView() {
-        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "search", photosVisible);
-        super.onDestroyView();
-    }
-
     /** Aplica un filtro completo desde fuera (chip de categoría, búsqueda
      *  guardada): sincroniza el campo de texto, los chips y recarga. */
     public void applyFilter(JobFilter newFilter) {
@@ -591,6 +586,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         AnimUtils.stopPulse(skeletonContainer);
         if (pendingSearch != null) handler.removeCallbacks(pendingSearch);
         if (watchdog != null) handler.removeCallbacks(watchdog);
+        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "search", photosVisible);
         super.onDestroyView();
     }
 }

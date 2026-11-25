@@ -208,11 +208,6 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
         outState.putInt("viewMode", viewMode);
         outState.putBoolean("photosVisible", photosVisible);
     }
-    @Override public void onDestroyView() {
-        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "home", photosVisible);
-        super.onDestroyView();
-    }
-
     /** Refresco silencioso: actualiza la lista solo si los datos cambiaron. */
     private void loadJobsQuiet() {
         JobFilter filter = new JobFilter();
@@ -393,6 +388,7 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
         // Detener el pulso infinito del skeleton al destruir la vista.
         if (watchdog != null) watchdogHandler.removeCallbacks(watchdog);
         AnimUtils.stopPulse(skeletonContainer);
+        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "home", photosVisible);
         super.onDestroyView();
     }
 }
