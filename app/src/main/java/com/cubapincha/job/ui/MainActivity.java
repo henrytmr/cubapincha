@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     repository.syncNow(result -> {
                         if (isFinishing() || isDestroyed()) return;
                         bannerHandler.removeCallbacks(hideBanner);
-                        offlineBanner.setVisibility(View.GONE);
+                        updateOfflineBanner(true);
                         if (!result.ok) {
                             Snackbar.make(findViewById(R.id.fragment_container),
                                     R.string.sync_failed, Snackbar.LENGTH_LONG).show();
@@ -442,7 +442,12 @@ public class MainActivity extends AppCompatActivity {
     private void updateOfflineBanner(boolean online) {
         if (online) {
             bannerHandler.removeCallbacks(hideBanner);
-            offlineBanner.setVisibility(View.GONE);
+            int pending = repository == null ? 0 : repository.pendingCount();
+            if (pending > 0) {
+                offlineBannerIcon.setImageResource(R.drawable.ic_sync);
+                offlineBannerText.setText(pending + (pending == 1 ? " pendiente de enviar" : " pendientes de enviar"));
+                offlineBanner.setVisibility(View.VISIBLE);
+            } else offlineBanner.setVisibility(View.GONE);
             return;
         }
         offlineBannerIcon.setImageResource(R.drawable.ic_cloud_offline);

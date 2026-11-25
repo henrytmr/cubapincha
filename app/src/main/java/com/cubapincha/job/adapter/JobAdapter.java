@@ -243,8 +243,12 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             location.setText(job.locationText());
             mode.setText(Job.workModeLabel(job.workMode));
             salary.setText(job.salaryText());
-            date.setText(TextUtils.timeAgo(job.publishedAt != null && !job.publishedAt.isEmpty()
+            String expiry = job.expiryNotice();
+            date.setText((expiry.isEmpty() ? "" : expiry + " · ") + TextUtils.timeAgo(job.publishedAt != null && !job.publishedAt.isEmpty()
                     ? job.publishedAt : job.createdAt));
+            date.setTextColor(expiry.equals("Vencida") ? ContextCompat.getColor(ctx, R.color.error_red)
+                    : expiry.isEmpty() ? UiUtils.resolveThemeColor(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant)
+                    : ContextCompat.getColor(ctx, R.color.amber_notice));
             boolean closed = !"published".equals(job.status);
             closedLabel.setVisibility(closed ? View.VISIBLE : View.GONE);
             if (job.matchScore > 0) {
@@ -316,8 +320,12 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             } else {
                 requirements.setVisibility(View.GONE);
             }
-            date.setText(TextUtils.timeAgo(job.publishedAt != null && !job.publishedAt.isEmpty()
+            String expiry = job.expiryNotice();
+            date.setText((expiry.isEmpty() ? "" : expiry + " · ") + TextUtils.timeAgo(job.publishedAt != null && !job.publishedAt.isEmpty()
                     ? job.publishedAt : job.createdAt));
+            date.setTextColor(expiry.equals("Vencida") ? ContextCompat.getColor(itemView.getContext(), R.color.error_red)
+                    : expiry.isEmpty() ? UiUtils.resolveThemeColor(itemView.getContext(), com.google.android.material.R.attr.colorOnSurfaceVariant)
+                    : ContextCompat.getColor(itemView.getContext(), R.color.amber_notice));
             ring.setVisibility(job.matchScore > 0 ? View.VISIBLE : View.GONE);
             ring.setPercent(job.matchScore, false);
             bindSaveButton(saveBtn, job);

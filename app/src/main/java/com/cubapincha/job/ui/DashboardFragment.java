@@ -44,6 +44,8 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         root = view;
+        photosVisible = savedInstanceState != null ? savedInstanceState.getBoolean("photosVisible", false)
+                : UiUtils.getPhotosVisible(requireContext(), "dashboard");
         MainActivity activity = (MainActivity) requireActivity();
         SessionManager session = SessionManager.get(requireContext());
         ((TextView) view.findViewById(R.id.greeting)).setText(
@@ -69,6 +71,7 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
         recommendedAdapter.setPhotosVisible(photosVisible);
         list.setAdapter(recommendedAdapter);
         android.widget.ImageButton eye = view.findViewById(R.id.btn_dashboard_photo_toggle);
+        eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
         eye.setOnClickListener(v -> {
             photosVisible = !photosVisible;
             recommendedAdapter.setPhotosVisible(photosVisible);
@@ -124,8 +127,17 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
     }
 
     @Override public void onInterestClick(RecommendedWorker worker) {
-        Repository.get(requireContext()).inviteWorker(worker.workerId, worker.matchedOfferId, "",
+        if (worker.invited) {
+            String offerId = worker.invitedOfferId == null || worker.invitedOfferId.isEmpty()
+                    ? worker.matchedOfferId : worker.invitedOfferId;
+            Repository.get(requireContext()).uninviteWorker(worker.workerId, offerId,
+                    result -> { if (isAdded() && result.ok) { worker.invited = false; worker.invitedOfferId = ""; recommendedAdapter.updateItem(worker); } });
+            return;
+        }
+        Repository.get(requireContext()).inviteWorker(worker.workerId, worker.matchedOfferId,
+                "Invitación para trabajar en CubaPincha",
                 result -> {
+                    if (result.ok) { worker.invited = true; worker.invitedOfferId = worker.matchedOfferId; recommendedAdapter.updateItem(worker); }
                     if (isAdded() && root != null) Snackbar.make(root,
                             result.ok ? "Invitación enviada al trabajador." : result.friendlyMessage(),
                             Snackbar.LENGTH_SHORT).show();
@@ -156,14 +168,23 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
         }
         Repository.get(requireContext()).contactEvent("worker", worker.workerId, "whatsapp");
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/"
-                    + worker.phone.replaceAll("[^0-9]", ""))));
+            UiUtils.openWhatsApp(requireContext(), worker.phone,
+                    "Hola " + worker.workerName + ", te contacto por una oportunidad en CubaPincha.");
         } catch (Exception e) {
             Snackbar.make(root, "No pudimos abrir WhatsApp.", Snackbar.LENGTH_LONG).show();
         }
     }
 
     @Override public void onProfileClick(RecommendedWorker worker) { onWorkerClick(worker); }
+    @Override public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("photosVisible", photosVisible);
+    }
+    @Override public void onDestroyView() {
+        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "dashboard", photosVisible);
+        root = null;
+        super.onDestroyView();
+    }
 
     private static String join(List<String> values) { return join(values, ", "); }
     private static String join(List<String> values, String separator) {

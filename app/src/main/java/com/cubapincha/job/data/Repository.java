@@ -684,8 +684,8 @@ public class Repository {
     public void saveCandidate(String workerId, String applicationId, boolean save, ApiCallback<Boolean> cb) {
         run(() -> {
             boolean wasSaved = false;
+            RecommendedWorker cached = null;
             try {
-                RecommendedWorker cached = null;
                 for (RecommendedWorker existing : db.getSavedCandidates()) {
                     if (workerId != null && workerId.equals(existing.workerId)) {
                         cached = existing; wasSaved = true; break;
@@ -711,9 +711,7 @@ public class Repository {
                 // Nunca dejar el perfil marcado/desmarcado si la construcción de
                 // la petición o el almacenamiento local falla.
                 try {
-                    RecommendedWorker rollback = new RecommendedWorker();
-                    rollback.workerId = workerId;
-                    db.setSavedCandidate(rollback, wasSaved);
+                    if (cached != null) db.setSavedCandidate(cached, wasSaved);
                 } catch (Exception ignored) { }
                 return ApiResult.fail("INTERNAL_ERROR", "No se pudo guardar el perfil. Inténtalo de nuevo.");
             }

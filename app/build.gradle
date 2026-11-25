@@ -23,8 +23,8 @@ android {
         applicationId "com.cubapincha.job"
         minSdk 24
         targetSdk 34
-        versionCode 29
-        versionName "2.11.4"
+        versionCode 30
+        versionName "2.11.5"
     }
 
     signingConfigs {

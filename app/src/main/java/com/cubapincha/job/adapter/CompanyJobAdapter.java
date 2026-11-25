@@ -83,9 +83,13 @@ public class CompanyJobAdapter extends RecyclerView.Adapter<CompanyJobAdapter.Ho
                         com.google.android.material.R.attr.colorOnSurfaceVariant)
                 : ContextCompat.getColor(h.itemView.getContext(), color));
         h.meta.setText(job.locationText() + " · " + Job.workModeLabel(job.workMode) + " · " + job.salaryText());
-        h.date.setText("published".equals(job.status)
+        String expiry = job.expiryNotice();
+        h.date.setText((expiry.isEmpty() ? "" : expiry + " · ") + ("published".equals(job.status)
                 ? "Publicada " + TextUtils.timeAgo(job.publishedAt).toLowerCase()
-                : "Actualizada " + TextUtils.timeAgo(job.updatedAt).toLowerCase());
+                : "Actualizada " + TextUtils.timeAgo(job.updatedAt).toLowerCase()));
+        h.date.setTextColor(expiry.equals("Vencida") ? ContextCompat.getColor(h.itemView.getContext(), R.color.error_red)
+                : expiry.isEmpty() ? UiUtils.resolveThemeColor(h.itemView.getContext(), com.google.android.material.R.attr.colorOnSurfaceVariant)
+                : ContextCompat.getColor(h.itemView.getContext(), R.color.amber_notice));
         h.pause.setText("paused".equals(job.status) ? "Reactivar" : h.itemView.getContext().getString(R.string.pause));
         // Pausar/Reactivar solo tiene sentido en ofertas publicadas o pausadas.
         h.pause.setVisibility("published".equals(job.status) || "paused".equals(job.status)

@@ -50,6 +50,16 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         lastAnimatedPosition = -1;
         notifyDataSetChanged();
     }
+    public void updateItem(RecommendedWorker worker) {
+        if (worker == null) return;
+        for (int i = 0; i < items.size(); i++) {
+            if (worker.workerId != null && worker.workerId.equals(items.get(i).workerId)) {
+                items.set(i, worker);
+                notifyItemChanged(i);
+                return;
+            }
+        }
+    }
 
     public void remove(RecommendedWorker worker) {
         int index = items.indexOf(worker);
@@ -90,6 +100,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.photoEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
         UiUtils.setDebouncedClickListener(h.photoEye, v -> {
             photosVisible = !photosVisible;
+            h.photoEye.setVisibility(View.VISIBLE);
+            h.photoEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
             notifyDataSetChanged();
         });
         h.photo.setVisibility(photosVisible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
@@ -101,6 +113,10 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
             h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
             listener.onSaveClick(w);
         });
+        h.invite.setText(w.invited ? "Invitación enviada" : "Invitar");
+        h.invite.setIconResource(w.invited ? R.drawable.ic_check_circle : R.drawable.ic_send);
+        UiUtils.setDebouncedClickListener(h.invite, v -> listener.onInterestClick(w));
+        UiUtils.setDebouncedClickListener(h.whatsapp, v -> listener.onWhatsAppClick(w));
         int pos = h.getBindingAdapterPosition();
         if (pos != RecyclerView.NO_POSITION && pos > lastAnimatedPosition) {
             lastAnimatedPosition = pos;
@@ -122,6 +138,7 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
     static class Holder extends RecyclerView.ViewHolder {
         TextView avatar, name, headline, location, mode, salary, date, profile, matchLabel;
         ImageButton save, photoEye;
+        com.google.android.material.button.MaterialButton invite, whatsapp;
         android.widget.ImageView photo, avatarPhoto;
         MatchRingView ring;
         Holder(View v) {
@@ -140,6 +157,8 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
             save = v.findViewById(R.id.btn_recommended_save);
             photoEye = v.findViewById(R.id.btn_worker_photo_eye);
             photo = v.findViewById(R.id.worker_photo);
+            invite = v.findViewById(R.id.btn_recommended_invite);
+            whatsapp = v.findViewById(R.id.btn_recommended_whatsapp);
         }
     }
 }

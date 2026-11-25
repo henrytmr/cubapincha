@@ -85,6 +85,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         } else {
             JobFilter pending = activity.takePendingSearchFilter();
             if (pending != null) filter = pending;
+            photosVisible = UiUtils.getPhotosVisible(requireContext(), "search");
         }
         queryInput = view.findViewById(R.id.input_query);
         if (filter.q != null) {
@@ -211,6 +212,10 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         outState.putBundle("filter", filter.toBundle());
         outState.putInt("viewMode", viewMode);
         outState.putBoolean("photosVisible", photosVisible);
+    }
+    @Override public void onDestroyView() {
+        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "search", photosVisible);
+        super.onDestroyView();
     }
 
     /** Aplica un filtro completo desde fuera (chip de categoría, búsqueda

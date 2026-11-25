@@ -284,10 +284,8 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         boolean available = worker.phone != null && !worker.phone.trim().isEmpty();
         whatsapp.setVisibility(available ? View.VISIBLE : View.GONE);
         call.setVisibility(View.GONE);
-        if (available) whatsapp.setOnClickListener(v -> {
-            try { startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://wa.me/" + worker.phone.replaceAll("[^0-9]", "")))); }
-            catch (Exception e) { Snackbar.make(requireView(), "No pudimos abrir WhatsApp.", Snackbar.LENGTH_LONG).show(); }
-        });
+        if (available) whatsapp.setOnClickListener(v -> UiUtils.openWhatsApp(requireContext(), worker.phone,
+                "Hola " + worker.workerName + ", te contacto por una oportunidad en CubaPincha."));
     }
 
     /** Actualiza la oferta en segundo plano sin skeleton ni parpadeos: solo

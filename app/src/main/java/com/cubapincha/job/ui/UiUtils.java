@@ -21,6 +21,13 @@ import com.cubapincha.job.R;
 /** Pequeñas ayudas compartidas por los fragmentos. */
 public final class UiUtils {
     private UiUtils() {}
+    private static final String PHOTO_PREFS = "cubapincha_photo_visibility";
+    public static boolean getPhotosVisible(Context ctx, String screen) {
+        return ctx.getSharedPreferences(PHOTO_PREFS, Context.MODE_PRIVATE).getBoolean(screen, false);
+    }
+    public static void setPhotosVisible(Context ctx, String screen, boolean visible) {
+        ctx.getSharedPreferences(PHOTO_PREFS, Context.MODE_PRIVATE).edit().putBoolean(screen, visible).apply();
+    }
 
     public static void snackbar(View view, String message) {
         if (view != null) Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();

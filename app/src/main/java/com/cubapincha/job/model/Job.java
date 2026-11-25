@@ -6,6 +6,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Oferta de empleo. Campos alineados con la Edge Function Supabase
@@ -226,6 +230,31 @@ public class Job {
     /** La oferta admite interés de trabajadores. */
     public boolean isActive() {
         return "published".equals(status);
+    }
+
+    /** Aviso corto para tarjetas y gestión de ofertas, calculado desde expiresAt. */
+    public String expiryNotice() {
+        if (expiresAt == null || expiresAt.isEmpty()) return "";
+        try {
+            String iso = expiresAt.replaceAll("(Z|[+-]\\d{2}:?\\d{2})$", "");
+            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ROOT);
+            parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+            ParsePosition pos = new ParsePosition(0);
+            Date expiry = parser.parse(iso, pos);
+            if (expiry == null) {
+                parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ROOT);
+                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+                pos = new ParsePosition(0);
+                expiry = parser.parse(iso, pos);
+            }
+            if (expiry == null) return "";
+            long hours = (expiry.getTime() - System.currentTimeMillis()) / (60L * 60L * 1000L);
+            if (hours < 0) return "Vencida";
+            if (hours < 24) return "Vence en menos de 24 h";
+            return "";
+        } catch (Exception ignored) {
+            return "";
+        }
     }
 
     /** La oferta conserva historial (no puede borrarse físicamente). */

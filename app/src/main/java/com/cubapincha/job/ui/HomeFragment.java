@@ -119,6 +119,9 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
 
         if (savedInstanceState != null) {
             viewMode = savedInstanceState.getInt("viewMode", JobAdapter.VIEW_CARD);
+            photosVisible = savedInstanceState.getBoolean("photosVisible", false);
+        } else {
+            photosVisible = UiUtils.getPhotosVisible(requireContext(), "home");
         }
 
         listRecommended = view.findViewById(R.id.list_recommended);
@@ -203,6 +206,11 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("viewMode", viewMode);
+        outState.putBoolean("photosVisible", photosVisible);
+    }
+    @Override public void onDestroyView() {
+        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "home", photosVisible);
+        super.onDestroyView();
     }
 
     /** Refresco silencioso: actualiza la lista solo si los datos cambiaron. */

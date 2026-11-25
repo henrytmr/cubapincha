@@ -81,6 +81,15 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
         h.skills.setVisibility(skills.isEmpty() ? View.GONE : View.VISIBLE);
         h.status.setText("Estado: " + Application.statusLabel(app.status)
                 + (app.hasCv ? " · Tiene CV" : ""));
+        int statusColor;
+        switch (app.status == null ? "" : app.status) {
+            case "sent": statusColor = R.color.cpMint; break;
+            case "reviewing": statusColor = R.color.night_blue; break;
+            case "interview": statusColor = R.color.amber_notice; break;
+            case "hired": statusColor = R.color.confirm_green; break;
+            default: statusColor = R.color.error_red;
+        }
+        h.status.setTextColor(androidx.core.content.ContextCompat.getColor(h.itemView.getContext(), statusColor));
         h.rate.setVisibility("hired".equals(app.status) ? View.VISIBLE : View.GONE);
         // Solo se muestran las transiciones permitidas desde el estado actual.
         boolean isSent = "sent".equals(app.status);
@@ -89,7 +98,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
         h.reviewing.setVisibility(isSent ? View.VISIBLE : View.GONE);
         h.interview.setVisibility(isSent || isReviewing ? View.VISIBLE : View.GONE);
         h.hire.setVisibility(isReviewing || isInterview ? View.VISIBLE : View.GONE);
-        h.reject.setVisibility(isSent || isReviewing || isInterview ? View.VISIBLE : View.GONE);
         UiUtils.setDebouncedClickListener(h.itemView, v -> {
             if (listener != null) listener.onCandidateClick(app);
         });
@@ -101,9 +109,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
         });
         UiUtils.setDebouncedClickListener(h.hire, v -> {
             if (listener != null) listener.onStatusClick(app, "hired");
-        });
-        UiUtils.setDebouncedClickListener(h.reject, v -> {
-            if (listener != null) listener.onStatusClick(app, "rejected");
         });
         UiUtils.setDebouncedClickListener(h.note, v -> {
             if (listener != null) listener.onNoteClick(app);
@@ -138,7 +143,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
     static class Holder extends RecyclerView.ViewHolder {
         TextView avatar, name, headline, jobInfo, skills, status;
         ImageView avatarPhoto;
-        TextView reviewing, interview, hire, reject, note, save, rate;
+        TextView reviewing, interview, hire, note, save, rate;
         MatchRingView ring;
 
         Holder(View itemView) {
@@ -154,7 +159,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.Hold
             reviewing = itemView.findViewById(R.id.btn_reviewing);
             interview = itemView.findViewById(R.id.btn_interview);
             hire = itemView.findViewById(R.id.btn_hire);
-            reject = itemView.findViewById(R.id.btn_reject);
             note = itemView.findViewById(R.id.btn_note);
             save = itemView.findViewById(R.id.btn_save);
             rate = itemView.findViewById(R.id.btn_rate_work);

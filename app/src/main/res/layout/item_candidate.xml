@@ -124,13 +124,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/hire" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_reject"
-                style="@style/Widget.CubaPincha.Button.Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reject"
-                android:textColor="@color/error_red" />
         </LinearLayout>
 
         <LinearLayout

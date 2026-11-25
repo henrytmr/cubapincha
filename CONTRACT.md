@@ -1,6 +1,6 @@
-# CubaPincha — Contrato API Edge/Supabase v25 / aplicación 2.11.4
+# CubaPincha — Contrato API Edge/Supabase v25 / aplicación 2.11.5
 
-Este es el contrato vigente de la aplicación Android 2.11.4 contra el servidor v25. La app autentica con Supabase Auth y envía el JWT en `Authorization: Bearer <jwt>` a `POST https://<proyecto>.supabase.co/functions/v1/api`. La respuesta tiene siempre `{ ok, data, error, requestId }`. `health`, `publicJob`, `publicWorker`, `listCatalogs` y `getRatings` son públicas; el resto exige JWT. El servidor v25 no fue modificado.
+Este es el contrato vigente de la aplicación Android 2.11.5 contra el servidor v25. La app autentica con Supabase Auth y envía el JWT en `Authorization: Bearer <jwt>` a `POST https://<proyecto>.supabase.co/functions/v1/api`. La respuesta tiene siempre `{ ok, data, error, requestId }`. `health`, `publicJob`, `publicWorker`, `listCatalogs` y `getRatings` son públicas; el resto exige JWT. El servidor v25 no fue modificado.
 
 ## Identidad y perfiles
 
@@ -27,9 +27,9 @@ Errores relevantes: `AUTH_REQUIRED`, `FORBIDDEN_ROLE`, `VALIDATION_ERROR`, `NOT_
 FCM usa `google-services.json`; el token real se registra mediante `registerDevice`. Las acciones sincronizables viajan dentro de `syncActions` con `clientActionId`. Las valoraciones no se encolan offline: se envían únicamente con conexión y sesión válida.
 
 ## Base de datos
-Aplicar `backend/sql/001_esquema.sql` a `005_permisos_service_role.sql` y después `006_valoraciones.sql`. La migración 006 crea `valoraciones`, índices, la unicidad anti-duplicados y RLS; las escrituras de la Edge Function usan `service_role` y la autorización de negocio se ejecuta en `rateApplication`.
+Aplicar los scripts `backend/sql/001_*.sql` a `009_*.sql` en orden. Las migraciones 006–009 incluyen valoraciones, índices, restricciones y permisos; las escrituras de la Edge Function usan `service_role` y la autorización de negocio se ejecuta en `rateApplication`. El servidor v25 no se modifica desde esta rama.
 
-## Extensiones de aplicación 2.11.4
+## Extensiones de aplicación 2.11.5
 
 `publicWorker` recibe `workerId` y devuelve el perfil público del trabajador. Las recomendaciones exponen `invited` e `invitedOfferId`; `inviteWorker` marca la invitación y `uninviteWorker` la deshace. La app conserva el estado tras recarga y no modifica tablas, políticas, funciones ni endpoints del servidor.
 

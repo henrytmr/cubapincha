@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cubapincha.job.R;
@@ -38,6 +39,7 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     private com.cubapincha.job.data.JobFilter workerFilter = new com.cubapincha.job.data.JobFilter();
     private boolean photosVisible;
     private boolean sortByMatch;
+    private boolean gridView;
     private View root;
 
     @Nullable @Override
@@ -55,9 +57,18 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         MaterialButton sort = view.findViewById(R.id.worker_sort);
         MaterialButton save = view.findViewById(R.id.worker_save_search);
         RecyclerView list = view.findViewById(R.id.worker_list);
-        list.setLayoutManager(new LinearLayoutManager(requireContext()));
+        gridView = state != null && state.getBoolean("gridView", false);
+        list.setLayoutManager(gridView ? new GridLayoutManager(requireContext(), 2) : new LinearLayoutManager(requireContext()));
         adapter = new RecommendedWorkerAdapter(this);
         list.setAdapter(adapter);
+        android.widget.ImageButton viewToggle = view.findViewById(R.id.worker_view_toggle);
+        viewToggle.setVisibility(View.VISIBLE);
+        viewToggle.setImageResource(gridView ? R.drawable.ic_list : R.drawable.ic_grid);
+        viewToggle.setOnClickListener(v -> {
+            gridView = !gridView;
+            list.setLayoutManager(gridView ? new GridLayoutManager(requireContext(), 2) : new LinearLayoutManager(requireContext()));
+            viewToggle.setImageResource(gridView ? R.drawable.ic_list : R.drawable.ic_grid);
+        });
         filters.setOnClickListener(v -> {
             if (getParentFragmentManager().findFragmentByTag("worker_filters") == null)
                 FilterSheetFragment.newInstance(workerFilter).show(getParentFragmentManager(), "worker_filters");
@@ -72,7 +83,11 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
             searchWorkers();
         });
         save.setOnClickListener(v -> saveSearch());
+        photosVisible = state != null ? state.getBoolean("photosVisible", false)
+                : UiUtils.getPhotosVisible(requireContext(), "worker_search");
+        adapter.setPhotosVisible(photosVisible);
         android.widget.ImageButton eye = view.findViewById(R.id.worker_photo_toggle);
+        eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
         eye.setOnClickListener(v -> { photosVisible = !photosVisible; adapter.setPhotosVisible(photosVisible); eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off); eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos"); });
         loadSavedSearchChips();
         query.addTextChangedListener(new android.text.TextWatcher() {
@@ -165,9 +180,9 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     @Override public void onProfileClick(RecommendedWorker w) { onWorkerClick(w); }
     @Override public void onInterestClick(RecommendedWorker w) {
         if (w.invited) {
-            Repository.get(requireContext()).uninviteWorker(w.workerId, w.invitedOfferId == null || w.invitedOfferId.isEmpty() ? w.matchedOfferId : w.invitedOfferId, r -> { if (r.ok) { w.invited = false; w.invitedOfferId = ""; adapter.setItems(new java.util.ArrayList<>(java.util.Arrays.asList(w))); } });
+            Repository.get(requireContext()).uninviteWorker(w.workerId, w.invitedOfferId == null || w.invitedOfferId.isEmpty() ? w.matchedOfferId : w.invitedOfferId, r -> { if (r.ok) { w.invited = false; w.invitedOfferId = ""; adapter.updateItem(w); } });
         } else {
-            Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { if (r.ok) { w.invited = true; w.invitedOfferId = w.matchedOfferId == null ? "" : w.matchedOfferId; adapter.setItems(new java.util.ArrayList<>(java.util.Arrays.asList(w))); } });
+            Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "Invitación para trabajar en CubaPincha", r -> { if (r.ok) { w.invited = true; w.invitedOfferId = w.matchedOfferId == null ? "" : w.matchedOfferId; adapter.updateItem(w); } });
         }
     }
     @Override public void onSaveClick(RecommendedWorker w) {
@@ -185,10 +200,16 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         });
     }
     @Override public void onWhatsAppClick(RecommendedWorker w) {
-        if (w.phone != null && !w.phone.isEmpty()) startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,
-                android.net.Uri.parse("https://wa.me/" + w.phone.replaceAll("[^0-9]", ""))));
+        UiUtils.openWhatsApp(requireContext(), w.phone,
+                "Hola " + w.workerName + ", te contacto por una oportunidad en CubaPincha.");
+    }
+    @Override public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("photosVisible", photosVisible);
+        outState.putBoolean("gridView", gridView);
     }
     @Override public void onDestroyView() {
+        if (isAdded()) UiUtils.setPhotosVisible(requireContext(), "worker_search", photosVisible);
         if (pendingSearch != null) searchHandler.removeCallbacks(pendingSearch);
         root = null; super.onDestroyView();
     }
