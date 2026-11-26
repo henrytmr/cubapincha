@@ -72,6 +72,9 @@ public class CandidatesFragment extends Fragment implements CandidateAdapter.Lis
         ItemTouchHelper.SimpleCallback swipe = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             @Override public boolean onMove(@NonNull RecyclerView r, @NonNull RecyclerView.ViewHolder a, @NonNull RecyclerView.ViewHolder b) { return false; }
+            @Override public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder holder) { return 0.35f; }
+            @Override public float getSwipeEscapeVelocity(float defaultValue) { return defaultValue * 1.25f; }
+            @Override public float getSwipeVelocityThreshold(float defaultValue) { return defaultValue * 1.25f; }
             @Override public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int direction) {
                 int pos = vh.getBindingAdapterPosition();
                 if (pos == RecyclerView.NO_POSITION) { loadCandidates(); return; }
@@ -81,6 +84,7 @@ public class CandidatesFragment extends Fragment implements CandidateAdapter.Lis
                 else onDiscard(app);
             }
             @Override public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView r, @NonNull RecyclerView.ViewHolder vh, float dx, float dy, int state, boolean active) {
+                dy = 0f;
                 View item = vh.itemView; paint.setColor(dx > 0 ? Color.rgb(198, 40, 40) : Color.rgb(80, 80, 80));
                 c.drawRect(item.getLeft(), item.getTop(), item.getRight(), item.getBottom(), paint);
                 paint.setColor(Color.WHITE); paint.setTextSize(15 * getResources().getDisplayMetrics().scaledDensity); paint.setFakeBoldText(true);

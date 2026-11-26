@@ -2,10 +2,14 @@ package com.cubapincha.job.data;
 
 import com.cubapincha.job.model.AppNotification;
 import com.cubapincha.job.model.Application;
+import com.cubapincha.job.model.AddCommentResult;
+import com.cubapincha.job.model.CommentsPage;
+import com.cubapincha.job.model.DeletedCommentResult;
 import com.cubapincha.job.model.ContactOptions;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RatingsPage;
 import com.cubapincha.job.model.RatingSubmission;
+import com.cubapincha.job.model.ReactionSummary;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.model.SavedSearch;
 import com.cubapincha.job.model.User;
@@ -49,6 +53,12 @@ public interface ApiClient {
 
     /** Envía una valoración autenticada; no se debe encolar offline. */
     ApiResult<RatingSubmission> rateApplication(String applicationId, int stars, String comment);
+
+    ApiResult<ReactionSummary> react(String entityType, String entityId, String reaction);
+    ApiResult<ReactionSummary> getReactions(String entityType, String entityId);
+    ApiResult<CommentsPage> listComments(String entityType, String entityId, int limit, String cursor);
+    ApiResult<AddCommentResult> addComment(String entityType, String entityId, String text);
+    ApiResult<DeletedCommentResult> deleteComment(String commentId);
 
     ApiResult<Application> expressInterest(String jobId, String clientActionId);
 

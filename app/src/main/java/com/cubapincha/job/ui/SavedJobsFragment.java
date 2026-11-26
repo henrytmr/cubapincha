@@ -23,6 +23,7 @@ import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.model.ReactionSummary;
 import com.cubapincha.job.util.AnimUtils;
 
 import java.util.List;
@@ -125,6 +126,9 @@ public class SavedJobsFragment extends Fragment implements JobAdapter.Listener,
 
     @Override public void onJobClick(Job job) { ((MainActivity) requireActivity()).openJobDetail(job); }
 
+    @Override public void onReaction(Job job, String reaction) { String previous=job.myReaction; int likes=job.likeCount, dislikes=job.dislikeCount; if (reaction.equals(previous)) { job.myReaction=null; if ("like".equals(reaction)) job.likeCount=Math.max(0,job.likeCount-1); else job.dislikeCount=Math.max(0,job.dislikeCount-1); } else { if ("like".equals(previous)) job.likeCount=Math.max(0,job.likeCount-1); if ("dislike".equals(previous)) job.dislikeCount=Math.max(0,job.dislikeCount-1); job.myReaction=reaction; if ("like".equals(reaction)) job.likeCount++; else job.dislikeCount++; } adapter.notifyDataSetChanged(); Repository.get(requireContext()).react("job", job.jobId, reaction, r -> { if (!isAdded()) return; if (r.ok && r.data != null) { ReactionSummary x=r.data; job.likeCount=x.likeCount; job.dislikeCount=x.dislikeCount; job.myReaction=x.myReaction; job.commentCount=x.commentCount; } else { job.myReaction=previous; job.likeCount=likes; job.dislikeCount=dislikes; Snackbar.make(requireView(), r.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } adapter.notifyDataSetChanged(); }); }
+    @Override public void onCommentsClick(Job job) { CommentsBottomSheet.newInstance("job", job.jobId, job.commentCount).setOnCountChanged(c -> { job.commentCount=c; adapter.notifyDataSetChanged(); }).show(getParentFragmentManager(), "comments"); }
+
     @Override public void onSaveClick(Job job, ImageButton saveButton) {
         Repository.get(requireContext()).saveJob(job.jobId, false, result -> {
             if (!isAdded()) return;
@@ -134,6 +138,9 @@ public class SavedJobsFragment extends Fragment implements JobAdapter.Listener,
             } else Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
         });
     }
+
+    @Override public void onReaction(RecommendedWorker w, String reaction) { String previous=w.myReaction; int likes=w.likeCount, dislikes=w.dislikeCount; if (reaction.equals(previous)) { w.myReaction=null; if ("like".equals(reaction)) w.likeCount=Math.max(0,w.likeCount-1); else w.dislikeCount=Math.max(0,w.dislikeCount-1); } else { if ("like".equals(previous)) w.likeCount=Math.max(0,w.likeCount-1); if ("dislike".equals(previous)) w.dislikeCount=Math.max(0,w.dislikeCount-1); w.myReaction=reaction; if ("like".equals(reaction)) w.likeCount++; else w.dislikeCount++; } candidateAdapter.notifyDataSetChanged(); Repository.get(requireContext()).react("worker", w.workerId, reaction, r -> { if (!isAdded()) return; if (r.ok && r.data != null) { ReactionSummary x=r.data; w.likeCount=x.likeCount; w.dislikeCount=x.dislikeCount; w.myReaction=x.myReaction; w.commentCount=x.commentCount; } else { w.myReaction=previous; w.likeCount=likes; w.dislikeCount=dislikes; Snackbar.make(requireView(), r.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } candidateAdapter.notifyDataSetChanged(); }); }
+    @Override public void onCommentsClick(RecommendedWorker w) { CommentsBottomSheet.newInstance("worker", w.workerId, w.commentCount).setOnCountChanged(c -> { w.commentCount=c; candidateAdapter.notifyDataSetChanged(); }).show(getParentFragmentManager(), "comments"); }
 
     @Override public void onWorkerClick(RecommendedWorker worker) {
         ((MainActivity) requireActivity()).openWorkerDetail(worker);

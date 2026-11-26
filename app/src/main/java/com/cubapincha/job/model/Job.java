@@ -70,6 +70,10 @@ public class Job {
     public String photoThumbUrl = "";
     /** Miniatura del perfil de la empresa que publica la oferta. */
     public String companyPhotoThumbUrl = "";
+    public int likeCount;
+    public int dislikeCount;
+    public String myReaction;
+    public int commentCount;
 
     public Job() {}
 
@@ -300,6 +304,10 @@ public class Job {
         j.photoUrl = o.optString("photoUrl", "");
         j.photoThumbUrl = o.optString("photoThumbUrl", "");
         j.companyPhotoThumbUrl = o.optString("companyPhotoThumbUrl", "");
+        j.likeCount = o.optInt("likeCount", 0);
+        j.dislikeCount = o.optInt("dislikeCount", 0);
+        j.myReaction = o.has("myReaction") && !o.isNull("myReaction") ? o.optString("myReaction") : null;
+        j.commentCount = o.optInt("commentCount", 0);
         return j;
     }
 
@@ -354,6 +362,9 @@ public class Job {
             o.put("photoUrl", photoUrl);
             o.put("photoThumbUrl", photoThumbUrl);
             o.put("companyPhotoThumbUrl", companyPhotoThumbUrl);
+            o.put("likeCount", likeCount); o.put("dislikeCount", dislikeCount);
+            if (myReaction != null) o.put("myReaction", myReaction); else o.put("myReaction", JSONObject.NULL);
+            o.put("commentCount", commentCount);
         } catch (Exception ignored) { }
         return o;
     }

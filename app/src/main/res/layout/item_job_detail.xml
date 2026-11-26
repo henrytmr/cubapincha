@@ -64,14 +64,6 @@
 
             <!-- WhatsApp en un toque: abre el chat con la empresa sin abrir
                  la ficha. Solo visible si la oferta admite WhatsApp. -->
-            <ImageButton
-                android:id="@+id/btn_whatsapp"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/whatsapp_contact"
-                android:src="@drawable/ic_whatsapp"
-                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/btn_save"
@@ -116,6 +108,7 @@
             android:textAppearance="?attr/textAppearanceBodySmall" />
         <ImageView
             android:id="@+id/job_photo"
+            android:background="?attr/colorSurfaceVariant"
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:layout_marginTop="@dimen/space_16"
@@ -123,6 +116,21 @@
             android:contentDescription="Foto de la oferta"
             android:visibility="gone" />
 
+
+        <LinearLayout
+            android:id="@+id/reactions_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageButton android:id="@+id/btn_like" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_thumb_up" android:contentDescription="Me gusta" />
+            <TextView android:id="@+id/like_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="8dp" android:text="0" />
+            <ImageButton android:id="@+id/btn_dislike" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_thumb_down" android:contentDescription="No me gusta" />
+            <TextView android:id="@+id/dislike_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="8dp" android:text="0" />
+            <ImageButton android:id="@+id/btn_comments" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_chat" android:contentDescription="Comentarios públicos" />
+            <TextView android:id="@+id/comment_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" />
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

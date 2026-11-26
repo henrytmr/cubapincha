@@ -78,6 +78,7 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
             @Override public void onChildDraw(@NonNull Canvas canvas, @NonNull RecyclerView rv,
                                               @NonNull RecyclerView.ViewHolder holder, float dX, float dY,
                                               int actionState, boolean isCurrentlyActive) {
+                dY = 0f;
                 if (dX > 0) {
                     View item = holder.itemView;
                     float right = item.getLeft() + dX;
@@ -90,6 +91,9 @@ public class InterestsFragment extends Fragment implements ApplicationAdapter.Li
             }
 
             @Override public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder a, @NonNull RecyclerView.ViewHolder b) { return false; }
+            @Override public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder holder) { return 0.35f; }
+            @Override public float getSwipeEscapeVelocity(float defaultValue) { return defaultValue * 1.25f; }
+            @Override public float getSwipeVelocityThreshold(float defaultValue) { return defaultValue * 1.25f; }
             @Override public void onSwiped(@NonNull RecyclerView.ViewHolder holder, int direction) {
                 int pos = holder.getBindingAdapterPosition(); if (pos == RecyclerView.NO_POSITION || shown == null || pos >= shown.size()) return;
                 Application app = shown.get(pos);

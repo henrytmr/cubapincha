@@ -4,10 +4,15 @@ import android.content.Context;
 
 import com.cubapincha.job.model.AppNotification;
 import com.cubapincha.job.model.Application;
+import com.cubapincha.job.model.AddCommentResult;
+import com.cubapincha.job.model.CommentsPage;
+import com.cubapincha.job.model.DeletedCommentResult;
 import com.cubapincha.job.model.ContactOptions;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RatingsPage;
 import com.cubapincha.job.model.RatingSubmission;
+import com.cubapincha.job.model.ReactionSummary;
+import com.cubapincha.job.model.PublicComment;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.model.SavedSearch;
 import com.cubapincha.job.model.User;
@@ -20,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -45,6 +52,8 @@ public class DemoApiClient implements ApiClient {
     private final List<Application> candidates = new ArrayList<>();
     private final List<AppNotification> notifications = new ArrayList<>();
     private final List<SavedSearch> savedSearches = new ArrayList<>();
+    private final Map<String, ReactionSummary> reactionState = new HashMap<>();
+    private final List<PublicComment> publicComments = new ArrayList<>();
 
     public DemoApiClient(Context ctx) {
         db = LocalDb.get(ctx);
@@ -464,6 +473,67 @@ public class DemoApiClient implements ApiClient {
         }
         Collections.sort(out, (a, b) -> String.valueOf(b.createdAt).compareTo(String.valueOf(a.createdAt)));
         return ApiResult.success(out);
+    }
+
+    private static String reactionKey(String type, String id) { return type + ":" + id; }
+    private static boolean validEntity(String type, String id) {
+        return ("job".equals(type) || "worker".equals(type)) && id != null && !id.trim().isEmpty();
+    }
+    private ReactionSummary demoSummary(String type, String id) {
+        ReactionSummary r = reactionState.get(reactionKey(type, id));
+        if (r == null) { r = new ReactionSummary(); r.entityType = type; r.entityId = id; reactionState.put(reactionKey(type, id), r); }
+        r.commentCount = 0;
+        for (PublicComment c : publicComments) if (id.equals(c.entityId)) r.commentCount++;
+        return r;
+    }
+
+    @Override
+    public ApiResult<ReactionSummary> react(String entityType, String entityId, String reaction) {
+        latency();
+        if (!validEntity(entityType, entityId) || !("like".equals(reaction) || "dislike".equals(reaction)))
+            return ApiResult.fail("VALIDATION_ERROR", "La entidad o reacción no es válida.");
+        ReactionSummary r = demoSummary(entityType, entityId);
+        if (reaction.equals(r.myReaction)) { if ("like".equals(reaction)) r.likeCount--; else r.dislikeCount--; r.myReaction = null; }
+        else { if ("like".equals(reaction)) r.likeCount++; else r.dislikeCount++; if ("like".equals(r.myReaction)) r.likeCount--; if ("dislike".equals(r.myReaction)) r.dislikeCount--; r.myReaction = reaction; }
+        return ApiResult.success(r);
+    }
+
+    @Override
+    public ApiResult<ReactionSummary> getReactions(String entityType, String entityId) {
+        latency();
+        if (!validEntity(entityType, entityId)) return ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.");
+        return ApiResult.success(demoSummary(entityType, entityId));
+    }
+
+    @Override
+    public ApiResult<CommentsPage> listComments(String entityType, String entityId, int limit, String cursor) {
+        latency();
+        if (!validEntity(entityType, entityId)) return ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.");
+        CommentsPage page = new CommentsPage(); page.entityType = entityType; page.entityId = entityId;
+        int offset = 0; try { if (cursor != null && !cursor.isEmpty()) offset = Integer.parseInt(cursor); } catch (Exception ignored) { }
+        List<PublicComment> matches = new ArrayList<>(); for (PublicComment c : publicComments) if (entityId.equals(c.entityId)) matches.add(c);
+        page.total = matches.size(); int end = Math.min(matches.size(), offset + Math.max(1, Math.min(100, limit)));
+        if (offset < matches.size()) page.comments.addAll(matches.subList(offset, end));
+        page.nextCursor = end < matches.size() ? String.valueOf(end) : null; return ApiResult.success(page);
+    }
+
+    @Override
+    public ApiResult<AddCommentResult> addComment(String entityType, String entityId, String text) {
+        latency(); String normalized = text == null ? "" : text.trim();
+        if (!validEntity(entityType, entityId) || normalized.isEmpty() || normalized.length() > 1000)
+            return ApiResult.fail("VALIDATION_ERROR", "El comentario debe tener entre 1 y 1000 caracteres.");
+        PublicComment c = new PublicComment(); c.commentId = UUID.randomUUID().toString(); c.entityId = entityId;
+        c.authorId = session.getUserId(); c.authorName = session.getDisplayName(); c.authorRole = session.getRole(); c.text = normalized; c.createdAt = TextUtils.nowIso();
+        publicComments.add(0, c); ReactionSummary summary = demoSummary(entityType, entityId);
+        AddCommentResult r = new AddCommentResult(); r.commentId=c.commentId; r.entityType=entityType; r.entityId=entityId; r.authorId=c.authorId; r.authorName=c.authorName; r.authorRole=c.authorRole; r.text=c.text; r.createdAt=c.createdAt; r.commentCount=summary.commentCount;
+        return ApiResult.success(r);
+    }
+
+    @Override
+    public ApiResult<DeletedCommentResult> deleteComment(String commentId) {
+        latency(); if (commentId == null || commentId.trim().isEmpty()) return ApiResult.fail("VALIDATION_ERROR", "El comentario no es válido.");
+        for (int i=0;i<publicComments.size();i++) if (commentId.equals(publicComments.get(i).commentId)) { publicComments.remove(i); DeletedCommentResult r=new DeletedCommentResult(); r.deleted=true; r.commentId=commentId; return ApiResult.success(r); }
+        return ApiResult.fail("NOT_FOUND", "No encontramos el comentario.");
     }
 
     @Override

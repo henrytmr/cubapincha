@@ -23,6 +23,7 @@ import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Application;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.model.ReactionSummary;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import java.util.Locale;
 public class DashboardFragment extends Fragment implements RecommendedWorkerAdapter.Listener {
     private RecommendedWorkerAdapter recommendedAdapter;
     private View root;
-    private boolean photosVisible;
+    private boolean showAllPhotos;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -66,14 +67,14 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
         RecyclerView list = view.findViewById(R.id.list_recommended);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         recommendedAdapter = new RecommendedWorkerAdapter(this);
-        recommendedAdapter.setPhotosVisible(photosVisible);
+        recommendedAdapter.setPhotosVisible(showAllPhotos);
         list.setAdapter(recommendedAdapter);
         android.widget.ImageButton eye = view.findViewById(R.id.btn_dashboard_photo_toggle);
         eye.setOnClickListener(v -> {
-            photosVisible = !photosVisible;
-            recommendedAdapter.setPhotosVisible(photosVisible);
-            eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+            showAllPhotos = !showAllPhotos;
+            recommendedAdapter.setPhotosVisible(showAllPhotos);
+            eye.setImageResource(showAllPhotos ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            eye.setContentDescription(showAllPhotos ? "Ocultar fotos" : "Mostrar fotos");
         });
         View explorer = view.findViewById(R.id.btn_explore_workers);
         if (explorer != null) explorer.setOnClickListener(v -> ((MainActivity) requireActivity()).pushFragment(new WorkerSearchFragment()));
@@ -131,6 +132,18 @@ public class DashboardFragment extends Fragment implements RecommendedWorkerAdap
                             Snackbar.LENGTH_SHORT).show();
                 });
     }
+
+    @Override public void onReaction(RecommendedWorker worker, String reaction) {
+        String previous = worker.myReaction; int oldLikes = worker.likeCount, oldDislikes = worker.dislikeCount;
+        if (reaction.equals(previous)) { worker.myReaction = null; if ("like".equals(reaction)) worker.likeCount = Math.max(0, worker.likeCount - 1); else worker.dislikeCount = Math.max(0, worker.dislikeCount - 1); }
+        else { if ("like".equals(previous)) worker.likeCount = Math.max(0, worker.likeCount - 1); if ("dislike".equals(previous)) worker.dislikeCount = Math.max(0, worker.dislikeCount - 1); worker.myReaction = reaction; if ("like".equals(reaction)) worker.likeCount++; else worker.dislikeCount++; }
+        recommendedAdapter.notifyDataSetChanged();
+        Repository.get(requireContext()).react("worker", worker.workerId, reaction, result -> { if (!isAdded()) return; if (result.ok && result.data != null) { apply(worker, result.data); } else { worker.myReaction = previous; worker.likeCount = oldLikes; worker.dislikeCount = oldDislikes; Snackbar.make(root, result.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } recommendedAdapter.notifyDataSetChanged(); });
+    }
+    @Override public void onCommentsClick(RecommendedWorker worker) {
+        CommentsBottomSheet.newInstance("worker", worker.workerId, worker.commentCount).setOnCountChanged(c -> { worker.commentCount = c; recommendedAdapter.notifyDataSetChanged(); }).show(getParentFragmentManager(), "comments");
+    }
+    private static void apply(RecommendedWorker w, ReactionSummary r) { w.likeCount = r.likeCount; w.dislikeCount = r.dislikeCount; w.commentCount = r.commentCount; w.myReaction = r.myReaction; }
 
     @Override public void onSaveClick(RecommendedWorker worker) {
         boolean requested = worker.saved;

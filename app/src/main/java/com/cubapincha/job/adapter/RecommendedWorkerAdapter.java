@@ -17,7 +17,9 @@ import android.widget.ImageButton;
 
 import com.cubapincha.job.R;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.data.LocalDb;
 import com.cubapincha.job.ui.UiUtils;
+import com.cubapincha.job.ui.ReactionUi;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
 import com.cubapincha.job.util.NetworkImageLoader;
@@ -34,13 +36,15 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         void onSaveClick(RecommendedWorker worker);
         void onWhatsAppClick(RecommendedWorker worker);
         default void onProfileClick(RecommendedWorker worker) { onWorkerClick(worker); }
+        default void onReaction(RecommendedWorker worker, String reaction) { }
+        default void onCommentsClick(RecommendedWorker worker) { }
     }
 
     private final List<RecommendedWorker> items = new ArrayList<>();
     private final Listener listener;
     private int lastAnimatedPosition = -1;
-    private boolean photosVisible;
-    public void setPhotosVisible(boolean visible) { photosVisible = visible; notifyDataSetChanged(); }
+    private boolean showAllPhotos;
+    public void setPhotosVisible(boolean visible) { showAllPhotos = visible; notifyDataSetChanged(); }
 
     public RecommendedWorkerAdapter(Listener listener) { this.listener = listener; }
 
@@ -79,6 +83,10 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.salary.setText(w.salaryText());
         h.date.setText("Perfil profesional");
         h.ring.setPercent(w.matchPercent, true);
+        ReactionUi.bind(h.itemView, w.myReaction, w.likeCount, w.dislikeCount, w.commentCount, new ReactionUi.Actions() {
+            @Override public void onReaction(String reaction) { listener.onReaction(w, reaction); }
+            @Override public void onComments() { listener.onCommentsClick(w); }
+        });
         h.matchLabel.setText(String.format(java.util.Locale.US, "%d%% de coincidencia", w.matchPercent));
         UiUtils.setDebouncedClickListener(h.profile, v -> listener.onProfileClick(w));
         UiUtils.setDebouncedClickListener(h.avatar, v -> listener.onProfileClick(w));
@@ -86,13 +94,15 @@ public class RecommendedWorkerAdapter extends RecyclerView.Adapter<RecommendedWo
         h.save.setImageResource(w.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
         h.save.setContentDescription(w.saved ? "Quitar de guardados" : "Guardar trabajador");
         h.photoEye.setVisibility(View.VISIBLE);
-        h.photoEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-        h.photoEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+        boolean visible = showAllPhotos || LocalDb.get(h.photoEye.getContext()).isPhotoVisible("worker", w.workerId);
+        h.photoEye.setImageResource(visible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+        h.photoEye.setContentDescription(visible ? "Ocultar foto" : "Mostrar foto");
         UiUtils.setDebouncedClickListener(h.photoEye, v -> {
-            photosVisible = !photosVisible;
+            boolean next = !(showAllPhotos || LocalDb.get(v.getContext()).isPhotoVisible("worker", w.workerId));
+            LocalDb.get(v.getContext()).setPhotoVisible("worker", w.workerId, next);
             notifyDataSetChanged();
         });
-        h.photo.setVisibility(photosVisible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
+        h.photo.setVisibility(visible && w.photoThumbUrl != null && !w.photoThumbUrl.isEmpty() ? View.VISIBLE : View.GONE);
         if (h.photo.getVisibility() == View.VISIBLE) NetworkImageLoader.load(h.photo, w.photoThumbUrl);
         UiUtils.setDebouncedClickListener(h.itemView, v -> listener.onWorkerClick(w));
         UiUtils.setDebouncedClickListener(h.save, v -> {

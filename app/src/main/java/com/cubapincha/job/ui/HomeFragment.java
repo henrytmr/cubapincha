@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -29,6 +30,7 @@ import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SeedData;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Job;
+import com.cubapincha.job.model.ReactionSummary;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.TextUtils;
 
@@ -49,7 +51,7 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
     private List<Job> cachedRecommended;
     private List<Job> cachedRecent;
     private boolean jobsLoaded = false;
-    private boolean photosVisible;
+    private boolean showAllPhotos;
     // Vigilante del esqueleto: si la red no responde en 15 s, el esqueleto
     // se esconde y aparece el estado de reintento (nunca se queda colgado).
     private final Handler watchdogHandler = new Handler(Looper.getMainLooper());
@@ -123,26 +125,27 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
 
         listRecommended = view.findViewById(R.id.list_recommended);
         listNew = view.findViewById(R.id.list_new);
-        listRecommended.setLayoutManager(new LinearLayoutManager(requireContext()));
-        listNew.setLayoutManager(new LinearLayoutManager(requireContext()));
+        applyLayoutManagers();
         recommendedAdapter = new JobAdapter(this);
         newAdapter = new JobAdapter(this);
         recommendedAdapter.setViewMode(viewMode);
         newAdapter.setViewMode(viewMode);
-        recommendedAdapter.setPhotosVisible(photosVisible);
-        newAdapter.setPhotosVisible(photosVisible);
+        recommendedAdapter.setPhotosVisible(showAllPhotos);
+        newAdapter.setPhotosVisible(showAllPhotos);
         listRecommended.setAdapter(recommendedAdapter);
         listNew.setAdapter(newAdapter);
 
         view.findViewById(R.id.btn_home_photo_toggle).setOnClickListener(v -> {
-            photosVisible = !photosVisible;
-            recommendedAdapter.setPhotosVisible(photosVisible); newAdapter.setPhotosVisible(photosVisible);
+            showAllPhotos = !showAllPhotos;
+            recommendedAdapter.setPhotosVisible(showAllPhotos); newAdapter.setPhotosVisible(showAllPhotos);
             ImageButton eye = view.findViewById(R.id.btn_home_photo_toggle);
-            eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+            eye.setImageResource(showAllPhotos ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            eye.setContentDescription(showAllPhotos ? "Ocultar fotos" : "Mostrar fotos");
         });
         view.findViewById(R.id.btn_view_toggle).setOnClickListener(v -> {
-            viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL : JobAdapter.VIEW_CARD;
+            viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL
+                    : (viewMode == JobAdapter.VIEW_DETAIL ? JobAdapter.VIEW_GRID : JobAdapter.VIEW_CARD);
+            applyLayoutManagers();
             recommendedAdapter.setViewMode(viewMode);
             newAdapter.setViewMode(viewMode);
             Snackbar.make(view, viewMode == JobAdapter.VIEW_CARD
@@ -206,6 +209,17 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
     }
 
     /** Refresco silencioso: actualiza la lista solo si los datos cambiaron. */
+    private void applyLayoutManagers() {
+        if (listRecommended == null || listNew == null) return;
+        if (viewMode == JobAdapter.VIEW_GRID) {
+            listRecommended.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+            listNew.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        } else {
+            listRecommended.setLayoutManager(new LinearLayoutManager(requireContext()));
+            listNew.setLayoutManager(new LinearLayoutManager(requireContext()));
+        }
+    }
+
     private void loadJobsQuiet() {
         JobFilter filter = new JobFilter();
         filter.limit = 20;
@@ -349,6 +363,20 @@ public class HomeFragment extends Fragment implements JobAdapter.Listener {
     public void onJobClick(Job job) {
         ((MainActivity) requireActivity()).openJobDetail(job);
     }
+
+    @Override public void onReaction(Job job, String reaction) {
+        String previous = job.myReaction;
+        int oldLikes = job.likeCount, oldDislikes = job.dislikeCount;
+        if (reaction.equals(previous)) { job.myReaction = null; if ("like".equals(reaction)) job.likeCount = Math.max(0, job.likeCount - 1); else job.dislikeCount = Math.max(0, job.dislikeCount - 1); }
+        else { if ("like".equals(previous)) job.likeCount = Math.max(0, job.likeCount - 1); if ("dislike".equals(previous)) job.dislikeCount = Math.max(0, job.dislikeCount - 1); job.myReaction = reaction; if ("like".equals(reaction)) job.likeCount++; else job.dislikeCount++; }
+        recommendedAdapter.updateJob(job); newAdapter.updateJob(job);
+        Repository.get(requireContext()).react("job", job.jobId, reaction, result -> { if (!isAdded()) return; if (result.ok && result.data != null) { apply(job, result.data); recommendedAdapter.updateJob(job); newAdapter.updateJob(job); } else { job.myReaction = previous; job.likeCount = oldLikes; job.dislikeCount = oldDislikes; recommendedAdapter.updateJob(job); newAdapter.updateJob(job); Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } });
+    }
+    @Override public void onCommentsClick(Job job) {
+        CommentsBottomSheet sheet = CommentsBottomSheet.newInstance("job", job.jobId, job.commentCount).setOnCountChanged(c -> { job.commentCount = c; recommendedAdapter.updateJob(job); newAdapter.updateJob(job); });
+        sheet.show(getParentFragmentManager(), "comments");
+    }
+    private static void apply(Job job, ReactionSummary r) { job.likeCount = r.likeCount; job.dislikeCount = r.dislikeCount; job.commentCount = r.commentCount; job.myReaction = r.myReaction; }
 
     @Override
     public void onSaveClick(Job job, ImageButton saveButton) {

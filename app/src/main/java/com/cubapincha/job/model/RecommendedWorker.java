@@ -37,6 +37,10 @@ public class RecommendedWorker {
     public String invitedOfferId = "";
     public String photoUrl = "";
     public String photoThumbUrl = "";
+    public int likeCount;
+    public int dislikeCount;
+    public String myReaction;
+    public int commentCount;
 
     public String locationText() {
         if (municipalityName != null && !municipalityName.isEmpty()
@@ -70,6 +74,9 @@ public class RecommendedWorker {
             o.put("invitedOfferId", invitedOfferId);
             o.put("photoUrl", photoUrl);
             o.put("photoThumbUrl", photoThumbUrl);
+            o.put("likeCount", likeCount); o.put("dislikeCount", dislikeCount);
+            if (myReaction != null) o.put("myReaction", myReaction); else o.put("myReaction", JSONObject.NULL);
+            o.put("commentCount", commentCount);
         } catch (Exception ignored) { }
         return o;
     }
@@ -104,6 +111,10 @@ public class RecommendedWorker {
         w.invitedOfferId = o.optString("invitedOfferId", "");
         w.photoUrl = o.optString("photoUrl", "");
         w.photoThumbUrl = o.optString("photoThumbUrl", "");
+        w.likeCount = o.optInt("likeCount", 0);
+        w.dislikeCount = o.optInt("dislikeCount", 0);
+        w.myReaction = o.has("myReaction") && !o.isNull("myReaction") ? o.optString("myReaction") : null;
+        w.commentCount = o.optInt("commentCount", 0);
         return w;
     }
 

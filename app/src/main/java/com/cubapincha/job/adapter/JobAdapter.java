@@ -7,12 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.cubapincha.job.ui.RatingStarsView;
 import com.cubapincha.job.ui.RatingUi;
+import com.cubapincha.job.ui.CommentsBottomSheet;
+import com.cubapincha.job.ui.ReactionUi;
 import androidx.fragment.app.Fragment;
 import com.cubapincha.job.ui.RatingStarsView;
 import com.cubapincha.job.ui.RatingUi;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cubapincha.job.R;
 import com.cubapincha.job.data.Repository;
+import com.cubapincha.job.data.LocalDb;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.ui.UiUtils;
 import com.cubapincha.job.util.AnimUtils;
@@ -39,18 +41,21 @@ import java.util.List;
 public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int VIEW_CARD = 0;
     public static final int VIEW_DETAIL = 1;
+    public static final int VIEW_GRID = 2;
 
     public interface Listener {
         void onJobClick(Job job);
         void onSaveClick(Job job, ImageButton saveButton);
         default void onRatingClick(Job job) { }
+        default void onReaction(Job job, String reaction) { }
+        default void onCommentsClick(Job job) { }
     }
 
     private final List<Job> jobs = new ArrayList<>();
     private final Listener listener;
     private int lastAnimatedPosition = -1;
     private int viewMode = VIEW_CARD;
-    private boolean photosVisible;
+    private boolean showAllPhotos;
 
     public JobAdapter(Listener listener) {
         this.listener = listener;
@@ -65,10 +70,10 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void setPhotosVisible(boolean visible) {
-        if (photosVisible != visible) { photosVisible = visible; notifyDataSetChanged(); }
+        if (showAllPhotos != visible) { showAllPhotos = visible; notifyDataSetChanged(); }
     }
 
-    public boolean arePhotosVisible() { return photosVisible; }
+    public boolean arePhotosVisible() { return showAllPhotos; }
 
     public int getViewMode() {
         return viewMode;
@@ -163,38 +168,17 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         });
     }
 
+    private void bindReactions(View root, Job job) {
+        ReactionUi.bind(root, job.myReaction, job.likeCount, job.dislikeCount, job.commentCount,
+                new ReactionUi.Actions() {
+                    @Override public void onReaction(String reaction) { if (listener != null) listener.onReaction(job, reaction); }
+                    @Override public void onComments() { if (listener != null) listener.onCommentsClick(job); }
+                });
+    }
+
     private void bindClick(View view, Job job) {
         UiUtils.setDebouncedClickListener(view, v -> {
             if (listener != null) listener.onJobClick(job);
-        });
-    }
-
-    /** WhatsApp en un toque: abre el chat con la empresa sin abrir la ficha.
-     *  Visible solo si la oferta admite WhatsApp. El número viene en la
-     *  oferta (demo) o se pide al servidor al tocar (conectado). */
-    private void bindWhatsappButton(ImageButton btn, Job job) {
-        // El acceso permanece visible; el contacto real se resuelve al tocar.
-        btn.setVisibility(View.VISIBLE);
-        UiUtils.setDebouncedClickListener(btn, v -> {
-            AnimUtils.hapticTick(btn);
-            Context ctx = btn.getContext();
-            String message = "Hola, vi en CubaPincha la oferta de " + job.title
-                    + " en " + job.locationText() + ".";
-            if (Repository.get(ctx).isDemoMode()
-                    && job.contactPhone != null && !job.contactPhone.isEmpty()) {
-                Repository.get(ctx).contactEvent("job", job.jobId, "whatsapp");
-                UiUtils.openWhatsApp(ctx, job.contactPhone, message);
-                return;
-            }
-            Repository.get(ctx).getContactOptions("job", job.jobId, result -> {
-                if (result.ok && result.data != null && result.data.whatsappEnabled
-                        && result.data.publicPhone != null && !result.data.publicPhone.isEmpty()) {
-                    Repository.get(ctx).contactEvent("job", job.jobId, "whatsapp");
-                    UiUtils.openWhatsApp(ctx, result.data.publicPhone, message);
-                } else {
-                    Toast.makeText(ctx, R.string.whatsapp_no_contact, Toast.LENGTH_SHORT).show();
-                }
-            });
         });
     }
 
@@ -202,7 +186,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView avatar, title, company, location, mode, salary, date, matchLabel, closedLabel;
         RatingStarsView ratingStars;
         ImageView verified, photo;
-        ImageButton saveBtn, whatsappBtn, photoEye;
+        ImageButton saveBtn, photoEye;
         ImageView avatarPhoto;
         View btnView;
         MatchRingView ring;
@@ -222,7 +206,6 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             matchLabel = itemView.findViewById(R.id.match_label);
             closedLabel = itemView.findViewById(R.id.closed_label);
             saveBtn = itemView.findViewById(R.id.btn_save);
-            whatsappBtn = itemView.findViewById(R.id.btn_whatsapp);
             photoEye = itemView.findViewById(R.id.btn_job_photo_eye);
             photo = itemView.findViewById(R.id.job_photo);
             btnView = itemView.findViewById(R.id.btn_view);
@@ -257,15 +240,17 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 matchLabel.setVisibility(View.GONE);
             }
             bindSaveButton(saveBtn, job);
-            bindWhatsappButton(whatsappBtn, job);
+            bindReactions(itemView, job);
             photoEye.setVisibility(View.VISIBLE);
-            photoEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-            photoEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+            boolean visible = showAllPhotos || LocalDb.get(photoEye.getContext()).isPhotoVisible("job", job.jobId);
+            photoEye.setImageResource(visible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+            photoEye.setContentDescription(visible ? "Ocultar foto" : "Mostrar foto");
             UiUtils.setDebouncedClickListener(photoEye, v -> {
-                photosVisible = !photosVisible;
+                boolean next = !(showAllPhotos || LocalDb.get(v.getContext()).isPhotoVisible("job", job.jobId));
+                LocalDb.get(v.getContext()).setPhotoVisible("job", job.jobId, next);
                 notifyDataSetChanged();
             });
-            boolean hasPhoto = photosVisible && job.photoThumbUrl != null && !job.photoThumbUrl.isEmpty();
+            boolean hasPhoto = visible && job.photoThumbUrl != null && !job.photoThumbUrl.isEmpty();
             photo.setVisibility(hasPhoto ? View.VISIBLE : View.GONE);
             photo.setBackgroundResource(hasPhoto ? R.drawable.bg_skeleton : android.R.color.transparent);
             if (!hasPhoto) photo.setImageDrawable(null);
@@ -282,7 +267,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class DetailHolder extends RecyclerView.ViewHolder {
         TextView title, company, meta, salary, description, requirements, date;
         ImageView verified;
-        ImageButton saveBtn, whatsappBtn;
+        ImageButton saveBtn;
         View btnView;
         MatchRingView ring;
 
@@ -297,7 +282,6 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             requirements = itemView.findViewById(R.id.job_requirements);
             date = itemView.findViewById(R.id.job_date);
             saveBtn = itemView.findViewById(R.id.btn_save);
-            whatsappBtn = itemView.findViewById(R.id.btn_whatsapp);
             btnView = itemView.findViewById(R.id.btn_view);
             ring = itemView.findViewById(R.id.match_ring);
         }
@@ -321,7 +305,7 @@ public class JobAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ring.setVisibility(job.matchScore > 0 ? View.VISIBLE : View.GONE);
             ring.setPercent(job.matchScore, false);
             bindSaveButton(saveBtn, job);
-            bindWhatsappButton(whatsappBtn, job);
+            bindReactions(itemView, job);
             bindClick(itemView, job);
             bindClick(btnView, job);
             if (position > lastAnimatedPosition) {

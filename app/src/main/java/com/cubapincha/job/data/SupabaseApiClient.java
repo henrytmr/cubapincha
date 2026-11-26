@@ -6,10 +6,15 @@ import android.util.Log;
 import com.cubapincha.job.BuildConfig;
 import com.cubapincha.job.model.AppNotification;
 import com.cubapincha.job.model.Application;
+import com.cubapincha.job.model.AddCommentResult;
+import com.cubapincha.job.model.CommentsPage;
+import com.cubapincha.job.model.DeletedCommentResult;
 import com.cubapincha.job.model.ContactOptions;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RatingsPage;
 import com.cubapincha.job.model.RatingSubmission;
+import com.cubapincha.job.model.ReactionSummary;
+import com.cubapincha.job.model.PublicComment;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.model.SavedSearch;
 import com.cubapincha.job.model.User;
@@ -414,6 +419,70 @@ public class SupabaseApiClient implements ApiClient {
         } catch (Exception e) {
             return failOf(e);
         }
+    }
+
+    private ApiResult<Void> validateEntity(String entityType, String entityId) {
+        if (!("job".equals(entityType) || "worker".equals(entityType)) || entityId == null || entityId.trim().isEmpty())
+            return ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.");
+        return null;
+    }
+
+    @Override
+    public ApiResult<ReactionSummary> react(String entityType, String entityId, String reaction) {
+        try {
+            ApiResult<Void> invalid = validateEntity(entityType, entityId);
+            if (invalid != null) return ApiResult.fail(invalid.errorCode, invalid.errorMessage);
+            if (!("like".equals(reaction) || "dislike".equals(reaction)))
+                return ApiResult.fail("VALIDATION_ERROR", "La reacción no es válida.");
+            JSONObject body = new JSONObject(); body.put("action", "react");
+            body.put("entityType", entityType); body.put("entityId", entityId.trim()); body.put("reaction", reaction);
+            return unwrap(doPost(body), data -> ReactionSummary.fromJson((JSONObject) data));
+        } catch (Exception e) { return failOf(e); }
+    }
+
+    @Override
+    public ApiResult<ReactionSummary> getReactions(String entityType, String entityId) {
+        try {
+            ApiResult<Void> invalid = validateEntity(entityType, entityId);
+            if (invalid != null) return ApiResult.fail(invalid.errorCode, invalid.errorMessage);
+            JSONObject params = new JSONObject(); params.put("entityType", entityType); params.put("entityId", entityId.trim());
+            return unwrap(doPublicRead("getReactions", params), data -> ReactionSummary.fromJson((JSONObject) data));
+        } catch (Exception e) { return failOf(e); }
+    }
+
+    @Override
+    public ApiResult<CommentsPage> listComments(String entityType, String entityId, int limit, String cursor) {
+        try {
+            ApiResult<Void> invalid = validateEntity(entityType, entityId);
+            if (invalid != null) return ApiResult.fail(invalid.errorCode, invalid.errorMessage);
+            JSONObject params = new JSONObject(); params.put("entityType", entityType); params.put("entityId", entityId.trim());
+            params.put("limit", Math.max(1, Math.min(100, limit)));
+            if (cursor != null && !cursor.trim().isEmpty()) params.put("cursor", cursor.trim());
+            return unwrap(doPublicRead("listComments", params), data -> CommentsPage.fromJson((JSONObject) data));
+        } catch (Exception e) { return failOf(e); }
+    }
+
+    @Override
+    public ApiResult<AddCommentResult> addComment(String entityType, String entityId, String text) {
+        try {
+            ApiResult<Void> invalid = validateEntity(entityType, entityId);
+            if (invalid != null) return ApiResult.fail(invalid.errorCode, invalid.errorMessage);
+            String normalized = text == null ? "" : text.trim();
+            if (normalized.isEmpty() || normalized.length() > 1000)
+                return ApiResult.fail("VALIDATION_ERROR", "El comentario debe tener entre 1 y 1000 caracteres.");
+            JSONObject body = new JSONObject(); body.put("action", "addComment");
+            body.put("entityType", entityType); body.put("entityId", entityId.trim()); body.put("text", normalized);
+            return unwrap(doPost(body), data -> AddCommentResult.fromJson((JSONObject) data));
+        } catch (Exception e) { return failOf(e); }
+    }
+
+    @Override
+    public ApiResult<DeletedCommentResult> deleteComment(String commentId) {
+        try {
+            if (commentId == null || commentId.trim().isEmpty()) return ApiResult.fail("VALIDATION_ERROR", "El comentario no es válido.");
+            JSONObject body = new JSONObject(); body.put("action", "deleteComment"); body.put("commentId", commentId.trim());
+            return unwrap(doPost(body), data -> DeletedCommentResult.fromJson((JSONObject) data));
+        } catch (Exception e) { return failOf(e); }
     }
 
     @Override

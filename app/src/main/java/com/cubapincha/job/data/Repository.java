@@ -7,10 +7,14 @@ import android.os.Looper;
 
 import com.cubapincha.job.model.AppNotification;
 import com.cubapincha.job.model.Application;
+import com.cubapincha.job.model.AddCommentResult;
+import com.cubapincha.job.model.CommentsPage;
+import com.cubapincha.job.model.DeletedCommentResult;
 import com.cubapincha.job.model.ContactOptions;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RatingsPage;
 import com.cubapincha.job.model.RatingSubmission;
+import com.cubapincha.job.model.ReactionSummary;
 import com.cubapincha.job.model.RecommendedWorker;
 import com.cubapincha.job.model.SavedSearch;
 import com.cubapincha.job.model.User;
@@ -798,6 +802,48 @@ public class Repository {
             if (!isOnline()) return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para cargar valoraciones.");
             return activeClient().getRatings(userId, limit, cursor);
         }, cb);
+    }
+
+    public void react(String entityType, String entityId, String reaction, ApiCallback<ReactionSummary> cb) {
+        run(() -> {
+            if (!validEntity(entityType, entityId)) return ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.");
+            if (!("like".equals(reaction) || "dislike".equals(reaction))) return ApiResult.fail("VALIDATION_ERROR", "La reacción no es válida.");
+            if (!session.isLoggedIn()) return ApiResult.fail("AUTH_REQUIRED", "Inicia sesión para reaccionar.");
+            if (!isOnline()) return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para reaccionar.");
+            return activeClient().react(entityType, entityId.trim(), reaction);
+        }, cb);
+    }
+
+    public void getReactions(String entityType, String entityId, ApiCallback<ReactionSummary> cb) {
+        run(() -> !validEntity(entityType, entityId) ? ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.") : activeClient().getReactions(entityType, entityId.trim()), cb);
+    }
+
+    public void listComments(String entityType, String entityId, int limit, String cursor, ApiCallback<CommentsPage> cb) {
+        run(() -> !validEntity(entityType, entityId) ? ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.") : activeClient().listComments(entityType, entityId.trim(), Math.max(1, Math.min(100, limit)), cursor), cb);
+    }
+
+    public void addComment(String entityType, String entityId, String text, ApiCallback<AddCommentResult> cb) {
+        run(() -> {
+            if (!validEntity(entityType, entityId)) return ApiResult.fail("VALIDATION_ERROR", "La entidad solicitada no es válida.");
+            String normalized = text == null ? "" : text.trim();
+            if (normalized.isEmpty() || normalized.length() > 1000) return ApiResult.fail("VALIDATION_ERROR", "El comentario debe tener entre 1 y 1000 caracteres.");
+            if (!session.isLoggedIn()) return ApiResult.fail("AUTH_REQUIRED", "Inicia sesión para comentar.");
+            if (!isOnline()) return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para comentar.");
+            return activeClient().addComment(entityType, entityId.trim(), normalized);
+        }, cb);
+    }
+
+    public void deleteComment(String commentId, ApiCallback<DeletedCommentResult> cb) {
+        run(() -> {
+            if (commentId == null || commentId.trim().isEmpty()) return ApiResult.fail("VALIDATION_ERROR", "El comentario no es válido.");
+            if (!session.isLoggedIn()) return ApiResult.fail("AUTH_REQUIRED", "Inicia sesión para borrar el comentario.");
+            if (!isOnline()) return ApiResult.fail("NO_CONNECTION", "Necesitas conexión para borrar el comentario.");
+            return activeClient().deleteComment(commentId.trim());
+        }, cb);
+    }
+
+    private static boolean validEntity(String entityType, String entityId) {
+        return ("job".equals(entityType) || "worker".equals(entityType)) && entityId != null && !entityId.trim().isEmpty();
     }
 
     /** Escritura autenticada, nunca pasa por la cola offline ni por syncActions. */

@@ -16,12 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cubapincha.job.R;
 import com.cubapincha.job.adapter.RecommendedWorkerAdapter;
 import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.model.ReactionSummary;
 import com.cubapincha.job.model.SavedSearch;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -36,7 +38,8 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
     private com.cubapincha.job.data.JobFilter workerFilter = new com.cubapincha.job.data.JobFilter();
-    private boolean photosVisible;
+    private boolean showAllPhotos;
+    private boolean gridView;
     private boolean sortByMatch;
     private View root;
 
@@ -73,7 +76,10 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
         });
         save.setOnClickListener(v -> saveSearch());
         android.widget.ImageButton eye = view.findViewById(R.id.worker_photo_toggle);
-        eye.setOnClickListener(v -> { photosVisible = !photosVisible; adapter.setPhotosVisible(photosVisible); eye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off); eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos"); });
+        eye.setOnClickListener(v -> { showAllPhotos = !showAllPhotos; adapter.setPhotosVisible(showAllPhotos); eye.setImageResource(showAllPhotos ? R.drawable.ic_visibility : R.drawable.ic_visibility_off); eye.setContentDescription(showAllPhotos ? "Ocultar fotos" : "Mostrar fotos"); });
+        android.widget.ImageButton viewToggle = view.findViewById(R.id.worker_view_toggle);
+        viewToggle.setVisibility(View.VISIBLE);
+        viewToggle.setOnClickListener(v -> { gridView = !gridView; list.setLayoutManager(gridView ? new GridLayoutManager(requireContext(), 2) : new LinearLayoutManager(requireContext())); viewToggle.setImageResource(gridView ? R.drawable.ic_list : R.drawable.ic_grid); });
         loadSavedSearchChips();
         query.addTextChangedListener(new android.text.TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -170,6 +176,10 @@ public class WorkerSearchFragment extends Fragment implements RecommendedWorkerA
             Repository.get(requireContext()).inviteWorker(w.workerId, w.matchedOfferId, "", r -> { if (r.ok) { w.invited = true; w.invitedOfferId = w.matchedOfferId == null ? "" : w.matchedOfferId; adapter.setItems(new java.util.ArrayList<>(java.util.Arrays.asList(w))); } });
         }
     }
+    @Override public void onReaction(RecommendedWorker w, String reaction) { reactWorker(w, reaction); }
+    @Override public void onCommentsClick(RecommendedWorker w) { CommentsBottomSheet.newInstance("worker", w.workerId, w.commentCount).setOnCountChanged(c -> { w.commentCount = c; adapter.notifyDataSetChanged(); }).show(getParentFragmentManager(), "comments"); }
+    private void reactWorker(RecommendedWorker w, String reaction) { String previous=w.myReaction; int likes=w.likeCount, dislikes=w.dislikeCount; if (reaction.equals(previous)) { w.myReaction=null; if ("like".equals(reaction)) w.likeCount=Math.max(0,w.likeCount-1); else w.dislikeCount=Math.max(0,w.dislikeCount-1); } else { if ("like".equals(previous)) w.likeCount=Math.max(0,w.likeCount-1); if ("dislike".equals(previous)) w.dislikeCount=Math.max(0,w.dislikeCount-1); w.myReaction=reaction; if ("like".equals(reaction)) w.likeCount++; else w.dislikeCount++; } adapter.notifyDataSetChanged(); Repository.get(requireContext()).react("worker", w.workerId, reaction, r -> { if (!isAdded()) return; if (r.ok && r.data != null) { ReactionSummary x=r.data; w.likeCount=x.likeCount; w.dislikeCount=x.dislikeCount; w.myReaction=x.myReaction; w.commentCount=x.commentCount; } else { w.myReaction=previous; w.likeCount=likes; w.dislikeCount=dislikes; Snackbar.make(root, r.friendlyMessage(), Snackbar.LENGTH_LONG).show(); } adapter.notifyDataSetChanged(); }); }
+
     @Override public void onSaveClick(RecommendedWorker w) {
         boolean requested = w.saved;
         Repository.get(requireContext()).saveCandidate(w.workerId, null, requested, r -> {

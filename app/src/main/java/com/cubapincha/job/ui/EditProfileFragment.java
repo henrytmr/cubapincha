@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,11 @@ public class EditProfileFragment extends Fragment {
         photoPicker = new PhotoPicker(this, new PhotoPicker.Callback() {
             @Override public void onPhotoPicked(Uri uri) {
                 try {
+                    if (isAdded() && getView() != null) {
+                        ImageView preview = getView().findViewById(R.id.edit_profile_photo_preview);
+                        preview.setImageURI(uri);
+                        preview.setVisibility(View.VISIBLE);
+                    }
                     PhotoPayload payload = PhotoPayload.fromUri(requireContext(), uri);
                     Repository.get(requireContext()).uploadPhoto("profile", null,
                             payload.detailBase64, payload.thumbBase64, result -> {
@@ -100,6 +106,17 @@ public class EditProfileFragment extends Fragment {
         orgType = view.findViewById(R.id.input_org_type);
         progress = view.findViewById(R.id.progress);
         btnSave = view.findViewById(R.id.btn_save);
+        ImageView photoPreview = view.findViewById(R.id.edit_profile_photo_preview);
+        String savedPhotoUri = session.getPhotoUri();
+        if (savedPhotoUri != null && !savedPhotoUri.isEmpty()) {
+            try {
+                photoPreview.setImageURI(Uri.parse(savedPhotoUri));
+                photoPreview.setVisibility(View.VISIBLE);
+            } catch (RuntimeException ignored) {
+                photoPreview.setImageDrawable(null);
+                photoPreview.setVisibility(View.GONE);
+            }
+        }
 
         LocationPicker.setup(province, municipality);
         UiUtils.setupDropdown(mobility, new String[]{

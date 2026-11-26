@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class LocalDb extends SQLiteOpenHelper {
     private static final String DB_NAME = "cubapincha.db";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 7;
 
     private static LocalDb instance;
 
@@ -55,6 +55,7 @@ public class LocalDb extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT)");
         db.execSQL("CREATE TABLE demo_state (key TEXT PRIMARY KEY, json TEXT)");
         db.execSQL("CREATE TABLE drafts (draftId TEXT PRIMARY KEY, json TEXT, createdAt TEXT, updatedAt TEXT)");
+        db.execSQL("CREATE TABLE photo_visibility (entityType TEXT, entityId TEXT, visible INTEGER NOT NULL, updatedAt TEXT, PRIMARY KEY(entityType, entityId))");
     }
 
     @Override
@@ -85,6 +86,28 @@ public class LocalDb extends SQLiteOpenHelper {
             db.execSQL("CREATE TABLE IF NOT EXISTS cached_recommended_workers (workerId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
             db.execSQL("CREATE TABLE IF NOT EXISTS cached_profile (profileId TEXT PRIMARY KEY, json TEXT, updatedAt TEXT)");
         }
+        if (oldVersion < 7) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS photo_visibility (entityType TEXT, entityId TEXT, visible INTEGER NOT NULL, updatedAt TEXT, PRIMARY KEY(entityType, entityId))");
+        }
+    }
+
+    /** Estado local por entityType+id; no comparte visibilidad entre ofertas y trabajadores. */
+    public boolean isPhotoVisible(String entityType, String entityId) {
+        if (entityType == null || entityId == null || entityType.isEmpty() || entityId.isEmpty()) return false;
+        try (Cursor c = getReadableDatabase().query("photo_visibility", new String[]{"visible"},
+                "entityType = ? AND entityId = ?", new String[]{entityType, entityId}, null, null, null)) {
+            return c.moveToFirst() && c.getInt(0) == 1;
+        }
+    }
+
+    public void setPhotoVisible(String entityType, String entityId, boolean visible) {
+        if (entityType == null || entityId == null || entityType.isEmpty() || entityId.isEmpty()) return;
+        ContentValues values = new ContentValues();
+        values.put("entityType", entityType);
+        values.put("entityId", entityId);
+        values.put("visible", visible ? 1 : 0);
+        values.put("updatedAt", String.valueOf(System.currentTimeMillis()));
+        getWritableDatabase().insertWithOnConflict("photo_visibility", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     /** Cifra en su sitio los valores en claro de una columna (migración v4). */

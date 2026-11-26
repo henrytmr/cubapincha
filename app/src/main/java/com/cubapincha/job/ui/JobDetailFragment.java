@@ -32,6 +32,7 @@ import com.cubapincha.job.data.Repository;
 import com.cubapincha.job.data.SessionManager;
 import com.cubapincha.job.model.Job;
 import com.cubapincha.job.model.RecommendedWorker;
+import com.cubapincha.job.model.ReactionSummary;
 import com.cubapincha.job.model.User;
 import com.cubapincha.job.util.AnimUtils;
 import com.cubapincha.job.util.MatchRingView;
@@ -260,7 +261,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         }
         view.findViewById(R.id.similar_title).setVisibility(View.GONE);
         view.findViewById(R.id.list_similar).setVisibility(View.GONE);
-        view.findViewById(R.id.btn_report).setVisibility(View.GONE);
+        view.findViewById(R.id.btn_report).setVisibility(View.VISIBLE);
         contentScroll.setVisibility(View.VISIBLE);
         boolean companyViewer = "company".equals(SessionManager.get(requireContext()).getRole());
         // Solo una empresa puede invitar a un trabajador. Un trabajador que
@@ -275,6 +276,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         }
         btnSaveBottom.setText(worker.saved ? "Trabajador guardado" : "Guardar trabajador");
         btnSaveTop.setImageResource(worker.saved ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
+        bindDetailReactions();
         if (animate) AnimUtils.fadeSlideIn(contentScroll);
     }
 
@@ -310,6 +312,10 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
     private void setupSection(View root, int buttonId, int contentId) {
         View content = root.findViewById(contentId);
         MaterialButton button = root.findViewById(buttonId);
+        // Las secciones informativas se muestran abiertas al entrar; el mismo
+        // botón conserva el toggle para plegarlas manualmente.
+        content.setVisibility(View.VISIBLE);
+        button.post(() -> rotateChevron(button, true));
         button.setOnClickListener(v -> {
             boolean show = content.getVisibility() != View.VISIBLE;
             content.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -426,6 +432,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
         } else {
             AnimUtils.resetItemState(contentScroll);
         }
+        bindDetailReactions();
     }
 
     private void setListText(View view, int id, List<String> items) {
@@ -736,7 +743,17 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
     }
 
     private void showReportMenu() {
-        if (job == null) return;
+        final String entityType;
+        final String entityId;
+        if (worker != null) {
+            entityType = "worker";
+            entityId = worker.workerId;
+        } else if (job != null) {
+            entityType = "job";
+            entityId = job.jobId;
+        } else {
+            return;
+        }
         showIconChoiceDialog(R.string.report, new int[]{
                         R.drawable.ic_money, R.drawable.price_check_24px,
                         R.drawable.location_off_24px, R.drawable.ic_verified_badge,
@@ -745,7 +762,7 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
                         getString(R.string.report_location), getString(R.string.report_identity),
                         getString(R.string.report_harassment), getString(R.string.report_duplicate),
                         "Otro motivo"}, which -> Repository.get(requireContext())
-                        .report("job", job.jobId, REPORT_REASONS[which], result -> {
+                        .report(entityType, entityId, REPORT_REASONS[which], result -> {
                             if (isAdded()) {
                                 Snackbar.make(requireView(), result.ok
                                         ? getString(R.string.report_sent) : result.friendlyMessage(),
@@ -818,6 +835,53 @@ public class JobDetailFragment extends Fragment implements JobAdapter.Listener {
     public void onJobClick(Job job) {
         ((MainActivity) requireActivity()).openJobDetail(job);
     }
+
+    private void bindDetailReactions() {
+        View root = requireView();
+        String type = worker != null ? "worker" : "job";
+        String id = worker != null ? worker.workerId : (job == null ? "" : job.jobId);
+        String reaction = worker != null ? worker.myReaction : job.myReaction;
+        int likes = worker != null ? worker.likeCount : job.likeCount;
+        int dislikes = worker != null ? worker.dislikeCount : job.dislikeCount;
+        int comments = worker != null ? worker.commentCount : job.commentCount;
+        ReactionUi.bind(root, reaction, likes, dislikes, comments, new ReactionUi.Actions() {
+            @Override public void onReaction(String value) { reactDetail(type, id, value); }
+            @Override public void onComments() { showDetailComments(type, id); }
+        });
+    }
+    private void reactDetail(String type, String id, String value) {
+        String previous = worker != null ? worker.myReaction : job.myReaction;
+        int oldLikes = worker != null ? worker.likeCount : job.likeCount;
+        int oldDislikes = worker != null ? worker.dislikeCount : job.dislikeCount;
+        if (worker != null) updateReaction(worker, previous, value); else updateReaction(job, previous, value);
+        bindDetailReactions();
+        Repository.get(requireContext()).react(type, id, value, result -> {
+            if (!isAdded()) return;
+            if (result.ok && result.data != null) applyReaction(result.data);
+            else {
+                if (worker != null) { worker.myReaction = previous; worker.likeCount = oldLikes; worker.dislikeCount = oldDislikes; }
+                else { job.myReaction = previous; job.likeCount = oldLikes; job.dislikeCount = oldDislikes; }
+                bindDetailReactions();
+                Snackbar.make(requireView(), result.friendlyMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+    private void showDetailComments(String type, String id) {
+        int current = worker != null ? worker.commentCount : job.commentCount;
+        CommentsBottomSheet.newInstance(type, id, current).setOnCountChanged(c -> { if (worker != null) worker.commentCount = c; else if (job != null) job.commentCount = c; bindDetailReactions(); }).show(getParentFragmentManager(), "comments");
+    }
+    private static void updateReaction(Job value, String previous, String reaction) {
+        if (reaction.equals(previous)) { value.myReaction = null; if ("like".equals(reaction)) value.likeCount = Math.max(0, value.likeCount - 1); else value.dislikeCount = Math.max(0, value.dislikeCount - 1); }
+        else { if ("like".equals(previous)) value.likeCount = Math.max(0, value.likeCount - 1); if ("dislike".equals(previous)) value.dislikeCount = Math.max(0, value.dislikeCount - 1); value.myReaction = reaction; if ("like".equals(reaction)) value.likeCount++; else value.dislikeCount++; }
+    }
+    private static void updateReaction(RecommendedWorker value, String previous, String reaction) {
+        if (reaction.equals(previous)) { value.myReaction = null; if ("like".equals(reaction)) value.likeCount = Math.max(0, value.likeCount - 1); else value.dislikeCount = Math.max(0, value.dislikeCount - 1); }
+        else { if ("like".equals(previous)) value.likeCount = Math.max(0, value.likeCount - 1); if ("dislike".equals(previous)) value.dislikeCount = Math.max(0, value.dislikeCount - 1); value.myReaction = reaction; if ("like".equals(reaction)) value.likeCount++; else value.dislikeCount++; }
+    }
+    private void applyReaction(ReactionSummary r) { if (worker != null) { worker.likeCount = r.likeCount; worker.dislikeCount = r.dislikeCount; worker.commentCount = r.commentCount; worker.myReaction = r.myReaction; } else if (job != null) { job.likeCount = r.likeCount; job.dislikeCount = r.dislikeCount; job.commentCount = r.commentCount; job.myReaction = r.myReaction; } bindDetailReactions(); }
+
+    @Override public void onReaction(Job value, String reaction) { reactDetail("job", value.jobId, reaction); }
+    @Override public void onCommentsClick(Job value) { showDetailComments("job", value.jobId); }
 
     @Override
     public void onSaveClick(Job job, android.widget.ImageButton saveButton) {

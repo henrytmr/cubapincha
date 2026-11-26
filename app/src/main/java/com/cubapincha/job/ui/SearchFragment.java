@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
@@ -62,7 +63,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
     // además de la carga explícita (doble carga).
     private boolean suppressWatcher = false;
     private boolean sortDialogShowing = false;
-    private boolean photosVisible = false;
+    private boolean showAllPhotos = false;
 
     @Nullable
     @Override
@@ -81,7 +82,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
             JobFilter restored = JobFilter.fromBundle(savedInstanceState.getBundle("filter"));
             if (restored != null) filter = restored;
             viewMode = savedInstanceState.getInt("viewMode", JobAdapter.VIEW_CARD);
-            photosVisible = savedInstanceState.getBoolean("photosVisible", false);
+            showAllPhotos = savedInstanceState.getBoolean("showAllPhotos", false);
         } else {
             JobFilter pending = activity.takePendingSearchFilter();
             if (pending != null) filter = pending;
@@ -98,10 +99,10 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         emptyState = view.findViewById(R.id.empty_state);
         errorState = view.findViewById(R.id.error_state);
         listJobs = view.findViewById(R.id.list_jobs);
-        listJobs.setLayoutManager(new LinearLayoutManager(requireContext()));
+        applyLayoutManager();
         adapter = new JobAdapter(this);
         adapter.setViewMode(viewMode);
-        adapter.setPhotosVisible(photosVisible);
+        adapter.setPhotosVisible(showAllPhotos);
         listJobs.setAdapter(adapter);
         listJobs.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -147,18 +148,20 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         view.findViewById(R.id.btn_sort).setOnClickListener(v -> showSortDialog());
         updateViewToggleIcon(view);
         ImageButton initialEye = view.findViewById(R.id.btn_photo_toggle_save);
-        initialEye.setImageResource(photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
-        initialEye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+        initialEye.setImageResource(showAllPhotos ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
+        initialEye.setContentDescription(showAllPhotos ? "Ocultar fotos" : "Mostrar fotos");
         view.findViewById(R.id.btn_photo_toggle_save).setOnClickListener(v -> {
-            photosVisible = !photosVisible;
-            adapter.setPhotosVisible(photosVisible);
+            showAllPhotos = !showAllPhotos;
+            adapter.setPhotosVisible(showAllPhotos);
             ImageButton eye = view.findViewById(R.id.btn_photo_toggle_save);
-            int icon = photosVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off;
+            int icon = showAllPhotos ? R.drawable.ic_visibility : R.drawable.ic_visibility_off;
             eye.setImageResource(icon);
-            eye.setContentDescription(photosVisible ? "Ocultar fotos" : "Mostrar fotos");
+            eye.setContentDescription(showAllPhotos ? "Ocultar fotos" : "Mostrar fotos");
         });
         view.findViewById(R.id.btn_view_toggle).setOnClickListener(v -> {
-            viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL : JobAdapter.VIEW_CARD;
+            viewMode = viewMode == JobAdapter.VIEW_CARD ? JobAdapter.VIEW_DETAIL
+                    : (viewMode == JobAdapter.VIEW_DETAIL ? JobAdapter.VIEW_GRID : JobAdapter.VIEW_CARD);
+            applyLayoutManager();
             adapter.setViewMode(viewMode);
             updateViewToggleIcon(view);
         });
@@ -210,7 +213,7 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         super.onSaveInstanceState(outState);
         outState.putBundle("filter", filter.toBundle());
         outState.putInt("viewMode", viewMode);
-        outState.putBoolean("photosVisible", photosVisible);
+        outState.putBoolean("showAllPhotos", showAllPhotos);
     }
 
     /** Aplica un filtro completo desde fuera (chip de categoría, búsqueda
@@ -482,6 +485,13 @@ public class SearchFragment extends Fragment implements JobAdapter.Listener {
         chip.setOnCloseIconClickListener(v -> onClose.run());
         activeChips.addView(chip);
         AnimUtils.chipPop(chip);
+    }
+
+    private void applyLayoutManager() {
+        if (listJobs == null) return;
+        listJobs.setLayoutManager(viewMode == JobAdapter.VIEW_GRID
+                ? new GridLayoutManager(requireContext(), 2)
+                : new LinearLayoutManager(requireContext()));
     }
 
     private void loadJobs() {
